@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /admin
+
+Sitemap: https://wv-detailing.de/sitemap.xml

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="12" fill="#121212"/>
+  <!-- Diamond shape -->
+  <polygon points="32,6 52,22 32,58 12,22" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.9"/>
+  <polygon points="32,6 52,22 32,26 12,22" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.5"/>
+  <line x1="12" y1="22" x2="52" y2="22" stroke="#ffffff" stroke-width="1" opacity="0.5"/>
+  <line x1="32" y1="6" x2="32" y2="26" stroke="#ffffff" stroke-width="1" opacity="0.3"/>
+  <!-- WV text -->
+  <text x="32" y="43" font-family="serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="2">WV</text>
+</svg>
