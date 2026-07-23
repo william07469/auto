@@ -1,0 +1,98 @@
+/*
+  styles/animations.css
+
+  WHERE TO PLACE:
+    Import this once, globally — in app/layout.js alongside your existing
+    global stylesheet import, e.g.:
+
+      import "./globals.css";
+      import "@/styles/animations.css";
+
+    This file ONLY adds new classes and does not touch or override any of
+    your existing selectors, so your current design is untouched. It also
+    sets `--loader-bg` as a variable you can override to match your brand's
+    background color without editing PageLoader.jsx.
+*/
+
+:root {
+  --loader-bg: #0a0a0a;
+}
+
+/* ---------- Page loader ---------- */
+.loader-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
+}
+
+.loader-counter {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  letter-spacing: 0.05em;
+  color: #fff;
+  font-weight: 500;
+}
+
+.loader-bar-track {
+  width: clamp(160px, 20vw, 260px);
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.loader-bar-fill {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  transform: scaleX(0);
+}
+
+/* ---------- Generic reveal helpers ----------
+   These classes only set the STARTING (pre-animation) state.
+   GSAP/ScrollTrigger animates them to their natural/visible state at
+   runtime, so if JS fails to load the content still displays normally
+   after a graceful fallback timeout you control in the hook. */
+
+.gsap-hidden {
+  visibility: hidden;
+}
+
+/* Used by useImageReveal: wraps an <img> so we can animate a clip-path
+   and a scale on the image without affecting your existing layout. */
+.image-reveal-wrapper {
+  overflow: hidden;
+  position: relative;
+  display: block;
+}
+
+.image-reveal-wrapper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* Used by useStaggerText: each split line/word/char gets wrapped in a
+   span with overflow hidden so the "slide up from mask" effect is possible. */
+.stagger-line-mask {
+  overflow: hidden;
+  display: block;
+}
+
+/* Used by useCardHover: sets the perspective for the tilt effect. */
+.card-hover-perspective {
+  perspective: 1000px;
+}
+
+/* Used by useNavbarReveal to avoid a flash-of-unstyled-navbar before JS runs. */
+.nav-will-animate {
+  will-change: transform;
+}
