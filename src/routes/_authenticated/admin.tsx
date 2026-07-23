@@ -6,6 +6,7 @@ import { LogOut, ArrowLeft } from "lucide-react";
 import { Toaster } from "sonner";
 import { AdminBookings } from "@/components/admin/AdminBookings";
 import { AdminPricing } from "@/components/admin/AdminPricing";
+import { AdminVideos } from "@/components/admin/AdminVideos";
 import { AdminGallery } from "@/components/admin/AdminGallery";
 import { AdminTestimonials } from "@/components/admin/AdminTestimonials";
 import { AdminFaq } from "@/components/admin/AdminFaq";
@@ -43,7 +44,7 @@ function AdminPage() {
             <Link to="/" className="flex items-center">
               <img src="/logo.jpeg" alt="WV Detailing" className="h-9 w-auto object-contain" />
             </Link>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground hidden sm:inline">Admin</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground hidden sm:inline">Admin Panel</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground hidden md:inline">{email}</span>
@@ -55,7 +56,7 @@ function AdminPage() {
             </Link>
             <button
               onClick={signOut}
-              className="inline-flex items-center gap-2 border border-border px-4 py-2 text-xs uppercase tracking-[0.25em] hover:border-foreground transition-colors"
+              className="inline-flex items-center gap-2 border border-border px-4 py-2 text-xs uppercase tracking-[0.25em] hover:border-foreground transition-colors cursor-pointer"
             >
               <LogOut className="h-3 w-3" /> Abmelden
             </button>
@@ -68,12 +69,14 @@ function AdminPage() {
           <TabsList className="w-full flex flex-wrap justify-start gap-2 bg-transparent border-b border-border rounded-none p-0 h-auto">
             <TabsTrigger value="bookings" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Buchungen</TabsTrigger>
             <TabsTrigger value="pricing" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Preise</TabsTrigger>
+            <TabsTrigger value="videos" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Videos</TabsTrigger>
             <TabsTrigger value="gallery" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Galerie</TabsTrigger>
             <TabsTrigger value="testimonials" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Bewertungen</TabsTrigger>
             <TabsTrigger value="faq" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">FAQ</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings" className="mt-8"><AdminBookings /></TabsContent>
           <TabsContent value="pricing" className="mt-8"><AdminPricing /></TabsContent>
+          <TabsContent value="videos" className="mt-8"><AdminVideos /></TabsContent>
           <TabsContent value="gallery" className="mt-8"><AdminGallery /></TabsContent>
           <TabsContent value="testimonials" className="mt-8"><AdminTestimonials /></TabsContent>
           <TabsContent value="faq" className="mt-8"><AdminFaq /></TabsContent>

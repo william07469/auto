@@ -1,12 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import heroVideo from "@/assets/jeep.mp4";
+import defaultHeroVideo from "@/assets/jeep.mp4";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const NOISE = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
+
 export function Hero() {
   const sectionRef   = useRef<HTMLElement>(null);
   const bgRef        = useRef<HTMLDivElement>(null);
@@ -19,7 +20,33 @@ export function Hero() {
   const scrollRef    = useRef<HTMLAnchorElement>(null);
   const overlayRef   = useRef<HTMLDivElement>(null);
 
-  // ── Entrance animation ────────────────────────────────────────────────────
+  const [videoSrc, setVideoSrc] = useState<string>(defaultHeroVideo);
+
+  // Dynamic video source listener
+  useEffect(() => {
+    const updateSrc = () => {
+      try {
+        const stored = localStorage.getItem("wv_site_videos");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const heroVid = parsed.find((v: any) => v.id === "hero_video" || v.key === "hero_video");
+          if (heroVid?.url && heroVid.url.trim()) {
+            setVideoSrc(heroVid.url);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      setVideoSrc(defaultHeroVideo);
+    };
+
+    updateSrc();
+    window.addEventListener("site_videos_updated", updateSrc);
+    return () => window.removeEventListener("site_videos_updated", updateSrc);
+  }, []);
+
+  // Entrance animation
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -87,9 +114,9 @@ export function Hero() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [videoSrc]);
 
-  // ── Scroll parallax ──────────────────────────────────────────────────────
+  // Scroll parallax
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -121,7 +148,7 @@ export function Hero() {
     return () => ctx.revert();
   }, []);
 
-  // ── Scroll indicator pulse ────────────────────────────────────────────────
+  // Scroll indicator pulse
   useEffect(() => {
     if (typeof window === "undefined") return;
     const bar = scrollRef.current?.querySelector(".scroll-bar-fill");
@@ -148,11 +175,12 @@ export function Hero() {
       className="relative flex min-h-[100svh] items-center overflow-hidden pb-0"
       style={{ perspective: "1200px" }}
     >
-      {/* ── Background ────────────────────────────────────────────────────── */}
+      {/* Background */}
       <div ref={bgRef} className="absolute inset-0 will-change-transform">
         <video
+          key={videoSrc}
           ref={videoRef}
-          src={heroVideo}
+          src={videoSrc}
           autoPlay
           muted
           loop
@@ -179,9 +207,8 @@ export function Hero() {
         style={{ backgroundImage: NOISE, backgroundSize: "200px 200px" }}
       />
 
-      {/* ── Content ───────────────────────────────────────────────────────── */}
+      {/* Content */}
       <div className="container-lux relative z-10 pt-28 sm:pt-32 md:pt-0">
-
         <div
           ref={eyebrowRef}
           className="mb-8 flex items-center gap-4"
