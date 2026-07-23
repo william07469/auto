@@ -10,8 +10,11 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import animationsCss from "../lib/animations.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
+import SmoothScrollProvider from "../lib/SmoothScrollProvider";
+import PageLoader from "../lib/PageLoader";
 
 
 function NotFoundComponent() {
@@ -93,6 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: animationsCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
@@ -131,7 +135,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <SmoothScrollProvider>
+        <PageLoader />
+        <Outlet />
+      </SmoothScrollProvider>
       <Toaster />
     </QueryClientProvider>
   );

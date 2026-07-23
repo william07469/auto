@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/client";
+import { gsap } from "gsap";
 
 const links = [
   { href: "#leistungen", label: "Leistungen" },
@@ -23,6 +24,17 @@ export function Nav() {
   const [user, setUser] = useState<{ email: string } | null>(null);
   const navigate = useNavigate();
   const { scrollY } = useScroll();
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Entrance: fade in from top after hero begins loading
+  useEffect(() => {
+    if (typeof window === "undefined" || !headerRef.current) return;
+    gsap.fromTo(
+      headerRef.current,
+      { y: -64, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.1, delay: 1.6, ease: "expo.out" }
+    );
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -55,8 +67,9 @@ export function Nav() {
   return (
     <>
       <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: hidden ? -100 : 0, opacity: 1 }}
+        ref={headerRef}
+        style={{ opacity: 0 }}
+        animate={{ y: hidden ? -100 : 0 }}
         transition={{ duration: 0.5, ease }}
         className={`fixed inset-x-0 top-0 z-50 transition-shadow duration-500 ${
           scrolled ? "glass-nav shadow-[0_1px_40px_rgba(0,0,0,0.5)]" : ""

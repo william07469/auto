@@ -1,82 +1,227 @@
-import { motion } from "motion/react";
+import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowDown } from "lucide-react";
-import heroImg from "@/assets/hero.jpg";
+import heroVideo from "@/assets/jeep.mp4";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const ease = [0.16, 1, 0.3, 1] as const;
+gsap.registerPlugin(ScrollTrigger);
 
+const NOISE = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 export function Hero() {
-  return (
-    <section className="relative flex min-h-[100svh] items-end overflow-hidden pb-24 md:items-center md:pb-0">
-      {/* Background */}
-      <motion.div
-        initial={{ scale: 1.12, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 2.4, ease }}
-        className="absolute inset-0"
-      >
-        <img
-          src={heroImg}
-          alt="WV Detailing — Premium Fahrzeugaufbereitung"
-          className="h-full w-full object-cover"
-          fetchPriority="high"
-          width={1920}
-          height={1200}
-        />
-        {/* Cinematic overlays */}
-        <div className="absolute inset-0 bg-background/60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/75 via-background/30 to-transparent" />
-      </motion.div>
+  const sectionRef   = useRef<HTMLElement>(null);
+  const bgRef        = useRef<HTMLDivElement>(null);
+  const videoRef     = useRef<HTMLVideoElement>(null);
+  const eyebrowRef   = useRef<HTMLDivElement>(null);
+  const headlineRef  = useRef<HTMLDivElement>(null);
+  const subtitleRef  = useRef<HTMLParagraphElement>(null);
+  const ctaRef       = useRef<HTMLDivElement>(null);
+  const badgesRef    = useRef<HTMLDivElement>(null);
+  const scrollRef    = useRef<HTMLAnchorElement>(null);
+  const overlayRef   = useRef<HTMLDivElement>(null);
 
-      {/* Noise texture overlay for depth */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.025]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          backgroundSize: "200px 200px",
-        }}
+  // ── Entrance animation ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+
+      tl.fromTo(
+        videoRef.current,
+        { scale: 1.14, opacity: 0, filter: "blur(12px)" },
+        { scale: 1, opacity: 1, filter: "blur(0px)", duration: 2.2 },
+        0
+      );
+
+      tl.fromTo(
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 1.4 },
+        0.4
+      );
+
+      tl.fromTo(
+        eyebrowRef.current,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 1 },
+        0.8
+      );
+
+      const lines = headlineRef.current?.querySelectorAll(".line-inner");
+      if (lines) {
+        tl.fromTo(
+          lines,
+          { y: "105%", rotateX: 8 },
+          { y: "0%", rotateX: 0, duration: 1.1, stagger: 0.09 },
+          1.0
+        );
+      }
+
+      tl.fromTo(
+        subtitleRef.current,
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 1 },
+        1.3
+      );
+
+      tl.fromTo(
+        ctaRef.current,
+        { opacity: 0, y: 20, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.9 },
+        1.5
+      );
+
+      tl.fromTo(
+        badgesRef.current?.querySelectorAll(".badge-item") ?? [],
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.12 },
+        1.7
+      );
+
+      tl.fromTo(
+        scrollRef.current,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.8 },
+        2.0
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // ── Scroll parallax ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(videoRef.current, {
+        yPercent: 28,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      gsap.to([eyebrowRef.current, headlineRef.current, subtitleRef.current, ctaRef.current, badgesRef.current], {
+        opacity: 0,
+        y: -40,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "20% top",
+          end: "65% top",
+          scrub: 1.2,
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // ── Scroll indicator pulse ────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const bar = scrollRef.current?.querySelector(".scroll-bar-fill");
+    if (!bar) return;
+
+    const anim = gsap.fromTo(
+      bar,
+      { scaleY: 0, opacity: 1, transformOrigin: "top center" },
+      {
+        scaleY: 1,
+        opacity: 0,
+        duration: 1.6,
+        ease: "power2.inOut",
+        repeat: -1,
+        repeatDelay: 0.3,
+      }
+    );
+    return () => { anim.kill(); };
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative flex min-h-[100svh] items-end overflow-hidden pb-24 md:items-center md:pb-0"
+      style={{ perspective: "1200px" }}
+    >
+      {/* ── Background ────────────────────────────────────────────────────── */}
+      <div ref={bgRef} className="absolute inset-0 will-change-transform">
+        <video
+          ref={videoRef}
+          src={heroVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/hero.jpg"
+          className="h-full w-full object-cover will-change-transform"
+          style={{ opacity: 0 }}
+        />
+
+        <div
+          ref={overlayRef}
+          className="absolute inset-0"
+          style={{ opacity: 0 }}
+        >
+          <div className="absolute inset-0 bg-background/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/25 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/60 to-transparent" />
+        </div>
+      </div>
+
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.028] mix-blend-overlay"
+        style={{ backgroundImage: NOISE, backgroundSize: "200px 200px" }}
       />
 
+      {/* ── Content ───────────────────────────────────────────────────────── */}
       <div className="container-lux relative z-10 pt-32 md:pt-0">
-        {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.5, ease }}
+
+        <div
+          ref={eyebrowRef}
           className="mb-8 flex items-center gap-4"
+          style={{ opacity: 0 }}
         >
-          <span className="h-px w-8 bg-muted-foreground" />
+          <span className="h-px w-8 bg-muted-foreground/60" />
           <p className="text-eyebrow">Premium Fahrzeugaufbereitung · Deutschland</p>
-        </motion.div>
-        <div className="overflow-hidden">
-          <motion.h1
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            transition={{ duration: 1.1, delay: 0.6, ease }}
-            className="text-display max-w-[14ch] text-[clamp(3rem,9vw,8.5rem)] leading-[0.9]"
-          >
-            Perfektion bis ins kleinste
-            <span className="italic text-muted-foreground"> Detail.</span>
-          </motion.h1>
         </div>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.95, ease }}
+        <div
+          ref={headlineRef}
+          className="text-display text-[clamp(3rem,9vw,8.5rem)] leading-[0.9] max-w-[14ch]"
+          style={{ perspective: "800px" }}
+          aria-label="Perfektion bis ins kleinste Detail."
+        >
+          {["Perfektion", "bis ins kleinste", "Detail."].map((line, i) => (
+            <div key={i} className="overflow-hidden" aria-hidden="true">
+              <div
+                className={`line-inner block${i === 2 ? " italic text-muted-foreground" : ""}`}
+                style={{ transform: "translateY(105%)" }}
+              >
+                {line}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p
+          ref={subtitleRef}
           className="mt-8 max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg"
+          style={{ opacity: 0 }}
         >
           Handwerk, Präzision und Materialien auf höchstem Niveau —
           für Fahrzeuge, die das Beste verdienen.
-        </motion.p>
+        </p>
 
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.15, ease }}
+        <div
+          ref={ctaRef}
           className="mt-10 flex flex-wrap items-center gap-4"
+          style={{ opacity: 0 }}
         >
           <Link
             to="/buchen"
@@ -90,46 +235,40 @@ export function Hero() {
           >
             Leistungen ansehen
           </a>
-        </motion.div>
+        </div>
 
-        {/* Trust badges */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.45, ease }}
+        <div
+          ref={badgesRef}
           className="mt-14 flex flex-wrap items-center gap-6 md:gap-10"
+          style={{ opacity: 0 }}
         >
           {[
             { value: "500+", label: "Zufriedene Kunden" },
             { value: "4.9★", label: "Google Bewertung" },
             { value: "10+", label: "Jahre Erfahrung" },
           ].map((b) => (
-            <div key={b.label} className="flex items-center gap-3">
+            <div key={b.label} className="badge-item flex items-center gap-3">
               <span className="text-display text-2xl">{b.value}</span>
-              <span className="text-[0.6875rem] uppercase tracking-[0.25em] text-muted-foreground leading-tight max-w-[6rem]">{b.label}</span>
+              <span className="text-[0.6875rem] uppercase tracking-[0.25em] text-muted-foreground leading-tight max-w-[6rem]">
+                {b.label}
+              </span>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.a
+      <a
+        ref={scrollRef}
         href="#leistungen"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 1.8 }}
         aria-label="Nach unten scrollen"
-        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+        style={{ opacity: 0 }}
       >
         <span className="text-[0.6rem] uppercase tracking-[0.4em]">Scroll</span>
         <div className="relative h-10 w-px overflow-hidden bg-border">
-          <motion.div
-            className="absolute left-0 top-0 h-full w-full bg-foreground origin-top"
-            animate={{ scaleY: [0, 1, 1], y: ["0%", "0%", "100%"], opacity: [1, 1, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut", times: [0, 0.5, 1] }}
-          />
+          <div className="scroll-bar-fill absolute inset-0 bg-foreground origin-top" />
         </div>
-      </motion.a>
+      </a>
     </section>
   );
 }

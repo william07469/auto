@@ -63,7 +63,8 @@
     border-color: var(--color-border);
   }
   html {
-    scroll-behavior: smooth;
+    /* Lenis handles smooth scroll — keep this off to avoid conflict */
+    scroll-behavior: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -225,4 +226,23 @@
 @keyframes pulse-border {
   0%, 100% { border-color: var(--color-border); }
   50% { border-color: var(--color-muted-foreground); }
+}
+
+/* ============ CARD LIFT HOVER ============
+   Use as a plain CSS class (not Tailwind utility) so hover pseudo works.
+   Apply className="card-lift" on any card element.
+============================================ */
+.card-lift {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.card-lift:hover {
+  transform: translateY(-5px) scale(1.012);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* ============ GSAP WILL-CHANGE HINTS ============ */
+.gsap-will-change {
+  will-change: transform, opacity, filter;
 }
