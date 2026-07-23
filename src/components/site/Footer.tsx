@@ -63,7 +63,7 @@ export function Footer() {
                 className="h-14 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
               />
             </Link>
-            <p className="mt-5 max-w-[22rem] text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-[20rem] text-sm leading-relaxed text-muted-foreground md:max-w-[22rem]">
               Premium Fahrzeugaufbereitung aus Deutschland. Handwerk, Präzision
               und höchste Qualität für Fahrzeuge, die das Beste verdienen.
             </p>
@@ -73,7 +73,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="grid h-10 w-10 place-items-center rounded-full border border-border transition-all hover:border-foreground hover:-translate-y-0.5"
+                className="grid h-11 w-11 place-items-center rounded-full border border-border transition-all hover:border-foreground hover:-translate-y-0.5 md:h-10 md:w-10"
               >
                 <Instagram className="h-4 w-4" strokeWidth={1.5} />
               </a>
@@ -82,7 +82,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className="grid h-10 w-10 place-items-center rounded-full border border-border transition-all hover:border-foreground hover:-translate-y-0.5"
+                className="grid h-11 w-11 place-items-center rounded-full border border-border transition-all hover:border-foreground hover:-translate-y-0.5 md:h-10 md:w-10"
               >
                 <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
               </a>

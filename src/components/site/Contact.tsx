@@ -158,7 +158,7 @@ function ContactForm() {
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder="Ihr vollständiger Name"
-            className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-all focus:border-foreground/50 focus:bg-muted"
+            className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-all focus:border-foreground/50 focus:bg-muted md:py-3"
           />
         </label>
 
@@ -172,7 +172,7 @@ function ContactForm() {
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             placeholder="ihre@email.de"
-            className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-all focus:border-foreground/50 focus:bg-muted"
+            className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-all focus:border-foreground/50 focus:bg-muted md:py-3"
           />
         </label>
 
@@ -186,7 +186,7 @@ function ContactForm() {
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
             placeholder="Erzählen Sie uns von Ihrem Fahrzeug..."
-            className="w-full resize-none rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-all focus:border-foreground/50 focus:bg-muted"
+            className="w-full resize-none rounded-xl border border-border bg-muted/50 px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-all focus:border-foreground/50 focus:bg-muted md:py-3"
           />
         </label>
       </div>

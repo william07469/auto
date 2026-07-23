@@ -144,7 +144,7 @@ export function Testimonials() {
 
         {/* Carousel */}
         <div className="mt-16 overflow-hidden rounded-2xl border border-border bg-card">
-          <div className="relative min-h-[340px] p-10 md:p-16">
+          <div className="relative min-h-[280px] p-6 md:p-16">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={active}
@@ -182,7 +182,7 @@ export function Testimonials() {
           </div>
 
           {/* Controls */}
-          <div className="flex items-center justify-between border-t border-border px-10 py-5 md:px-16">
+          <div className="flex items-center justify-between border-t border-border px-6 py-5 md:px-16">
             {/* Dots */}
             <div className="flex items-center gap-2">
               {reviews.map((_, i) => (

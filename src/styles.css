@@ -246,3 +246,22 @@
 .gsap-will-change {
   will-change: transform, opacity, filter;
 }
+
+/* ============ MOBILE TOUCH IMPROVEMENTS ============ */
+@layer base {
+  /* Remove tap highlight on mobile */
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Better touch targets for all interactive elements */
+  button, a, input, textarea, select, label {
+    touch-action: manipulation;
+  }
+}
+
+/* ============ RESPONSIVE SECTION SPACING ============ */
+@utility mobile-section-padding {
+  padding-top: clamp(3.5rem, 8vw, 5rem);
+  padding-bottom: clamp(3.5rem, 8vw, 5rem);
+}

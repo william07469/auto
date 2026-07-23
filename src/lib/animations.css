@@ -96,3 +96,21 @@
 .nav-will-animate {
   will-change: transform;
 }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .gsap-hidden {
+    visibility: visible;
+  }
+
+  .loader-center,
+  .loader-counter,
+  .loader-bar-track {
+    display: none;
+  }
+
+  .card-lift:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}

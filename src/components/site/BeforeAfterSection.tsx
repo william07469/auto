@@ -284,7 +284,7 @@ export function BeforeAfterSection() {
                             : "border-border text-muted-foreground hover:border-foreground/20 hover:text-foreground"
                         }`}
                       >
-                        <span className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors ${pairIndex === i ? "bg-foreground" : "bg-border"}`} />
+                        <span className={`h-2.5 w-2.5 shrink-0 rounded-full transition-colors ${pairIndex === i ? "bg-foreground" : "bg-border"}`} />
                         {p.title}
                       </button>
                     ))}

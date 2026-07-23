@@ -182,7 +182,7 @@ export function Pricing() {
               <button
                 key={k}
                 onClick={() => setMode(k)}
-                className={`relative z-10 rounded-full px-6 py-2.5 text-[0.6875rem] uppercase tracking-[0.2em] transition-colors duration-300 ${
+                className={`relative z-10 rounded-full px-4 py-2.5 text-[0.6875rem] uppercase tracking-[0.2em] transition-colors duration-300 sm:px-6 ${
                   mode === k ? "text-background" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -208,18 +208,18 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.9, delay: i * 0.12, ease }}
-              className={`group relative flex flex-col rounded-2xl border p-8 transition-all duration-500 hover:-translate-y-2 md:p-10 ${
-                p.popular
-                  ? "border-foreground/60 bg-card shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_64px_rgba(0,0,0,0.5)]"
-                  : "border-border bg-card hover:border-foreground/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
-              }`}
+               className={`group relative flex flex-col rounded-2xl border p-6 transition-all duration-500 hover:-translate-y-2 md:p-10 ${
+                 p.popular
+                   ? "border-foreground/60 bg-card shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_64px_rgba(0,0,0,0.5)]"
+                   : "border-border bg-card hover:border-foreground/30 hover:shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
+               }`}
             >
               {/* Popular badge */}
               {p.popular && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <div className="flex items-center gap-1.5 rounded-full bg-foreground px-4 py-1">
-                    <Star className="h-3 w-3 fill-background text-background" />
-                    <span className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-background">
+                  <div className="flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1 sm:px-4">
+                    <Star className="hidden h-3 w-3 fill-background text-background sm:block" />
+                    <span className="text-[0.5rem] font-semibold uppercase tracking-[0.2em] text-background sm:text-[0.6rem] sm:tracking-[0.25em]">
                       Beliebteste Wahl
                     </span>
                   </div>
@@ -238,7 +238,7 @@ export function Pricing() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="text-display text-5xl"
+                    className="text-display text-4xl md:text-5xl"
                   >
                     {p.price[mode]}€
                   </motion.span>

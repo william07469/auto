@@ -127,7 +127,7 @@ export function Nav() {
             )}
             <Link
               to="/buchen"
-              className="hidden md:inline-flex btn-primary text-[0.6875rem] py-2.5 px-5 hover:opacity-90 hover:scale-[0.98] active:scale-95"
+              className="hidden sm:inline-flex btn-primary text-[0.6875rem] py-2.5 px-4 sm:px-5 hover:opacity-90 hover:scale-[0.98] active:scale-95"
             >
               Termin buchen
             </Link>
@@ -135,7 +135,7 @@ export function Nav() {
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Menü schließen" : "Menü öffnen"}
               aria-expanded={open}
-              className="grid h-10 w-10 place-items-center rounded-full border border-border transition-colors hover:border-foreground lg:hidden"
+              className="grid h-11 w-11 place-items-center rounded-full border border-border transition-colors hover:border-foreground lg:hidden"
             >
               <AnimatePresence mode="wait" initial={false}>
                 {open ? (
@@ -179,7 +179,7 @@ export function Nav() {
                 <button
                   onClick={() => setOpen(false)}
                   aria-label="Schließen"
-                  className="grid h-9 w-9 place-items-center rounded-full border border-border"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-border"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -194,7 +194,7 @@ export function Nav() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.05, ease }}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-4 py-3 text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="rounded-lg px-4 py-3.5 text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   >
                     {l.label}
                   </motion.a>

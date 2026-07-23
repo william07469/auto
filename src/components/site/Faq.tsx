@@ -58,11 +58,11 @@ function FaqRow({ item, index }: { item: FaqItem; index: number }) {
         aria-expanded={open}
         className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left md:px-8 md:py-6"
       >
-        <div className="flex items-center gap-4">
-          <span className="shrink-0 text-[0.625rem] uppercase tracking-[0.3em] text-muted-foreground">
+        <div className="flex items-start gap-3 md:items-center md:gap-4">
+          <span className="shrink-0 text-[0.625rem] uppercase tracking-[0.3em] text-muted-foreground pt-0.5 md:pt-0">
             0{index + 1}
           </span>
-          <span className="text-base font-medium leading-snug md:text-lg">{item.q}</span>
+          <span className="text-sm font-medium leading-snug md:text-lg">{item.q}</span>
         </div>
         <span
           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${

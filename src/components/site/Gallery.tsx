@@ -215,7 +215,7 @@ export function Gallery() {
         </motion.div>
 
         {/* Grid */}
-        <div className="mt-20 grid auto-rows-[200px] grid-cols-2 gap-3 md:auto-rows-[260px] md:grid-cols-4">
+        <div className="mt-20 grid auto-rows-[180px] grid-cols-2 gap-2 md:auto-rows-[260px] md:grid-cols-4 md:gap-3">
           {items.map((it, i) => (
             <motion.figure
               key={it.id}

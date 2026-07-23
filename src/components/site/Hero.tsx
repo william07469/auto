@@ -145,7 +145,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[100svh] items-end overflow-hidden pb-24 md:items-center md:pb-0"
+      className="relative flex min-h-[100svh] items-center overflow-hidden pb-0"
       style={{ perspective: "1200px" }}
     >
       {/* ── Background ────────────────────────────────────────────────────── */}
@@ -180,7 +180,7 @@ export function Hero() {
       />
 
       {/* ── Content ───────────────────────────────────────────────────────── */}
-      <div className="container-lux relative z-10 pt-32 md:pt-0">
+      <div className="container-lux relative z-10 pt-28 sm:pt-32 md:pt-0">
 
         <div
           ref={eyebrowRef}
@@ -193,7 +193,7 @@ export function Hero() {
 
         <div
           ref={headlineRef}
-          className="text-display text-[clamp(3rem,9vw,8.5rem)] leading-[0.9] max-w-[14ch]"
+          className="text-display text-[clamp(2.5rem,11vw,8.5rem)] leading-[0.9] max-w-[14ch]"
           style={{ perspective: "800px" }}
           aria-label="Perfektion bis ins kleinste Detail."
         >
@@ -211,7 +211,7 @@ export function Hero() {
 
         <p
           ref={subtitleRef}
-          className="mt-8 max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg"
+          className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground md:mt-8 md:text-lg"
           style={{ opacity: 0 }}
         >
           Handwerk, Präzision und Materialien auf höchstem Niveau —
@@ -220,7 +220,7 @@ export function Hero() {
 
         <div
           ref={ctaRef}
-          className="mt-10 flex flex-wrap items-center gap-4"
+          className="mt-8 flex flex-wrap items-center gap-3 md:mt-10 md:gap-4"
           style={{ opacity: 0 }}
         >
           <Link
@@ -239,7 +239,7 @@ export function Hero() {
 
         <div
           ref={badgesRef}
-          className="mt-14 flex flex-wrap items-center gap-6 md:gap-10"
+          className="mt-10 flex flex-wrap items-center gap-4 md:mt-14 md:gap-10"
           style={{ opacity: 0 }}
         >
           {[
@@ -261,7 +261,7 @@ export function Hero() {
         ref={scrollRef}
         href="#leistungen"
         aria-label="Nach unten scrollen"
-        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors md:bottom-10"
         style={{ opacity: 0 }}
       >
         <span className="text-[0.6rem] uppercase tracking-[0.4em]">Scroll</span>
