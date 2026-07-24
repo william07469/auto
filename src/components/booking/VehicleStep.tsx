@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { VehicleDetails } from "./types";
+import { VehicleDetails, VehicleSizeCategory } from "./types";
 import { VEHICLE_SIZES } from "./bookingData";
-import { Car, CarFront, Truck, Crown, Check, Palette, Calendar, Layers } from "lucide-react";
+import { Check } from "lucide-react";
 import gsap from "gsap";
 
 interface VehicleStepProps {
@@ -9,180 +9,206 @@ interface VehicleStepProps {
   onChangeVehicle: (updated: Partial<VehicleDetails>) => void;
 }
 
-const SIZE_ICONS: Record<string, React.ReactNode> = {
-  coupe: <Car className="w-6 h-6 text-emerald-400" />,
-  sedan: <CarFront className="w-6 h-6 text-teal-400" />,
-  suv: <Truck className="w-6 h-6 text-cyan-400" />,
-  exotic: <Crown className="w-6 h-6 text-amber-400" />,
+const VEHICLE_IMAGES: Record<string, string> = {
+  coupe: "/vehicle-coupe.png",
+  sedan: "/vehicle-sedan.png",
+  suv: "/vehicle-suv.png",
+  van: "/vehicle-van.png",
 };
-
-const POPULAR_MAKES = [
-  "Porsche", "BMW", "Mercedes-Benz", "Audi", "Volkswagen", "Tesla", "Lamborghini", "Ferrari", "Land Rover", "Aston Martin"
-];
 
 export const VehicleStep: React.FC<VehicleStepProps> = ({ vehicle, onChangeVehicle }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      gsap.fromTo(
-        containerRef.current.children,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power3.out" }
-      );
-    }
+    if (!containerRef.current) return;
+    const cards = containerRef.current.querySelectorAll(".vehicle-card");
+    gsap.fromTo(
+      cards,
+      { opacity: 0, y: 24, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.08, ease: "power3.out" }
+    );
   }, []);
 
   return (
-    <div ref={containerRef} className="space-y-8 max-w-4xl mx-auto">
-      <div className="text-center max-w-2xl mx-auto mb-6">
-        <span className="text-xs font-semibold tracking-widest text-emerald-400 uppercase bg-emerald-950/60 border border-emerald-500/20 px-3 py-1 rounded-full">
-          Schritt 3 — Fahrzeugprofil
-        </span>
-        <h3 className="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">
-          Fahrzeugdaten & Größenklasse
-        </h3>
-        <p className="text-zinc-400 text-sm mt-1">
-          Geben Sie Ihre Fahrzeugdaten ein, damit wir Produkte und Aufbereitungszeit optimal vorbereiten können.
+    <div ref={containerRef} style={{ maxWidth: 900, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ marginBottom: "3.5rem" }}>
+        <p
+          style={{
+            fontSize: "0.6rem",
+            letterSpacing: "0.38em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.3)",
+            fontWeight: 500,
+            marginBottom: "1rem",
+          }}
+        >
+          Step 2 — Vehicle Class
+        </p>
+        <h2
+          style={{
+            fontSize: "clamp(2rem, 5vw, 3.25rem)",
+            fontWeight: 300,
+            letterSpacing: "-0.04em",
+            color: "#ffffff",
+            lineHeight: 1,
+            marginBottom: "1rem",
+          }}
+        >
+          Select your vehicle
+        </h2>
+        <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.7, maxWidth: 420 }}>
+          Vehicle size determines treatment duration and pricing adjustment.
         </p>
       </div>
 
-      {/* Body Category Selector */}
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3 flex items-center gap-2">
-          <Layers className="w-4 h-4 text-emerald-400" />
-          Wählen Sie die Fahrzeugklasse
-        </label>
+      {/* Grid of Vehicle Image Cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "1.25rem",
+        }}
+      >
+        {VEHICLE_SIZES.map((size) => {
+          const isSelected = vehicle.sizeCategory === size.id;
+          const imageSrc = VEHICLE_IMAGES[size.id];
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {VEHICLE_SIZES.map((size) => {
-            const isSelected = vehicle.sizeCategory === size.id;
-
-            return (
+          return (
+            <button
+              key={size.id}
+              type="button"
+              id={`vehicle-${size.id}`}
+              onClick={() => onChangeVehicle({ sizeCategory: size.id as VehicleSizeCategory })}
+              className="vehicle-card group"
+              style={{
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+                borderRadius: 20,
+                padding: "1.25rem",
+                background: isSelected
+                  ? "linear-gradient(180deg, rgba(96,165,250,0.08) 0%, rgba(8,8,12,0.95) 100%)"
+                  : "rgba(255,255,255,0.02)",
+                border: isSelected
+                  ? "1px solid rgba(96,165,250,0.5)"
+                  : "1px solid rgba(255,255,255,0.07)",
+                boxShadow: isSelected
+                  ? "0 0 35px rgba(96,165,250,0.15), inset 0 0 20px rgba(96,165,250,0.05)"
+                  : "0 10px 30px rgba(0,0,0,0.4)",
+                cursor: "pointer",
+                transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                overflow: "hidden",
+              }}
+              onMouseEnter={(e) => {
+                if (!isSelected) {
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)";
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isSelected) {
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)";
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                }
+              }}
+            >
+              {/* Check badge */}
               <div
-                key={size.id}
-                onClick={() => onChangeVehicle({ sizeCategory: size.id })}
-                className={`relative p-5 rounded-2xl cursor-pointer transition-all duration-300 backdrop-blur-xl border ${
-                  isSelected
-                    ? "bg-zinc-900/90 border-emerald-400/80 shadow-[0_0_25px_rgba(52,211,153,0.25)] ring-2 ring-emerald-400/40 -translate-y-1"
-                    : "bg-zinc-950/60 border-white/10 hover:border-white/20 hover:bg-zinc-900/60"
-                }`}
+                style={{
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                  width: 22,
+                  height: 22,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: isSelected ? "1px solid rgba(96,165,250,0.8)" : "1px solid rgba(255,255,255,0.12)",
+                  background: isSelected ? "rgba(96,165,250,0.2)" : "rgba(255,255,255,0.03)",
+                  transition: "all 0.3s",
+                  zIndex: 2,
+                }}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div
-                    className={`p-2.5 rounded-xl border ${
-                      isSelected ? "bg-emerald-500/20 border-emerald-400/40" : "bg-zinc-900 border-white/10"
-                    }`}
-                  >
-                    {SIZE_ICONS[size.id]}
-                  </div>
+                {isSelected && <Check size={11} color="rgba(96,165,250,1)" strokeWidth={3} />}
+              </div>
 
-                  {isSelected && (
-                    <div className="w-5 h-5 rounded-full bg-emerald-400 flex items-center justify-center text-black shadow-[0_0_8px_rgba(52,211,153,0.8)]">
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    </div>
-                  )}
+              {/* Large vehicle image */}
+              <div
+                style={{
+                  width: "100%",
+                  aspectRatio: "16/10",
+                  borderRadius: 14,
+                  overflow: "hidden",
+                  marginBottom: "1.25rem",
+                  background: "#0a0a0e",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={imageSrc}
+                  alt={size.label}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                    filter: isSelected ? "brightness(1.1) contrast(1.05)" : "brightness(0.85) contrast(1)",
+                  }}
+                  className="group-hover:scale-105"
+                />
+              </div>
+
+              {/* Title & info */}
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div>
+                  <h3
+                    style={{
+                      fontSize: "1.1rem",
+                      fontWeight: isSelected ? 500 : 400,
+                      color: isSelected ? "#fff" : "rgba(255,255,255,0.75)",
+                      letterSpacing: "-0.01em",
+                      marginBottom: "0.25rem",
+                    }}
+                  >
+                    {size.label}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "rgba(255,255,255,0.32)",
+                      marginBottom: "0.75rem",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {size.subtext}
+                  </p>
                 </div>
 
-                <h4 className="text-base font-bold text-white">{size.label}</h4>
-                <p className="text-xs text-zinc-400 mt-1 leading-snug">{size.subtext}</p>
-                <p className="text-[10px] text-zinc-500 mt-2 italic">{size.example}</p>
-
-                {size.multiplier > 1.0 && (
-                  <div className="mt-3 inline-block text-[10px] font-mono font-medium text-emerald-400/90 bg-emerald-950/50 border border-emerald-500/20 px-2 py-0.5 rounded">
-                    +{Math.round((size.multiplier - 1) * 100)}% Größenzuschlag
-                  </div>
-                )}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingTop: "0.75rem",
+                    borderTop: "1px solid rgba(255,255,255,0.06)",
+                    fontSize: "0.62rem",
+                    fontFamily: "monospace",
+                    letterSpacing: "0.1em",
+                    color: isSelected ? "rgba(96,165,250,0.8)" : "rgba(255,255,255,0.25)",
+                  }}
+                >
+                  <span>{size.example.split(",")[0]}</span>
+                  <span>{size.multiplier > 1.0 ? `+${Math.round((size.multiplier - 1) * 100)}%` : "Base"}</span>
+                </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Make, Model, Year, Color Form */}
-      <div className="p-6 rounded-2xl bg-zinc-950/70 border border-white/10 backdrop-blur-xl space-y-6">
-        {/* Quick select Make badges */}
-        <div>
-          <span className="text-xs text-zinc-400 font-medium block mb-2">Häufige Marken:</span>
-          <div className="flex flex-wrap gap-2">
-            {POPULAR_MAKES.map((mk) => (
-              <button
-                key={mk}
-                type="button"
-                onClick={() => onChangeVehicle({ make: mk })}
-                className={`text-xs px-3 py-1 rounded-full border transition-all ${
-                  vehicle.make.toLowerCase() === mk.toLowerCase()
-                    ? "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-semibold"
-                    : "bg-zinc-900 border-white/10 text-zinc-400 hover:border-white/20 hover:text-white"
-                }`}
-              >
-                {mk}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {/* Make */}
-          <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1.5 flex items-center gap-1.5">
-              <Car className="w-3.5 h-3.5 text-emerald-400" />
-              Marke / Herstelle *
-            </label>
-            <input
-              type="text"
-              value={vehicle.make}
-              onChange={(e) => onChangeVehicle({ make: e.target.value })}
-              placeholder="z.B. Porsche, BMW, Audi"
-              className="w-full bg-zinc-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400/70 focus:ring-1 focus:ring-emerald-400/70 transition-all"
-            />
-          </div>
-
-          {/* Model */}
-          <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1.5 flex items-center gap-1.5">
-              <CarFront className="w-3.5 h-3.5 text-teal-400" />
-              Modell *
-            </label>
-            <input
-              type="text"
-              value={vehicle.model}
-              onChange={(e) => onChangeVehicle({ model: e.target.value })}
-              placeholder="z.B. 911 Carrera, M5, Golf R"
-              className="w-full bg-zinc-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400/70 focus:ring-1 focus:ring-emerald-400/70 transition-all"
-            />
-          </div>
-
-          {/* Year */}
-          <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1.5 flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-              Baujahr *
-            </label>
-            <input
-              type="text"
-              value={vehicle.year}
-              onChange={(e) => onChangeVehicle({ year: e.target.value })}
-              placeholder="z.B. 2024"
-              className="w-full bg-zinc-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400/70 focus:ring-1 focus:ring-emerald-400/70 transition-all"
-            />
-          </div>
-
-          {/* Color */}
-          <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1.5 flex items-center gap-1.5">
-              <Palette className="w-3.5 h-3.5 text-amber-400" />
-              Farbe / Lackierung *
-            </label>
-            <input
-              type="text"
-              value={vehicle.color}
-              onChange={(e) => onChangeVehicle({ color: e.target.value })}
-              placeholder="z.B. Schwarz Metallic, Nardograu"
-              className="w-full bg-zinc-900/90 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400/70 focus:ring-1 focus:ring-emerald-400/70 transition-all"
-            />
-          </div>
-        </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

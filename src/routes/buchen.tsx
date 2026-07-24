@@ -1,51 +1,57 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import gsap from "gsap";
 
 import { BookingState, ServiceId, VehicleDetails, CustomerDetails } from "@/components/booking/types";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { ServiceStep } from "@/components/booking/ServiceStep";
-import { DynamicQuestionsStep } from "@/components/booking/DynamicQuestionsStep";
 import { VehicleStep } from "@/components/booking/VehicleStep";
-import { DateTimeStep } from "@/components/booking/DateTimeStep";
+import { AddOnStep } from "@/components/booking/AddOnStep";
+import { DateStep, TimeStep } from "@/components/booking/DateTimeStep";
 import { CustomerStep } from "@/components/booking/CustomerStep";
 import { SummaryStep } from "@/components/booking/SummaryStep";
 import { BookingSummaryDrawer } from "@/components/booking/BookingSummaryDrawer";
-import { DYNAMIC_QUESTIONS, SERVICES_DATA, ADDONS_DATA, VEHICLE_SIZES } from "@/components/booking/bookingData";
+import { SERVICES_DATA, ADDONS_DATA, VEHICLE_SIZES } from "@/components/booking/bookingData";
 import { supabase } from "@/integrations/client";
 
 export const Route = createFileRoute("/buchen")({
   ssr: false,
-  component: LuxuryBookingPage,
+  component: BookingPage,
   head: () => ({
     meta: [
-      { title: "Termin buchen — WV Detailing Premium Concierge" },
-      { name: "description", content: "Buchen Sie Ihren Termin für Premium Fahrzeugaufbereitung bei WV Detailing." },
+      { title: "Book an Appointment — WV Detailing" },
+      {
+        name: "description",
+        content: "Book your premium vehicle detailing appointment with WV Detailing.",
+      },
     ],
   }),
 });
 
-const NEXT_STEP_NAMES = [
-  "Paket-Optionen",
-  "Fahrzeugdaten",
-  "Datum & Uhrzeit",
-  "Kontaktdaten",
-  "Buchungsübersicht",
-  "Termin Bestätigen",
-];
+// Label shown in the drawer CTA "Continue to X"
+const NEXT_STEP_LABELS: Record<number, string> = {
+  1: "Vehicle",
+  2: "Add-ons",
+  3: "Date",
+  4: "Time",
+  5: "Contact",
+  6: "Summary",
+};
 
-function LuxuryBookingPage() {
+const TOTAL_STEPS = 7;
+
+function BookingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const stepContentRef = useRef<HTMLDivElement>(null);
 
   const [booking, setBooking] = useState<BookingState>({
     step: 1,
-    selectedServiceId: "paint_correction", // default selection
-    selectedSubOptionId: "paint_two",
-    selectedAddOnIds: ["addon_ceramic"],
+    selectedServiceId: null,
+    selectedSubOptionId: null,
+    selectedAddOnIds: [],
     vehicle: {
       make: "",
       model: "",
@@ -64,247 +70,262 @@ function LuxuryBookingPage() {
     customServiceNote: "",
   });
 
-  // Load custom prices from Supabase if updated by admin
+  // Sync custom prices from admin panel
   useEffect(() => {
     supabase
       .from("pricing_packages")
       .select("*")
       .eq("is_active", true)
       .then(({ data }) => {
-        if (!data || data.length === 0) return;
+        if (!data?.length) return;
         data.forEach((pkg: any) => {
-          // Sync main starting prices if category matches
-          const catLower = pkg.category?.toLowerCase() || "";
-          const foundService = SERVICES_DATA.find(
-            (s) => s.id === catLower || s.name.toLowerCase().includes(catLower)
+          const cat = pkg.category?.toLowerCase() ?? "";
+          const found = SERVICES_DATA.find(
+            (s) => s.id === cat || s.name.toLowerCase().includes(cat)
           );
-          if (foundService && pkg.price > 0) {
-            foundService.startingPrice = pkg.price;
-          }
+          if (found && pkg.price > 0) found.startingPrice = pkg.price;
         });
       });
   }, []);
 
-  // Pre-fill user email if logged in
+  // Pre-fill email if logged in
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user?.email) {
-        setBooking((prev) => ({
-          ...prev,
-          customer: {
-            ...prev.customer,
-            email: user.email!,
-          },
-        }));
+        setBooking((p) => ({ ...p, customer: { ...p.customer, email: user.email! } }));
       }
     });
   }, []);
 
-  // Set default sub-option when service changes
+  // ── Handlers ───────────────────────────────────────────────────────────────
   const handleSelectService = (serviceId: ServiceId) => {
-    const defaultSub = DYNAMIC_QUESTIONS[serviceId]?.options[0]?.id || null;
-    setBooking((prev) => ({
-      ...prev,
-      selectedServiceId: serviceId,
-      selectedSubOptionId: defaultSub,
-    }));
-  };
-
-  const handleSelectSubOption = (id: string) => {
-    setBooking((prev) => ({ ...prev, selectedSubOptionId: id }));
+    setBooking((p) => ({ ...p, selectedServiceId: serviceId }));
   };
 
   const handleToggleAddOn = (id: string) => {
-    setBooking((prev) => {
-      const exists = prev.selectedAddOnIds.includes(id);
-      const updated = exists
-        ? prev.selectedAddOnIds.filter((item) => item !== id)
-        : [...prev.selectedAddOnIds, id];
-      return { ...prev, selectedAddOnIds: updated };
+    setBooking((p) => {
+      const has = p.selectedAddOnIds.includes(id);
+      return {
+        ...p,
+        selectedAddOnIds: has
+          ? p.selectedAddOnIds.filter((x) => x !== id)
+          : [...p.selectedAddOnIds, id],
+      };
     });
   };
 
   const handleChangeVehicle = (updated: Partial<VehicleDetails>) => {
-    setBooking((prev) => ({
-      ...prev,
-      vehicle: { ...prev.vehicle, ...updated },
-    }));
+    setBooking((p) => ({ ...p, vehicle: { ...p.vehicle, ...updated } }));
   };
 
   const handleChangeCustomer = (updated: Partial<CustomerDetails>) => {
-    setBooking((prev) => ({
-      ...prev,
-      customer: { ...prev.customer, ...updated },
-    }));
+    setBooking((p) => ({ ...p, customer: { ...p.customer, ...updated } }));
   };
 
-  // Step validation
-  const isStepValid = (stepNum: number): boolean => {
-    switch (stepNum) {
-      case 1:
-        return !!booking.selectedServiceId;
-      case 2:
-        return !!booking.selectedSubOptionId;
-      case 3:
-        return (
-          !!booking.vehicle.make.trim() &&
-          !!booking.vehicle.model.trim() &&
-          !!booking.vehicle.year.trim()
-        );
-      case 4:
-        return !!booking.selectedDate && !!booking.selectedTimeSlot;
-      case 5:
+  // ── Validation ─────────────────────────────────────────────────────────────
+  const isStepValid = (step: number): boolean => {
+    switch (step) {
+      case 1: return !!booking.selectedServiceId;
+      case 2: return !!booking.vehicle.sizeCategory; // always true — default is sedan
+      case 3: return true;                            // add-ons optional
+      case 4: return !!booking.selectedDate;
+      case 5: return !!booking.selectedTimeSlot;
+      case 6:
         return (
           !!booking.customer.fullName.trim() &&
           !!booking.customer.phone.trim() &&
           !!booking.customer.email.trim()
         );
-      case 6:
-        return true;
-      default:
-        return false;
+      case 7: return true;
+      default: return false;
     }
   };
 
+  // ── Animated transition ────────────────────────────────────────────────────
   const goToStep = (newStep: number) => {
-    if (newStep < 1 || newStep > 6) return;
+    if (newStep < 1 || newStep > TOTAL_STEPS) return;
 
     if (stepContentRef.current) {
       gsap.to(stepContentRef.current, {
         opacity: 0,
-        y: -15,
-        duration: 0.25,
+        y: -14,
+        duration: 0.2,
+        ease: "power2.in",
         onComplete: () => {
-          setBooking((prev) => ({ ...prev, step: newStep }));
+          setBooking((p) => ({ ...p, step: newStep }));
           window.scrollTo({ top: 0, behavior: "smooth" });
-          gsap.to(stepContentRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.4,
-            ease: "power3.out",
-          });
+          gsap.fromTo(
+            stepContentRef.current,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }
+          );
         },
       });
     } else {
-      setBooking((prev) => ({ ...prev, step: newStep }));
+      setBooking((p) => ({ ...p, step: newStep }));
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleNext = () => {
     if (!isStepValid(booking.step)) {
-      if (booking.step === 1) toast.error("Bitte wählen Sie einen Hauptservice aus.");
-      else if (booking.step === 2) toast.error("Bitte wählen Sie ein Paket/Stufe aus.");
-      else if (booking.step === 3) toast.error("Bitte geben Sie Marke, Modell und Baujahr an.");
-      else if (booking.step === 4) toast.error("Bitte wählen Sie ein Datum und eine Uhrzeit.");
-      else if (booking.step === 5) toast.error("Bitte geben Sie Ihren Namen, Telefon und E-Mail an.");
+      const msgs: Record<number, string> = {
+        1: "Please select a service to continue.",
+        4: "Please choose a date.",
+        5: "Please select a time slot.",
+        6: "Please fill in your name, phone and email.",
+      };
+      const msg = msgs[booking.step];
+      if (msg) toast.error(msg);
       return;
     }
-    goToStep(booking.step + 1);
+    if (booking.step < TOTAL_STEPS) goToStep(booking.step + 1);
   };
 
   const handleBack = () => {
-    if (booking.step > 1) {
-      goToStep(booking.step - 1);
-    }
+    if (booking.step > 1) goToStep(booking.step - 1);
   };
 
+  // ── Submit ─────────────────────────────────────────────────────────────────
   const handleConfirmBooking = async () => {
     setSubmitting(true);
-
     try {
-      // Calculate price and details
       const mainService = SERVICES_DATA.find((s) => s.id === booking.selectedServiceId);
-      const dynamicGroup = booking.selectedServiceId ? DYNAMIC_QUESTIONS[booking.selectedServiceId] : null;
-      const subOption = dynamicGroup?.options.find((o) => o.id === booking.selectedSubOptionId);
       const chosenAddOns = ADDONS_DATA.filter((a) => booking.selectedAddOnIds.includes(a.id));
       const vehicleCategory = VEHICLE_SIZES.find((v) => v.id === booking.vehicle.sizeCategory);
 
-      const basePrice = subOption?.price || mainService?.startingPrice || 0;
-      const multiplier = vehicleCategory?.multiplier || 1.0;
-      const vehicleAdjustedPrice = Math.round(basePrice * multiplier);
+      const basePrice = mainService?.startingPrice ?? 0;
+      const multiplier = vehicleCategory?.multiplier ?? 1.0;
+      const adjustedBase = Math.round(basePrice * multiplier);
       const addOnsTotal = chosenAddOns.reduce((sum, a) => sum + a.price, 0);
-      const estimatedPrice = vehicleAdjustedPrice + addOnsTotal;
+      const estimatedPrice = adjustedBase + addOnsTotal;
 
-      const vehicleString = `${booking.vehicle.year} ${booking.vehicle.make} ${booking.vehicle.model} (${booking.vehicle.color}) - [Klasse: ${vehicleCategory?.label}]`;
-      const serviceString = `${mainService?.name} - ${subOption?.title}${
-        chosenAddOns.length > 0 ? ` + [AddOns: ${chosenAddOns.map((a) => a.name).join(", ")}]` : ""
+      const vehicleString = vehicleCategory?.label ?? booking.vehicle.sizeCategory;
+      const serviceString = `${mainService?.name}${
+        chosenAddOns.length > 0 ? ` + [${chosenAddOns.map((a) => a.name).join(", ")}]` : ""
       }`;
 
-      // Insert into Supabase table
       const { error } = await supabase.from("bookings").insert({
         service: serviceString,
         vehicle: vehicleString,
-        booking_date: booking.selectedDate,
-        booking_time: booking.selectedTimeSlot,
+        booking_date: booking.selectedDate ?? "",
+        booking_time: booking.selectedTimeSlot ?? "",
         customer_name: booking.customer.fullName,
         email: booking.customer.email,
         phone: booking.customer.phone,
-        notes: booking.customer.notes || booking.customServiceNote || null,
+        notes: booking.customer.notes || null,
         estimated_price: estimatedPrice,
       });
 
-      if (error) {
-        console.warn("Supabase insert notice:", error.message);
-      }
-
+      if (error) console.warn("Supabase notice:", error.message);
       setDone(true);
-      toast.success("Termin erfolgreich reserviert!");
-    } catch (err: any) {
+      toast.success("Appointment booked!");
+    } catch (err) {
       console.error(err);
       setDone(true);
-      toast.success("Buchungsanfrage erfolgreich erhalten!");
+      toast.success("Booking request received!");
     } finally {
       setSubmitting(false);
     }
   };
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#08080c] text-white selection:bg-emerald-400 selection:text-black font-sans pb-32">
-      {/* Background ambient lighting */}
+    <div
+      className="min-h-screen text-white font-sans"
+      style={{
+        background: "#08080c",
+        paddingBottom: "9rem",
+        WebkitFontSmoothing: "antialiased",
+      }}
+    >
+      {/* Ambient glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-[120px] rounded-full" />
-        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-cyan-500/5 blur-[140px] rounded-full" />
+        <div
+          className="absolute rounded-full"
+          style={{
+            top: -200,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 700,
+            height: 500,
+            background: "radial-gradient(ellipse, rgba(96,165,250,0.055) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
       </div>
 
-      {/* Navigation Header */}
-      <header className="sticky top-0 z-30 bg-zinc-950/80 backdrop-blur-2xl border-b border-white/10 px-4 sm:px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      {/* Header */}
+      <header
+        className="sticky top-0 z-30 backdrop-blur-2xl"
+        style={{
+          background: "rgba(8,8,12,0.88)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        <div
+          className="max-w-5xl mx-auto flex items-center justify-between"
+          style={{ padding: "0 1.5rem", height: 56 }}
+        >
           <Link
             to="/"
-            className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 transition-all duration-200"
+            style={{
+              fontSize: "0.62rem",
+              letterSpacing: "0.28em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.28)",
+              fontWeight: 500,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
           >
-            <ArrowLeft className="w-4 h-4 text-emerald-400" />
-            <span>Zurück zur Startseite</span>
+            <ArrowLeft style={{ width: 13, height: 13 }} />
+            <span>Back</span>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-mono font-semibold text-emerald-400 bg-emerald-950/50 border border-emerald-500/30 px-3 py-1 rounded-full hidden sm:inline-flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              Garantierter Premium-Standard
-            </span>
-            <Link
-              to="/auth"
-              className="text-xs font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5 transition-all"
-            >
-              Anmelden
-            </Link>
-          </div>
+          <Link to="/">
+            <img
+              src="/logo.jpeg"
+              alt="WV Detailing"
+              style={{ height: 28, width: "auto", objectFit: "contain", opacity: 0.75 }}
+            />
+          </Link>
+
+          <Link
+            to="/auth"
+            className="transition-all duration-200"
+            style={{
+              fontSize: "0.62rem",
+              letterSpacing: "0.28em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.28)",
+              fontWeight: 500,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
+          >
+            Sign in
+          </Link>
         </div>
       </header>
 
-      {/* Main Workspace */}
-      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-8">
-        {/* Step Progress Indicator */}
+      {/* Main */}
+      <main
+        className="relative z-10 max-w-5xl mx-auto"
+        style={{ padding: "3rem 1.5rem 0" }}
+      >
+        {/* Progress */}
         {!done && (
           <StepIndicator
             currentStep={booking.step}
-            onStepClick={(s) => isStepValid(s - 1) && goToStep(s)}
+            totalSteps={TOTAL_STEPS}
+            onStepClick={(s) => s < booking.step && goToStep(s)}
           />
         )}
 
-        {/* Step Body */}
-        <div ref={stepContentRef} className="min-h-[500px]">
+        {/* Step content */}
+        <div ref={stepContentRef} style={{ minHeight: 480 }}>
           {booking.step === 1 && (
             <ServiceStep
               selectedServiceId={booking.selectedServiceId}
@@ -312,42 +333,43 @@ function LuxuryBookingPage() {
             />
           )}
 
-          {booking.step === 2 && booking.selectedServiceId && (
-            <DynamicQuestionsStep
-              selectedServiceId={booking.selectedServiceId}
-              selectedSubOptionId={booking.selectedSubOptionId}
-              selectedAddOnIds={booking.selectedAddOnIds}
-              customServiceNote={booking.customServiceNote}
-              onSelectSubOption={handleSelectSubOption}
-              onToggleAddOn={handleToggleAddOn}
-              onChangeCustomNote={(note) => setBooking((p) => ({ ...p, customServiceNote: note }))}
-            />
-          )}
-
-          {booking.step === 3 && (
+          {booking.step === 2 && (
             <VehicleStep
               vehicle={booking.vehicle}
               onChangeVehicle={handleChangeVehicle}
             />
           )}
 
+          {booking.step === 3 && (
+            <AddOnStep
+              selectedAddOnIds={booking.selectedAddOnIds}
+              onToggleAddOn={handleToggleAddOn}
+            />
+          )}
+
           {booking.step === 4 && (
-            <DateTimeStep
+            <DateStep
               selectedDate={booking.selectedDate}
-              selectedTimeSlot={booking.selectedTimeSlot}
               onSelectDate={(d) => setBooking((p) => ({ ...p, selectedDate: d }))}
-              onSelectTimeSlot={(t) => setBooking((p) => ({ ...p, selectedTimeSlot: t }))}
             />
           )}
 
           {booking.step === 5 && (
+            <TimeStep
+              selectedDate={booking.selectedDate}
+              selectedTimeSlot={booking.selectedTimeSlot}
+              onSelectTimeSlot={(t) => setBooking((p) => ({ ...p, selectedTimeSlot: t }))}
+            />
+          )}
+
+          {booking.step === 6 && (
             <CustomerStep
               customer={booking.customer}
               onChangeCustomer={handleChangeCustomer}
             />
           )}
 
-          {booking.step === 6 && (
+          {booking.step === 7 && (
             <SummaryStep
               bookingData={booking}
               onEditStep={goToStep}
@@ -358,47 +380,71 @@ function LuxuryBookingPage() {
           )}
         </div>
 
-        {/* Step Navigation Controls */}
-        {!done && booking.step < 6 && (
-          <div className="mt-12 pt-6 border-t border-white/10 flex items-center justify-between">
+        {/* Step nav buttons */}
+        {!done && booking.step < 7 && (
+          <div
+            className="flex items-center justify-between"
+            style={{ marginTop: "3.5rem", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.06)" }}
+          >
             <button
               type="button"
-              disabled={booking.step === 1}
               onClick={handleBack}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
-                booking.step === 1
-                  ? "opacity-30 cursor-not-allowed text-zinc-600"
-                  : "text-zinc-300 hover:text-white hover:bg-white/5 border border-white/10"
-              }`}
+              disabled={booking.step === 1}
+              className="flex items-center gap-2 transition-all duration-200"
+              style={{
+                fontSize: "0.65rem",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+                color: booking.step === 1 ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.35)",
+                cursor: booking.step === 1 ? "not-allowed" : "pointer",
+              }}
+              onMouseEnter={(e) => {
+                if (booking.step > 1) e.currentTarget.style.color = "rgba(255,255,255,0.6)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = booking.step === 1 ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.35)";
+              }}
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Zurück</span>
+              <ArrowLeft style={{ width: 13, height: 13 }} />
+              <span>Back</span>
             </button>
 
             <button
               type="button"
+              id="next-step-btn"
               onClick={handleNext}
               disabled={!isStepValid(booking.step)}
-              className={`flex items-center gap-2 px-7 py-3 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all ${
-                isStepValid(booking.step)
-                  ? "bg-gradient-to-r from-emerald-400 to-teal-400 text-black shadow-[0_0_20px_rgba(52,211,153,0.5)] hover:brightness-110 cursor-pointer"
-                  : "bg-zinc-800 text-zinc-500 border border-white/5 cursor-not-allowed"
-              }`}
+              className="flex items-center gap-2.5 transition-all duration-300"
+              style={{
+                padding: "0.75rem 1.75rem",
+                borderRadius: 999,
+                background: isStepValid(booking.step) ? "#fff" : "rgba(255,255,255,0.06)",
+                color: isStepValid(booking.step) ? "#000" : "rgba(255,255,255,0.2)",
+                fontWeight: 600,
+                fontSize: "0.65rem",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                boxShadow: isStepValid(booking.step) ? "0 4px 24px rgba(255,255,255,0.09)" : "none",
+                border: isStepValid(booking.step) ? "none" : "1px solid rgba(255,255,255,0.07)",
+                cursor: isStepValid(booking.step) ? "pointer" : "not-allowed",
+              }}
             >
-              <span>Weiter: {NEXT_STEP_NAMES[booking.step - 1]}</span>
-              <ArrowRight className="w-4 h-4 stroke-[3]" />
+              <span>Continue</span>
+              <ArrowRight style={{ width: 13, height: 13, strokeWidth: 2.5 }} />
             </button>
           </div>
         )}
       </main>
 
-      {/* Floating Drawer Bar */}
+      {/* Floating drawer */}
       {!done && (
         <BookingSummaryDrawer
           bookingData={booking}
           onContinue={handleNext}
           canContinue={isStepValid(booking.step)}
-          stepName={NEXT_STEP_NAMES[booking.step - 1] || "Nächster Schritt"}
+          stepName={NEXT_STEP_LABELS[booking.step] ?? "Next"}
+          currentStep={booking.step}
         />
       )}
     </div>

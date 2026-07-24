@@ -1,10 +1,13 @@
-export type ServiceId = 
-  | "exterior" 
-  | "interior" 
-  | "paint_correction" 
-  | "ceramic" 
-  | "engine_bay" 
+export type ServiceId =
+  | "exterior"
+  | "interior"
+  | "interior_exterior"
+  | "paint_correction"
+  | "ceramic"
+  | "engine_bay"
   | "other";
+
+export type VehicleSizeCategory = "coupe" | "sedan" | "suv" | "van";
 
 export interface ServiceOption {
   id: ServiceId;
@@ -43,7 +46,7 @@ export interface VehicleDetails {
   model: string;
   year: string;
   color: string;
-  sizeCategory: "coupe" | "sedan" | "suv" | "exotic";
+  sizeCategory: VehicleSizeCategory;
 }
 
 export interface CustomerDetails {

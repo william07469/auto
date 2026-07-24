@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { BookingState } from "./types";
-import { SERVICES_DATA, DYNAMIC_QUESTIONS, ADDONS_DATA, VEHICLE_SIZES } from "./bookingData";
-import { Sparkles, ShieldCheck, Car, Calendar, User, Clock, CheckCircle2, ArrowRight, Award } from "lucide-react";
+import { SERVICES_DATA, ADDONS_DATA, VEHICLE_SIZES } from "./bookingData";
+import { CheckCircle2, ArrowRight, Edit2 } from "lucide-react";
 import gsap from "gsap";
 
 interface SummaryStepProps {
@@ -11,6 +11,13 @@ interface SummaryStepProps {
   submitting: boolean;
   done: boolean;
 }
+
+const VEHICLE_IMAGES: Record<string, string> = {
+  coupe: "/vehicle-coupe.png",
+  sedan: "/vehicle-sedan.png",
+  suv: "/vehicle-suv.png",
+  van: "/vehicle-van.png",
+};
 
 export const SummaryStep: React.FC<SummaryStepProps> = ({
   bookingData,
@@ -23,30 +30,21 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
   const successRef = useRef<HTMLDivElement>(null);
 
   const mainService = SERVICES_DATA.find((s) => s.id === bookingData.selectedServiceId);
-  const dynamicGroup = bookingData.selectedServiceId ? DYNAMIC_QUESTIONS[bookingData.selectedServiceId] : null;
-  const subOption = dynamicGroup?.options.find((o) => o.id === bookingData.selectedSubOptionId);
-
   const chosenAddOns = ADDONS_DATA.filter((a) => bookingData.selectedAddOnIds.includes(a.id));
   const vehicleCategory = VEHICLE_SIZES.find((v) => v.id === bookingData.vehicle.sizeCategory);
 
-  // Price calculations
-  const basePrice = subOption?.price || mainService?.startingPrice || 0;
-  const multiplier = vehicleCategory?.multiplier || 1.0;
-  const vehicleAdjustedPrice = Math.round(basePrice * multiplier);
+  const basePrice = mainService?.startingPrice ?? 0;
+  const multiplier = vehicleCategory?.multiplier ?? 1.0;
+  const adjustedBase = Math.round(basePrice * multiplier);
   const addOnsTotal = chosenAddOns.reduce((sum, a) => sum + a.price, 0);
-  const totalPrice = vehicleAdjustedPrice + addOnsTotal;
-
-  // Duration calculation
-  const baseDurationMinutes = subOption?.durationMinutes || 240;
-  const addOnsDurationMinutes = chosenAddOns.reduce((sum, a) => sum + a.durationMinutes, 0);
-  const totalDurationHours = (baseDurationMinutes + addOnsDurationMinutes) / 60;
+  const totalPrice = adjustedBase + addOnsTotal;
 
   useEffect(() => {
     if (containerRef.current && !done) {
       gsap.fromTo(
         containerRef.current.children,
-        { opacity: 0, scale: 0.97, y: 20 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power3.out" }
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: "power3.out" }
       );
     }
   }, [done]);
@@ -55,261 +53,383 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({
     if (done && successRef.current) {
       gsap.fromTo(
         successRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.7)" }
+        { opacity: 0, scale: 0.95, y: 24 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "power3.out" }
       );
     }
   }, [done]);
 
+  // ── Confirmation Screen ───────────────────────────────────────────────────
   if (done) {
     return (
-      <div ref={successRef} className="max-w-2xl mx-auto text-center py-12 px-6">
-        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-[0_0_50px_rgba(52,211,153,0.5)]">
-          <div className="w-full h-full rounded-full bg-zinc-950 flex items-center justify-center">
-            <CheckCircle2 className="w-12 h-12 text-emerald-400 stroke-[2.5]" />
-          </div>
+      <div
+        ref={successRef}
+        style={{ maxWidth: 520, margin: "0 auto", textAlign: "center", padding: "3rem 1rem" }}
+      >
+        <div
+          style={{
+            margin: "0 auto 2rem",
+            width: 72,
+            height: 72,
+            borderRadius: "50%",
+            background: "rgba(96,165,250,0.08)",
+            border: "1px solid rgba(96,165,250,0.25)",
+            boxShadow: "0 0 60px rgba(96,165,250,0.2)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CheckCircle2 size={32} color="rgb(96,165,250)" strokeWidth={1.5} />
         </div>
 
-        <span className="text-xs font-semibold tracking-widest text-emerald-400 uppercase bg-emerald-950/60 border border-emerald-500/20 px-3.5 py-1 rounded-full">
-          Termin Bestätigt
-        </span>
-
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-4 tracking-tight">
-          Ihre Buchung ist erfolgreich reserviert!
+        <p
+          style={{
+            fontSize: "0.6rem",
+            letterSpacing: "0.38em",
+            textTransform: "uppercase",
+            color: "rgba(96,165,250,0.8)",
+            marginBottom: "0.75rem",
+          }}
+        >
+          Booking Confirmed
+        </p>
+        <h2
+          style={{
+            fontSize: "clamp(2rem, 4vw, 3rem)",
+            fontWeight: 300,
+            letterSpacing: "-0.04em",
+            color: "#ffffff",
+            marginBottom: "1rem",
+            lineHeight: 1.1,
+          }}
+        >
+          Your appointment is set
         </h2>
-
-        <p className="text-zinc-300 text-sm sm:text-base mt-3 leading-relaxed">
-          Vielen Dank, <span className="text-white font-semibold">{bookingData.customer.fullName}</span>. Ein Aufbereitungsexperte wurde für Ihren Termin am{" "}
-          <span className="text-emerald-400 font-semibold">{bookingData.selectedDate}</span> um{" "}
-          <span className="text-emerald-400 font-semibold">{bookingData.selectedTimeSlot} Uhr</span> eingeteilt.
+        <p
+          style={{
+            fontSize: "0.88rem",
+            color: "rgba(255,255,255,0.4)",
+            lineHeight: 1.7,
+            marginBottom: "2.5rem",
+          }}
+        >
+          Thank you, <span style={{ color: "#fff" }}>{bookingData.customer.fullName}</span>. A confirmation has been sent to{" "}
+          <span style={{ color: "#fff" }}>{bookingData.customer.email}</span>.
         </p>
 
-        <div className="mt-8 p-6 rounded-2xl bg-zinc-950/80 border border-white/10 text-left space-y-3">
-          <div className="flex justify-between text-xs text-zinc-400">
-            <span>Buchungscode:</span>
-            <span className="font-mono text-emerald-400 font-bold">WV-{(Math.random() * 899999 + 100000).toFixed(0)}</span>
+        {/* Receipt Box */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.02)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 20,
+            padding: "1.75rem",
+            textAlign: "left",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem" }}>
+            <span style={{ color: "rgba(255,255,255,0.3)" }}>Service</span>
+            <span style={{ color: "#fff", fontWeight: 500 }}>{mainService?.name}</span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-400">
-            <span>Fahrzeug:</span>
-            <span className="text-white font-medium">{bookingData.vehicle.year} {bookingData.vehicle.make} {bookingData.vehicle.model}</span>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem" }}>
+            <span style={{ color: "rgba(255,255,255,0.3)" }}>Vehicle</span>
+            <span style={{ color: "#fff", fontWeight: 500 }}>{vehicleCategory?.label}</span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-400">
-            <span>Gewählter Service:</span>
-            <span className="text-white font-medium">{subOption?.title || mainService?.name}</span>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem" }}>
+            <span style={{ color: "rgba(255,255,255,0.3)" }}>Date & Time</span>
+            <span style={{ color: "#fff", fontFamily: "monospace" }}>
+              {bookingData.selectedDate} @ {bookingData.selectedTimeSlot}
+            </span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-400 pt-2 border-t border-white/10 font-bold">
-            <span className="text-white">Geschätzter Gesamtpreis:</span>
-            <span className="text-emerald-400 font-mono text-base">€{totalPrice}</span>
+          <div
+            style={{
+              paddingTop: "1rem",
+              borderTop: "1px solid rgba(255,255,255,0.06)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "baseline",
+            }}
+          >
+            <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)" }}>Estimated Total</span>
+            <span style={{ fontSize: "1.5rem", fontWeight: 600, fontFamily: "monospace", color: "#fff" }}>
+              €{totalPrice}
+            </span>
           </div>
         </div>
-
-        <p className="text-xs text-zinc-500 mt-6">
-          Eine Bestätigung wurde an <span className="text-zinc-300">{bookingData.customer.email}</span> gesendet.
-        </p>
       </div>
     );
   }
 
+  // ── Summary Screen ────────────────────────────────────────────────────────
   return (
-    <div ref={containerRef} className="space-y-8 max-w-4xl mx-auto">
-      <div className="text-center max-w-2xl mx-auto mb-6">
-        <span className="text-xs font-semibold tracking-widest text-emerald-400 uppercase bg-emerald-950/60 border border-emerald-500/20 px-3 py-1 rounded-full">
-          Finaler Schritt — Übersicht & Bestätigung
-        </span>
-        <h3 className="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">
-          Buchungsübersicht kontrollieren
-        </h3>
-        <p className="text-zinc-400 text-sm mt-1">
-          Bitte überprüfen Sie alle Angaben vor dem Absenden Ihrer Buchung.
+    <div ref={containerRef} style={{ maxWidth: 840, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ marginBottom: "3.5rem" }}>
+        <p
+          style={{
+            fontSize: "0.6rem",
+            letterSpacing: "0.38em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.3)",
+            fontWeight: 500,
+            marginBottom: "1rem",
+          }}
+        >
+          Step 7 — Summary
+        </p>
+        <h2
+          style={{
+            fontSize: "clamp(2rem, 5vw, 3.25rem)",
+            fontWeight: 300,
+            letterSpacing: "-0.04em",
+            color: "#ffffff",
+            lineHeight: 1,
+            marginBottom: "1rem",
+          }}
+        >
+          Review your booking
+        </h2>
+        <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.7, maxWidth: 420 }}>
+          Verify your appointment details before confirming.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Details (Left 2 cols) */}
-        <div className="md:col-span-2 space-y-5">
-          {/* Card 1: Selected Service */}
-          <div className="p-6 rounded-2xl bg-zinc-950/70 border border-white/10 backdrop-blur-xl">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <div className="flex items-center gap-2 text-white font-bold text-base">
-                <Sparkles className="w-5 h-5 text-emerald-400" />
-                Service & Behandlung
-              </div>
-              <button
-                type="button"
-                onClick={() => onEditStep(1)}
-                className="text-xs text-emerald-400 hover:text-emerald-300 font-medium underline underline-offset-4"
-              >
-                Ändern
-              </button>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "2rem" }}>
+        {/* Left Column — Summary Details */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Service Card */}
+          <SummaryCard title="Selected Service" step={1} onEdit={onEditStep}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span style={{ fontSize: "1.05rem", fontWeight: 500, color: "#fff" }}>{mainService?.name}</span>
+              <span style={{ fontSize: "0.9rem", fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>
+                €{basePrice}
+              </span>
             </div>
+            <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", marginTop: "0.25rem" }}>
+              {mainService?.tagline}
+            </p>
+          </SummaryCard>
 
-            <div className="mt-4 space-y-2">
-              <h4 className="text-lg font-extrabold text-white">{mainService?.name}</h4>
-              <p className="text-xs text-emerald-400/90 font-medium">{subOption?.title || "Standard Paket"}</p>
-              <p className="text-xs text-zinc-400 leading-relaxed">{subOption?.description}</p>
-              
-              {bookingData.customServiceNote && (
-                <div className="mt-3 p-3 rounded-lg bg-zinc-900 border border-white/10 text-xs text-zinc-300">
-                  <span className="text-emerald-400 font-semibold block mb-0.5">Sonderwünsche:</span>
-                  {bookingData.customServiceNote}
-                </div>
+          {/* Vehicle Card */}
+          <SummaryCard title="Vehicle Type" step={2} onEdit={onEditStep}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              {vehicleCategory && VEHICLE_IMAGES[vehicleCategory.id] && (
+                <img
+                  src={VEHICLE_IMAGES[vehicleCategory.id]}
+                  alt={vehicleCategory.label}
+                  style={{ width: 64, height: 42, objectFit: "cover", borderRadius: 8, background: "#000" }}
+                />
               )}
-            </div>
-          </div>
-
-          {/* Card 2: Add-Ons */}
-          <div className="p-6 rounded-2xl bg-zinc-950/70 border border-white/10 backdrop-blur-xl">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <div className="flex items-center gap-2 text-white font-bold text-base">
-                <ShieldCheck className="w-5 h-5 text-cyan-400" />
-                Gewählte Zusatzleistungen ({chosenAddOns.length})
-              </div>
-              <button
-                type="button"
-                onClick={() => onEditStep(2)}
-                className="text-xs text-emerald-400 hover:text-emerald-300 font-medium underline underline-offset-4"
-              >
-                Bearbeiten
-              </button>
-            </div>
-
-            <div className="mt-4">
-              {chosenAddOns.length === 0 ? (
-                <p className="text-xs text-zinc-500 italic">Keine zusätzlichen Add-Ons gewählt.</p>
-              ) : (
-                <div className="space-y-2">
-                  {chosenAddOns.map((addon) => (
-                    <div key={addon.id} className="flex items-center justify-between text-xs py-1.5 border-b border-white/5 last:border-0">
-                      <span className="text-zinc-200 font-medium">{addon.name}</span>
-                      <span className="font-mono text-emerald-400 font-semibold">+€{addon.price}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Card 3: Vehicle & Date */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {/* Vehicle Card */}
-            <div className="p-5 rounded-2xl bg-zinc-950/70 border border-white/10 backdrop-blur-xl">
-              <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Car className="w-4 h-4 text-teal-400" />
-                  Fahrzeug
+              <div>
+                <span style={{ fontSize: "1.05rem", fontWeight: 500, color: "#fff", display: "block" }}>
+                  {vehicleCategory?.label}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => onEditStep(3)}
-                  className="text-[11px] text-emerald-400 hover:underline"
-                >
-                  Ändern
-                </button>
-              </div>
-              <div className="mt-3">
-                <p className="text-sm font-bold text-white">
-                  {bookingData.vehicle.year || "Jahr"} {bookingData.vehicle.make || "Marke"} {bookingData.vehicle.model || "Modell"}
-                </p>
-                <p className="text-xs text-zinc-400 mt-0.5">Farbe: {bookingData.vehicle.color || "N/A"}</p>
-                <p className="text-[10px] text-emerald-400/80 mt-1 uppercase tracking-wider font-semibold">
-                  Klasse: {vehicleCategory?.label}
-                </p>
-              </div>
-            </div>
-
-            {/* Schedule Card */}
-            <div className="p-5 rounded-2xl bg-zinc-950/70 border border-white/10 backdrop-blur-xl">
-              <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-emerald-400" />
-                  Termin
+                <span style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.35)" }}>
+                  {vehicleCategory?.subtext}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => onEditStep(4)}
-                  className="text-[11px] text-emerald-400 hover:underline"
-                >
-                  Ändern
-                </button>
-              </div>
-              <div className="mt-3">
-                <p className="text-sm font-bold text-white font-mono">{bookingData.selectedDate || "Nicht gewählt"}</p>
-                <p className="text-xs text-emerald-400 font-mono mt-0.5">Uhrzeit: {bookingData.selectedTimeSlot || "N/A"}</p>
-                <p className="text-[10px] text-zinc-400 mt-1 flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  Geschätzte Dauer: ca. {totalDurationHours.toFixed(1)} Std.
-                </p>
               </div>
             </div>
+          </SummaryCard>
+
+          {/* Add-ons Card */}
+          <SummaryCard title={`Selected Add-ons (${chosenAddOns.length})`} step={3} onEdit={onEditStep}>
+            {chosenAddOns.length === 0 ? (
+              <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.25)", fontStyle: "italic" }}>
+                No add-ons selected
+              </span>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                {chosenAddOns.map((addon) => (
+                  <div key={addon.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.82rem" }}>
+                    <span style={{ color: "rgba(255,255,255,0.7)" }}>{addon.name}</span>
+                    <span style={{ color: "rgb(96,165,250)", fontFamily: "monospace" }}>+€{addon.price}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </SummaryCard>
+
+          {/* Schedule & Contact */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <SummaryCard title="Date & Time" step={4} onEdit={onEditStep}>
+              <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "#fff", display: "block", fontFamily: "monospace" }}>
+                {bookingData.selectedDate}
+              </span>
+              <span style={{ fontSize: "0.78rem", color: "rgba(96,165,250,0.9)", fontFamily: "monospace" }}>
+                {bookingData.selectedTimeSlot}
+              </span>
+            </SummaryCard>
+
+            <SummaryCard title="Contact" step={6} onEdit={onEditStep}>
+              <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "#fff", display: "block" }}>
+                {bookingData.customer.fullName}
+              </span>
+              <span style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.35)", display: "block" }}>
+                {bookingData.customer.email}
+              </span>
+            </SummaryCard>
           </div>
         </div>
 
-        {/* Price & Confirmation Panel */}
-        <div className="p-6 rounded-2xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-emerald-500/30 backdrop-blur-xl flex flex-col justify-between shadow-2xl">
-          <div>
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/10">
-              <Award className="w-5 h-5 text-emerald-400" />
-              <h4 className="text-base font-bold text-white">Preiszusammenfassung</h4>
-            </div>
+        {/* Right Column — Pricing & CTA Box */}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              position: "sticky",
+              top: "6rem",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 24,
+              padding: "2rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.75rem",
+              boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  fontSize: "0.6rem",
+                  letterSpacing: "0.3em",
+                  textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.3)",
+                  marginBottom: "1.25rem",
+                }}
+              >
+                Estimated Breakdown
+              </p>
 
-            {/* Line items */}
-            <div className="space-y-3 text-xs mb-6">
-              <div className="flex justify-between text-zinc-400">
-                <span>Grundpreis Service:</span>
-                <span className="text-white font-mono">€{basePrice}</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", fontSize: "0.8rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "rgba(255,255,255,0.4)" }}>Base service</span>
+                  <span style={{ color: "rgba(255,255,255,0.7)", fontFamily: "monospace" }}>€{basePrice}</span>
+                </div>
+                {multiplier > 1.0 && (
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "rgba(255,255,255,0.4)" }}>Size adjustment</span>
+                    <span style={{ color: "rgba(255,255,255,0.7)", fontFamily: "monospace" }}>+€{adjustedBase - basePrice}</span>
+                  </div>
+                )}
+                {chosenAddOns.length > 0 && (
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "rgba(255,255,255,0.4)" }}>Add-ons ({chosenAddOns.length})</span>
+                    <span style={{ color: "rgb(96,165,250)", fontFamily: "monospace" }}>+€{addOnsTotal}</span>
+                  </div>
+                )}
               </div>
 
-              {multiplier > 1.0 && (
-                <div className="flex justify-between text-zinc-400">
-                  <span>Größenzuschlag ({vehicleCategory?.label}):</span>
-                  <span className="text-emerald-400 font-mono">+€{vehicleAdjustedPrice - basePrice}</span>
-                </div>
-              )}
-
-              {chosenAddOns.length > 0 && (
-                <div className="flex justify-between text-zinc-400">
-                  <span>Add-Ons Gesamt ({chosenAddOns.length}):</span>
-                  <span className="text-emerald-400 font-mono">+€{addOnsTotal}</span>
-                </div>
-              )}
-
-              <div className="pt-3 border-t border-white/10 flex justify-between items-baseline">
-                <span className="text-sm font-extrabold text-white">Gesamtschätzung:</span>
-                <span className="text-2xl font-black font-mono text-emerald-400">
+              <div
+                style={{
+                  marginTop: "1.5rem",
+                  paddingTop: "1.25rem",
+                  borderTop: "1px solid rgba(255,255,255,0.08)",
+                  display: "flex",
+                  alignItems: "baseline",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.4)" }}>Total Estimated</span>
+                <span style={{ fontSize: "2.2rem", fontWeight: 600, fontFamily: "monospace", color: "#ffffff" }}>
                   €{totalPrice}
                 </span>
               </div>
             </div>
 
-            {/* Customer Quick View */}
-            <div className="p-3.5 rounded-xl bg-zinc-950/80 border border-white/10 text-xs space-y-1 mb-6">
-              <div className="flex items-center gap-1.5 text-zinc-300 font-semibold">
-                <User className="w-3.5 h-3.5 text-emerald-400" />
-                {bookingData.customer.fullName || "Kundenname"}
-              </div>
-              <p className="text-[11px] text-zinc-400">{bookingData.customer.email}</p>
-              <p className="text-[11px] text-zinc-400">{bookingData.customer.phone}</p>
-            </div>
+            {/* Book Appointment CTA Button */}
+            <button
+              type="button"
+              id="confirm-booking-btn"
+              disabled={submitting}
+              onClick={onConfirmBooking}
+              style={{
+                width: "100%",
+                padding: "1.2rem",
+                borderRadius: 99,
+                background: "#ffffff",
+                color: "#000000",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                border: "none",
+                cursor: submitting ? "not-allowed" : "pointer",
+                boxShadow: "0 10px 40px rgba(255,255,255,0.15)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.75rem",
+                transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                opacity: submitting ? 0.6 : 1,
+              }}
+              onMouseEnter={(e) => {
+                if (!submitting) {
+                  (e.currentTarget as HTMLElement).style.transform = "scale(1.02)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 15px 50px rgba(255,255,255,0.25)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!submitting) {
+                  (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 40px rgba(255,255,255,0.15)";
+                }
+              }}
+            >
+              <span>{submitting ? "Processing..." : "Book Appointment"}</span>
+              {!submitting && <ArrowRight size={14} strokeWidth={2.5} />}
+            </button>
           </div>
-
-          {/* Confirm Button */}
-          <button
-            type="button"
-            disabled={submitting}
-            onClick={onConfirmBooking}
-            className="w-full py-4 px-6 rounded-xl font-bold uppercase tracking-wider text-xs bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-black hover:brightness-110 active:scale-98 shadow-[0_0_30px_rgba(52,211,153,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer"
-          >
-            {submitting ? (
-              <span>Termin wird gebucht...</span>
-            ) : (
-              <>
-                <span>Jetzt Verbindlich Buchen</span>
-                <ArrowRight className="w-4 h-4 stroke-[3]" />
-              </>
-            )}
-          </button>
         </div>
       </div>
     </div>
   );
 };
+
+const SummaryCard: React.FC<{
+  title: string;
+  step: number;
+  onEdit: (step: number) => void;
+  children: React.ReactNode;
+}> = ({ title, step, onEdit, children }) => (
+  <div
+    style={{
+      background: "rgba(255,255,255,0.018)",
+      border: "1px solid rgba(255,255,255,0.07)",
+      borderRadius: 18,
+      padding: "1.25rem 1.5rem",
+    }}
+  >
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+      <span style={{ fontSize: "0.58rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)" }}>
+        {title}
+      </span>
+      <button
+        type="button"
+        onClick={() => onEdit(step)}
+        style={{
+          background: "none",
+          border: "none",
+          color: "rgba(255,255,255,0.3)",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.3rem",
+          fontSize: "0.62rem",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          transition: "color 0.2s",
+        }}
+        onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(96,165,250,0.9)")}
+        onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.3)")}
+      >
+        <Edit2 size={10} />
+        Edit
+      </button>
+    </div>
+    {children}
+  </div>
+);
