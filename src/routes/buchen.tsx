@@ -3,17 +3,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import gsap from "gsap";
-
-import { BookingState, ServiceId, VehicleDetails, CustomerDetails } from "@/components/booking/types";
+import { BookingState, ServiceId, PackageId, QuestionAnswer, CustomerDetails } from "@/components/booking/types";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { ServiceStep } from "@/components/booking/ServiceStep";
-import { VehicleStep } from "@/components/booking/VehicleStep";
+import { PackageStep } from "@/components/booking/PackageStep";
+import { ServiceQuestionsStep } from "@/components/booking/ServiceQuestionsStep";
 import { AddOnStep } from "@/components/booking/AddOnStep";
 import { DateStep, TimeStep } from "@/components/booking/DateTimeStep";
 import { CustomerStep } from "@/components/booking/CustomerStep";
 import { SummaryStep } from "@/components/booking/SummaryStep";
 import { BookingSummaryDrawer } from "@/components/booking/BookingSummaryDrawer";
-import { SERVICES_DATA, ADDONS_DATA, VEHICLE_SIZES } from "@/components/booking/bookingData";
+import { SERVICES_DATA, ADDONS_DATA, PACKAGES_DATA } from "@/components/booking/bookingData";
 import { supabase } from "@/integrations/client";
 
 export const Route = createFileRoute("/buchen")({
@@ -30,47 +30,36 @@ export const Route = createFileRoute("/buchen")({
   }),
 });
 
-// Label shown in the drawer CTA "Continue to X"
-const NEXT_STEP_LABELS: Record<number, string> = {
-  1: "Vehicle",
-  2: "Add-ons",
-  3: "Date",
-  4: "Time",
-  5: "Contact",
-  6: "Summary",
+const NEXT_LABELS: Record<number, string> = {
+  1: "Package",
+  2: "Questions",
+  3: "Add-ons",
+  4: "Date",
+  5: "Time",
+  6: "Contact",
+  7: "Summary",
 };
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
+
+const INITIAL_STATE: BookingState = {
+  step: 1,
+  selectedServiceId: null,
+  selectedPackageId: null,
+  questionAnswers: [],
+  selectedAddOnIds: [],
+  selectedDate: null,
+  selectedTimeSlot: null,
+  customer: { fullName: "", phone: "", email: "", notes: "" },
+};
 
 function BookingPage() {
+  const [booking, setBooking] = useState<BookingState>(INITIAL_STATE);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  const stepContentRef = useRef<HTMLDivElement>(null);
+  const stepRef = useRef<HTMLDivElement>(null);
 
-  const [booking, setBooking] = useState<BookingState>({
-    step: 1,
-    selectedServiceId: null,
-    selectedSubOptionId: null,
-    selectedAddOnIds: [],
-    vehicle: {
-      make: "",
-      model: "",
-      year: new Date().getFullYear().toString(),
-      color: "",
-      sizeCategory: "sedan",
-    },
-    selectedDate: null,
-    selectedTimeSlot: null,
-    customer: {
-      fullName: "",
-      phone: "",
-      email: "",
-      notes: "",
-    },
-    customServiceNote: "",
-  });
-
-  // Sync custom prices from admin panel
+  // Sync admin prices
   useEffect(() => {
     supabase
       .from("pricing_packages")
@@ -79,16 +68,18 @@ function BookingPage() {
       .then(({ data }) => {
         if (!data?.length) return;
         data.forEach((pkg: any) => {
-          const cat = pkg.category?.toLowerCase() ?? "";
-          const found = SERVICES_DATA.find(
-            (s) => s.id === cat || s.name.toLowerCase().includes(cat)
-          );
-          if (found && pkg.price > 0) found.startingPrice = pkg.price;
+          const cat = (pkg.category ?? "").toLowerCase();
+          const svc = SERVICES_DATA.find((s) => s.id === cat || s.name.toLowerCase().includes(cat));
+          if (!svc) return;
+          // Update matching package price in PACKAGES_DATA
+          Object.values(PACKAGES_DATA).flat().forEach((p) => {
+            if (p.id === "premium" && pkg.price > 0) p.price = pkg.price;
+          });
         });
       });
   }, []);
 
-  // Pre-fill email if logged in
+  // Pre-fill email
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user?.email) {
@@ -97,72 +88,84 @@ function BookingPage() {
     });
   }, []);
 
-  // ── Handlers ───────────────────────────────────────────────────────────────
-  const handleSelectService = (serviceId: ServiceId) => {
-    setBooking((p) => ({ ...p, selectedServiceId: serviceId }));
+  // ── Handlers ──────────────────────────────────────────────────────────────
+
+  const handleSelectService = (id: ServiceId) => {
+    setBooking((p) => ({
+      ...p,
+      selectedServiceId: id,
+      selectedPackageId: null,
+      questionAnswers: [],
+    }));
   };
 
-  const handleToggleAddOn = (id: string) => {
+  const handleSelectPackage = (id: PackageId) => {
+    setBooking((p) => ({ ...p, selectedPackageId: id }));
+  };
+
+  const handleAnswer = (questionId: string, answerId: string) => {
     setBooking((p) => {
-      const has = p.selectedAddOnIds.includes(id);
-      return {
-        ...p,
-        selectedAddOnIds: has
-          ? p.selectedAddOnIds.filter((x) => x !== id)
-          : [...p.selectedAddOnIds, id],
-      };
+      const filtered = p.questionAnswers.filter((a) => a.questionId !== questionId);
+      return { ...p, questionAnswers: [...filtered, { questionId, answerId }] };
     });
   };
 
-  const handleChangeVehicle = (updated: Partial<VehicleDetails>) => {
-    setBooking((p) => ({ ...p, vehicle: { ...p.vehicle, ...updated } }));
+  const handleToggleAddOn = (id: string) => {
+    setBooking((p) => ({
+      ...p,
+      selectedAddOnIds: p.selectedAddOnIds.includes(id)
+        ? p.selectedAddOnIds.filter((x) => x !== id)
+        : [...p.selectedAddOnIds, id],
+    }));
   };
 
   const handleChangeCustomer = (updated: Partial<CustomerDetails>) => {
     setBooking((p) => ({ ...p, customer: { ...p.customer, ...updated } }));
   };
 
-  // ── Validation ─────────────────────────────────────────────────────────────
+  // ── Validation ────────────────────────────────────────────────────────────
+
   const isStepValid = (step: number): boolean => {
     switch (step) {
       case 1: return !!booking.selectedServiceId;
-      case 2: return !!booking.vehicle.sizeCategory; // always true — default is sedan
-      case 3: return true;                            // add-ons optional
-      case 4: return !!booking.selectedDate;
-      case 5: return !!booking.selectedTimeSlot;
-      case 6:
+      case 2: return !!booking.selectedPackageId;
+      case 3: return true; // questions optional
+      case 4: return true; // add-ons optional
+      case 5: return !!booking.selectedDate;
+      case 6: return !!booking.selectedTimeSlot;
+      case 7:
         return (
           !!booking.customer.fullName.trim() &&
           !!booking.customer.phone.trim() &&
           !!booking.customer.email.trim()
         );
-      case 7: return true;
+      case 8: return true;
       default: return false;
     }
   };
 
-  // ── Animated transition ────────────────────────────────────────────────────
-  const goToStep = (newStep: number) => {
-    if (newStep < 1 || newStep > TOTAL_STEPS) return;
+  // ── Animated step transition ──────────────────────────────────────────────
 
-    if (stepContentRef.current) {
-      gsap.to(stepContentRef.current, {
+  const goToStep = (next: number) => {
+    if (next < 1 || next > TOTAL_STEPS) return;
+    if (stepRef.current) {
+      gsap.to(stepRef.current, {
         opacity: 0,
-        y: -14,
+        y: -16,
         duration: 0.2,
         ease: "power2.in",
         onComplete: () => {
-          setBooking((p) => ({ ...p, step: newStep }));
+          setBooking((p) => ({ ...p, step: next }));
           window.scrollTo({ top: 0, behavior: "smooth" });
           gsap.fromTo(
-            stepContentRef.current,
-            { opacity: 0, y: 18 },
+            stepRef.current,
+            { opacity: 0, y: 20 },
             { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }
           );
         },
       });
     } else {
-      setBooking((p) => ({ ...p, step: newStep }));
+      setBooking((p) => ({ ...p, step: next }));
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -171,9 +174,10 @@ function BookingPage() {
     if (!isStepValid(booking.step)) {
       const msgs: Record<number, string> = {
         1: "Please select a service to continue.",
-        4: "Please choose a date.",
-        5: "Please select a time slot.",
-        6: "Please fill in your name, phone and email.",
+        2: "Please choose a package.",
+        5: "Please choose a date.",
+        6: "Please select a time slot.",
+        7: "Please fill in your name, phone and email.",
       };
       const msg = msgs[booking.step];
       if (msg) toast.error(msg);
@@ -186,28 +190,26 @@ function BookingPage() {
     if (booking.step > 1) goToStep(booking.step - 1);
   };
 
-  // ── Submit ─────────────────────────────────────────────────────────────────
+  // ── Submit ────────────────────────────────────────────────────────────────
+
   const handleConfirmBooking = async () => {
     setSubmitting(true);
     try {
-      const mainService = SERVICES_DATA.find((s) => s.id === booking.selectedServiceId);
-      const chosenAddOns = ADDONS_DATA.filter((a) => booking.selectedAddOnIds.includes(a.id));
-      const vehicleCategory = VEHICLE_SIZES.find((v) => v.id === booking.vehicle.sizeCategory);
+      const service = SERVICES_DATA.find((s) => s.id === booking.selectedServiceId);
+      const packages = booking.selectedServiceId ? PACKAGES_DATA[booking.selectedServiceId] : [];
+      const pkg = packages.find((p) => p.id === booking.selectedPackageId);
+      const addons = ADDONS_DATA.filter((a) => booking.selectedAddOnIds.includes(a.id));
+      const basePrice = pkg?.price ?? 0;
+      const addonsTotal = addons.reduce((s, a) => s + a.price, 0);
+      const estimatedPrice = basePrice + addonsTotal;
 
-      const basePrice = mainService?.startingPrice ?? 0;
-      const multiplier = vehicleCategory?.multiplier ?? 1.0;
-      const adjustedBase = Math.round(basePrice * multiplier);
-      const addOnsTotal = chosenAddOns.reduce((sum, a) => sum + a.price, 0);
-      const estimatedPrice = adjustedBase + addOnsTotal;
-
-      const vehicleString = vehicleCategory?.label ?? booking.vehicle.sizeCategory;
-      const serviceString = `${mainService?.name}${
-        chosenAddOns.length > 0 ? ` + [${chosenAddOns.map((a) => a.name).join(", ")}]` : ""
+      const serviceStr = `${service?.name ?? ""}${pkg ? ` — ${pkg.name}` : ""}${
+        addons.length > 0 ? ` + [${addons.map((a) => a.name).join(", ")}]` : ""
       }`;
 
       const { error } = await supabase.from("bookings").insert({
-        service: serviceString,
-        vehicle: vehicleString,
+        service: serviceStr,
+        vehicle: "—",
         booking_date: booking.selectedDate ?? "",
         booking_time: booking.selectedTimeSlot ?? "",
         customer_name: booking.customer.fullName,
@@ -219,7 +221,7 @@ function BookingPage() {
 
       if (error) console.warn("Supabase notice:", error.message);
       setDone(true);
-      toast.success("Appointment booked!");
+      toast.success("Appointment booked successfully!");
     } catch (err) {
       console.error(err);
       setDone(true);
@@ -229,27 +231,38 @@ function BookingPage() {
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────
+
   return (
     <div
-      className="min-h-screen text-white font-sans"
       style={{
+        minHeight: "100vh",
         background: "#08080c",
-        paddingBottom: "9rem",
+        color: "#fff",
+        fontFamily: "var(--font-sans, Inter, sans-serif)",
         WebkitFontSmoothing: "antialiased",
+        paddingBottom: "9rem",
       }}
     >
       {/* Ambient glow */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          pointerEvents: "none",
+          overflow: "hidden",
+          zIndex: 0,
+        }}
+      >
         <div
-          className="absolute rounded-full"
           style={{
-            top: -200,
+            position: "absolute",
+            top: -180,
             left: "50%",
             transform: "translateX(-50%)",
-            width: 700,
-            height: 500,
-            background: "radial-gradient(ellipse, rgba(96,165,250,0.055) 0%, transparent 70%)",
+            width: 600,
+            height: 450,
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.025) 0%, transparent 70%)",
             filter: "blur(60px)",
           }}
         />
@@ -257,10 +270,14 @@ function BookingPage() {
 
       {/* Header */}
       <header
-        className="sticky top-0 z-30 backdrop-blur-2xl"
         style={{
-          background: "rgba(8,8,12,0.88)",
+          position: "sticky",
+          top: 0,
+          zIndex: 30,
+          background: "rgba(8,8,12,0.9)",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
         }}
       >
         <div
@@ -269,18 +286,22 @@ function BookingPage() {
         >
           <Link
             to="/"
-            className="flex items-center gap-2 transition-all duration-200"
             style={{
-              fontSize: "0.62rem",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: "0.6rem",
               letterSpacing: "0.28em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.28)",
               fontWeight: 500,
+              color: "rgba(255,255,255,0.28)",
+              textDecoration: "none",
+              transition: "color 0.2s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.28)")}
           >
-            <ArrowLeft style={{ width: 13, height: 13 }} />
+            <ArrowLeft style={{ width: 12, height: 12 }} />
             <span>Back</span>
           </Link>
 
@@ -294,16 +315,17 @@ function BookingPage() {
 
           <Link
             to="/auth"
-            className="transition-all duration-200"
             style={{
-              fontSize: "0.62rem",
+              fontSize: "0.6rem",
               letterSpacing: "0.28em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.28)",
               fontWeight: 500,
+              color: "rgba(255,255,255,0.28)",
+              textDecoration: "none",
+              transition: "color 0.2s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.28)")}
           >
             Sign in
           </Link>
@@ -315,7 +337,7 @@ function BookingPage() {
         className="relative z-10 max-w-5xl mx-auto"
         style={{ padding: "3rem 1.5rem 0" }}
       >
-        {/* Progress */}
+        {/* Progress indicator */}
         {!done && (
           <StepIndicator
             currentStep={booking.step}
@@ -325,7 +347,7 @@ function BookingPage() {
         )}
 
         {/* Step content */}
-        <div ref={stepContentRef} style={{ minHeight: 480 }}>
+        <div ref={stepRef} style={{ minHeight: 500 }}>
           {booking.step === 1 && (
             <ServiceStep
               selectedServiceId={booking.selectedServiceId}
@@ -333,28 +355,37 @@ function BookingPage() {
             />
           )}
 
-          {booking.step === 2 && (
-            <VehicleStep
-              vehicle={booking.vehicle}
-              onChangeVehicle={handleChangeVehicle}
+          {booking.step === 2 && booking.selectedServiceId && (
+            <PackageStep
+              selectedServiceId={booking.selectedServiceId}
+              selectedPackageId={booking.selectedPackageId}
+              onSelectPackage={handleSelectPackage}
             />
           )}
 
-          {booking.step === 3 && (
+          {booking.step === 3 && booking.selectedServiceId && (
+            <ServiceQuestionsStep
+              selectedServiceId={booking.selectedServiceId}
+              answers={booking.questionAnswers}
+              onAnswer={handleAnswer}
+            />
+          )}
+
+          {booking.step === 4 && (
             <AddOnStep
               selectedAddOnIds={booking.selectedAddOnIds}
               onToggleAddOn={handleToggleAddOn}
             />
           )}
 
-          {booking.step === 4 && (
+          {booking.step === 5 && (
             <DateStep
               selectedDate={booking.selectedDate}
               onSelectDate={(d) => setBooking((p) => ({ ...p, selectedDate: d }))}
             />
           )}
 
-          {booking.step === 5 && (
+          {booking.step === 6 && (
             <TimeStep
               selectedDate={booking.selectedDate}
               selectedTimeSlot={booking.selectedTimeSlot}
@@ -362,14 +393,14 @@ function BookingPage() {
             />
           )}
 
-          {booking.step === 6 && (
+          {booking.step === 7 && (
             <CustomerStep
               customer={booking.customer}
               onChangeCustomer={handleChangeCustomer}
             />
           )}
 
-          {booking.step === 7 && (
+          {booking.step === 8 && (
             <SummaryStep
               bookingData={booking}
               onEditStep={goToStep}
@@ -380,33 +411,41 @@ function BookingPage() {
           )}
         </div>
 
-        {/* Step nav buttons */}
-        {!done && booking.step < 7 && (
+        {/* Back / Continue nav */}
+        {!done && booking.step < 8 && (
           <div
-            className="flex items-center justify-between"
-            style={{ marginTop: "3.5rem", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.06)" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginTop: "3.5rem",
+              paddingTop: "1.5rem",
+              borderTop: "1px solid rgba(255,255,255,0.06)",
+            }}
           >
             <button
               type="button"
               onClick={handleBack}
               disabled={booking.step === 1}
-              className="flex items-center gap-2 transition-all duration-200"
               style={{
-                fontSize: "0.65rem",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: "0.62rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 fontWeight: 500,
-                color: booking.step === 1 ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.35)",
+                color: booking.step === 1 ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.32)",
+                background: "none",
+                border: "none",
                 cursor: booking.step === 1 ? "not-allowed" : "pointer",
+                padding: 0,
+                transition: "color 0.2s",
               }}
-              onMouseEnter={(e) => {
-                if (booking.step > 1) e.currentTarget.style.color = "rgba(255,255,255,0.6)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = booking.step === 1 ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.35)";
-              }}
+              onMouseEnter={(e) => { if (booking.step > 1) (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = booking.step === 1 ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.32)"; }}
             >
-              <ArrowLeft style={{ width: 13, height: 13 }} />
+              <ArrowLeft style={{ width: 12, height: 12 }} />
               <span>Back</span>
             </button>
 
@@ -415,23 +454,28 @@ function BookingPage() {
               id="next-step-btn"
               onClick={handleNext}
               disabled={!isStepValid(booking.step)}
-              className="flex items-center gap-2.5 transition-all duration-300"
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
                 padding: "0.75rem 1.75rem",
                 borderRadius: 999,
-                background: isStepValid(booking.step) ? "#fff" : "rgba(255,255,255,0.06)",
-                color: isStepValid(booking.step) ? "#000" : "rgba(255,255,255,0.2)",
-                fontWeight: 600,
-                fontSize: "0.65rem",
+                background: isStepValid(booking.step) ? "#fff" : "rgba(255,255,255,0.05)",
+                color: isStepValid(booking.step) ? "#000" : "rgba(255,255,255,0.18)",
+                fontWeight: 700,
+                fontSize: "0.62rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                boxShadow: isStepValid(booking.step) ? "0 4px 24px rgba(255,255,255,0.09)" : "none",
                 border: isStepValid(booking.step) ? "none" : "1px solid rgba(255,255,255,0.07)",
+                boxShadow: isStepValid(booking.step) ? "0 4px 24px rgba(255,255,255,0.09)" : "none",
                 cursor: isStepValid(booking.step) ? "pointer" : "not-allowed",
+                transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
               }}
+              onMouseEnter={(e) => { if (isStepValid(booking.step)) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.9)"; }}
+              onMouseLeave={(e) => { if (isStepValid(booking.step)) (e.currentTarget as HTMLElement).style.background = "#fff"; }}
             >
               <span>Continue</span>
-              <ArrowRight style={{ width: 13, height: 13, strokeWidth: 2.5 }} />
+              <ArrowRight style={{ width: 12, height: 12, strokeWidth: 2.5 }} />
             </button>
           </div>
         )}
@@ -443,7 +487,7 @@ function BookingPage() {
           bookingData={booking}
           onContinue={handleNext}
           canContinue={isStepValid(booking.step)}
-          stepName={NEXT_STEP_LABELS[booking.step] ?? "Next"}
+          stepName={NEXT_LABELS[booking.step] ?? "Next"}
           currentStep={booking.step}
         />
       )}

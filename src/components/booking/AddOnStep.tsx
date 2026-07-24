@@ -1,139 +1,224 @@
 import React, { useEffect, useRef } from "react";
 import { ADDONS_DATA } from "./bookingData";
 import {
-  Gauge, ShieldCheck, Sun, Sparkles, Armchair, Wind, Circle, Dog, Check, Plus
+  Gauge, Lightbulb, Wind, Circle, Sparkles, ShieldCheck, Check, Plus,
 } from "lucide-react";
 import gsap from "gsap";
 
-interface AddOnStepProps {
+interface Props {
   selectedAddOnIds: string[];
   onToggleAddOn: (id: string) => void;
 }
 
-const ADDON_ICON_MAP: Record<string, React.ReactNode> = {
-  Gauge: <Gauge className="w-4 h-4" />,
-  ShieldCheck: <ShieldCheck className="w-4 h-4" />,
-  Sun: <Sun className="w-4 h-4" />,
-  Sparkles: <Sparkles className="w-4 h-4" />,
-  Armchair: <Armchair className="w-4 h-4" />,
-  Wind: <Wind className="w-4 h-4" />,
-  Circle: <Circle className="w-4 h-4" />,
-  Dog: <Dog className="w-4 h-4" />,
+const ICONS: Record<string, React.ReactNode> = {
+  Gauge: <Gauge className="w-5 h-5" />,
+  Lightbulb: <Lightbulb className="w-5 h-5" />,
+  Wind: <Wind className="w-5 h-5" />,
+  Circle: <Circle className="w-5 h-5" />,
+  Sparkles: <Sparkles className="w-5 h-5" />,
+  ShieldCheck: <ShieldCheck className="w-5 h-5" />,
 };
 
-export const AddOnStep: React.FC<AddOnStepProps> = ({ selectedAddOnIds, onToggleAddOn }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) => {
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const items = containerRef.current.querySelectorAll(".addon-card");
-      gsap.fromTo(
-        items,
-        { opacity: 0, y: 20, scale: 0.98 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.06, ease: "power3.out" }
-      );
-    }
+    if (!ref.current) return;
+    gsap.fromTo(
+      ref.current.querySelectorAll(".addon-card"),
+      { opacity: 0, y: 22, scale: 0.98 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.07, ease: "power3.out" }
+    );
   }, []);
 
   const totalSelected = selectedAddOnIds.length;
-  const totalAdded = ADDONS_DATA.filter(a => selectedAddOnIds.includes(a.id))
-    .reduce((sum, a) => sum + a.price, 0);
+  const totalPrice = ADDONS_DATA.filter((a) => selectedAddOnIds.includes(a.id)).reduce(
+    (s, a) => s + a.price,
+    0
+  );
 
   return (
-    <div ref={containerRef} className="space-y-10 max-w-4xl mx-auto">
-      {/* Step header */}
-      <div className="space-y-2">
-        <p className="text-eyebrow">Optional Add-ons</p>
-        <h3 className="text-display text-3xl sm:text-4xl text-white leading-[0.95]">
-          Enhance your detail
+    <div ref={ref} className="space-y-10 max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="space-y-3">
+        <p style={{ fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", fontWeight: 500, color: "rgba(255,255,255,0.28)" }}>
+          Step 04
+        </p>
+        <h3 style={{ fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff" }}>
+          Recommended add-ons
         </h3>
-        <p className="text-[var(--color-muted-foreground)] text-sm max-w-md mt-3">
-          All add-ons are performed by the same technician in the same appointment. Skip this step if none apply.
+        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.38)", maxWidth: 460, marginTop: 8, lineHeight: 1.6 }}>
+          Enhance your appointment with specialist treatments performed by the same technician. All optional.
         </p>
       </div>
 
-      {/* Selection summary */}
+      {/* Selection bar */}
       {totalSelected > 0 && (
-        <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-white/[0.04] border border-white/15">
-          <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
-          <span className="text-xs text-white/60">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "0.75rem 1.25rem",
+            borderRadius: "0.75rem",
+            border: "1px solid rgba(255,255,255,0.15)",
+            background: "rgba(255,255,255,0.04)",
+          }}
+        >
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
+          <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.55)" }}>
             {totalSelected} add-on{totalSelected > 1 ? "s" : ""} selected
           </span>
-          <span className="text-xs font-mono text-white/70 ml-auto">+€{totalAdded}</span>
+          <span style={{ fontSize: "0.75rem", fontFamily: "monospace", color: "rgba(255,255,255,0.65)", marginLeft: "auto" }}>
+            +€{totalPrice}
+          </span>
         </div>
       )}
 
-      {/* Add-ons grid */}
+      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {ADDONS_DATA.map((addon) => {
-          const isSelected = selectedAddOnIds.includes(addon.id);
+          const selected = selectedAddOnIds.includes(addon.id);
           return (
             <button
               key={addon.id}
               type="button"
-              id={`addon-${addon.id}`}
               onClick={() => onToggleAddOn(addon.id)}
-              className={`addon-card group relative text-left p-5 rounded-xl cursor-pointer transition-all duration-300 border flex items-start gap-4 ${
-                isSelected
-                  ? "bg-white/[0.06] border-white/35 shadow-[0_0_25px_rgba(255,255,255,0.05)] ring-1 ring-white/15"
-                  : "bg-white/[0.02] border-white/8 hover:border-white/14 hover:bg-white/[0.035]"
-              }`}
+              className="addon-card group relative text-left"
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "1rem",
+                padding: "1.2rem 1.25rem",
+                borderRadius: "0.875rem",
+                border: selected
+                  ? "1px solid rgba(255,255,255,0.3)"
+                  : "1px solid rgba(255,255,255,0.07)",
+                background: selected
+                  ? "rgba(255,255,255,0.055)"
+                  : "rgba(255,255,255,0.02)",
+                transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                if (!selected) {
+                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.13)";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.032)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!selected) {
+                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.07)";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
+                }
+              }}
             >
               {/* Badge */}
               {addon.badge && (
-                <div className="absolute top-3 right-12">
-                  <span className="text-[8px] font-semibold uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-white/8 border border-white/15 text-white/50">
-                    {addon.badge}
-                  </span>
-                </div>
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 10,
+                    right: 44,
+                    fontSize: "0.5rem",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    fontWeight: 600,
+                    padding: "2px 8px",
+                    borderRadius: 999,
+                    border: "1px solid rgba(255,255,255,0.18)",
+                    color: "rgba(255,255,255,0.45)",
+                    background: "rgba(255,255,255,0.04)",
+                  }}
+                >
+                  {addon.badge}
+                </span>
               )}
 
               {/* Icon */}
               <div
-                className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center border transition-all ${
-                  isSelected
-                    ? "bg-white/10 border-white/25 text-white"
-                    : "bg-white/4 border-white/8 text-white/30 group-hover:text-white/50"
-                }`}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "0.6rem",
+                  border: selected
+                    ? "1px solid rgba(255,255,255,0.22)"
+                    : "1px solid rgba(255,255,255,0.08)",
+                  background: selected
+                    ? "rgba(255,255,255,0.07)"
+                    : "rgba(255,255,255,0.03)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: selected ? "#fff" : "rgba(255,255,255,0.3)",
+                  flexShrink: 0,
+                  transition: "all 0.3s",
+                }}
               >
-                {ADDON_ICON_MAP[addon.iconName] ?? <Sparkles className="w-4 h-4" />}
+                {ICONS[addon.iconName] ?? <Sparkles className="w-5 h-5" />}
               </div>
 
               {/* Content */}
-              <div className="flex-1 min-w-0 pr-2">
-                <div className="flex items-start justify-between gap-2">
-                  <h5 className={`text-sm font-semibold tracking-tight transition-colors leading-tight ${isSelected ? "text-white" : "text-white/70 group-hover:text-white/85"}`}>
+              <div style={{ flex: 1, minWidth: 0, paddingRight: "0.5rem" }}>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, marginBottom: 4 }}>
+                  <h5
+                    style={{
+                      fontSize: "0.88rem",
+                      fontWeight: 600,
+                      letterSpacing: "-0.01em",
+                      color: selected ? "#fff" : "rgba(255,255,255,0.65)",
+                      transition: "color 0.3s",
+                    }}
+                  >
                     {addon.name}
                   </h5>
-                  <span className={`text-xs font-mono font-medium transition-colors shrink-0 ${isSelected ? "text-white" : "text-white/35 group-hover:text-white/55"}`}>
+                  <span
+                    style={{
+                      fontSize: "0.78rem",
+                      fontFamily: "monospace",
+                      fontWeight: 600,
+                      color: selected ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.28)",
+                      flexShrink: 0,
+                      transition: "color 0.3s",
+                    }}
+                  >
                     +€{addon.price}
                   </span>
                 </div>
-                <p className="text-[11px] text-white/30 mt-1.5 leading-relaxed group-hover:text-white/40 transition-colors">
+                <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.3)", lineHeight: 1.55 }}>
                   {addon.description}
                 </p>
               </div>
 
-              {/* Checkbox */}
+              {/* Toggle */}
               <div
-                className={`flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center border transition-all mt-0.5 ${
-                  isSelected
-                    ? "bg-white border-white"
-                    : "border-white/16 bg-transparent group-hover:border-white/25"
-                }`}
+                style={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: "0.35rem",
+                  border: selected ? "none" : "1px solid rgba(255,255,255,0.14)",
+                  background: selected ? "#fff" : "transparent",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  marginTop: 2,
+                  transition: "all 0.28s",
+                }}
               >
-                {isSelected
-                  ? <Check className="w-3 h-3 text-black stroke-[3]" />
-                  : <Plus className="w-3 h-3 text-white/25" />}
+                {selected
+                  ? <Check style={{ width: 12, height: 12, color: "#000", strokeWidth: 3 }} />
+                  : <Plus style={{ width: 12, height: 12, color: "rgba(255,255,255,0.25)" }} />
+                }
               </div>
             </button>
           );
         })}
       </div>
 
-      {/* Skip hint */}
-      <p className="text-[10px] text-white/20 tracking-wide">
-        You can skip add-ons by pressing <span className="text-white/35">Continue</span> below.
+      <p style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.2)", letterSpacing: "0.05em" }}>
+        You can skip add-ons by pressing{" "}
+        <span style={{ color: "rgba(255,255,255,0.35)" }}>Continue</span> below.
       </p>
     </div>
   );

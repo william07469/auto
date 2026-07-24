@@ -1,34 +1,47 @@
 export type ServiceId =
   | "exterior"
   | "interior"
-  | "interior_exterior"
   | "paint_correction"
   | "ceramic"
-  | "engine_bay"
-  | "other";
+  | "full_detail";
 
-export type VehicleSizeCategory = "coupe" | "sedan" | "suv" | "van";
+export type PackageId = "basic" | "premium" | "ultimate";
 
 export interface ServiceOption {
   id: ServiceId;
   name: string;
   tagline: string;
   description: string;
-  startingPrice: number;
-  duration: string;
   iconName: string;
-  popular?: boolean;
   badge?: string;
+  popular?: boolean;
 }
 
-export interface ServiceStageOption {
-  id: string;
-  title: string;
+export interface PackageOption {
+  id: PackageId;
+  name: string;
+  tagline: string;
   description: string;
   price: number;
-  durationMinutes: number;
-  recommended?: boolean;
+  duration: string;
   features: string[];
+  recommended?: boolean;
+}
+
+export interface ServiceQuestion {
+  id: string;
+  question: string;
+  iconName: string;
+  options: {
+    id: string;
+    label: string;
+    iconName: string;
+  }[];
+}
+
+export interface QuestionAnswer {
+  questionId: string;
+  answerId: string;
 }
 
 export interface AddOnOption {
@@ -36,17 +49,8 @@ export interface AddOnOption {
   name: string;
   description: string;
   price: number;
-  durationMinutes: number;
   iconName: string;
   badge?: string;
-}
-
-export interface VehicleDetails {
-  make: string;
-  model: string;
-  year: string;
-  color: string;
-  sizeCategory: VehicleSizeCategory;
 }
 
 export interface CustomerDetails {
@@ -59,11 +63,10 @@ export interface CustomerDetails {
 export interface BookingState {
   step: number;
   selectedServiceId: ServiceId | null;
-  selectedSubOptionId: string | null;
+  selectedPackageId: PackageId | null;
+  questionAnswers: QuestionAnswer[];
   selectedAddOnIds: string[];
-  vehicle: VehicleDetails;
   selectedDate: string | null;
   selectedTimeSlot: string | null;
   customer: CustomerDetails;
-  customServiceNote: string;
 }

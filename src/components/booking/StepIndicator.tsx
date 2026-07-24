@@ -9,126 +9,175 @@ interface StepIndicatorProps {
 }
 
 const STEPS = [
-  { id: 1, title: "Service" },
-  { id: 2, title: "Vehicle" },
-  { id: 3, title: "Add-ons" },
-  { id: 4, title: "Date" },
-  { id: 5, title: "Time" },
-  { id: 6, title: "Contact" },
-  { id: 7, title: "Summary" },
+  { id: 1, label: "Service" },
+  { id: 2, label: "Package" },
+  { id: 3, label: "Questions" },
+  { id: 4, label: "Add-ons" },
+  { id: 5, label: "Date" },
+  { id: 6, label: "Time" },
+  { id: 7, label: "Contact" },
+  { id: 8, label: "Summary" },
 ];
 
-export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, totalSteps, onStepClick }) => {
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const percentage = Math.round(((currentStep - 1) / (totalSteps - 1)) * 100);
+export const StepIndicator: React.FC<StepIndicatorProps> = ({
+  currentStep,
+  totalSteps,
+  onStepClick,
+}) => {
+  const barRef = useRef<HTMLDivElement>(null);
+  const pct = Math.round(((currentStep - 1) / (totalSteps - 1)) * 100);
 
   useEffect(() => {
-    if (progressBarRef.current) {
-      gsap.to(progressBarRef.current, {
-        width: `${percentage}%`,
-        duration: 0.65,
+    if (barRef.current) {
+      gsap.to(barRef.current, {
+        width: `${pct}%`,
+        duration: 0.7,
         ease: "power3.out",
       });
     }
-  }, [percentage]);
+  }, [pct]);
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-14">
-      {/* Header */}
-      <div className="flex items-end justify-between mb-5">
+      {/* Top row */}
+      <div className="flex items-end justify-between mb-6">
         <div>
           <p
             style={{
-              fontSize: "0.6rem",
-              letterSpacing: "0.35em",
+              fontSize: "0.58rem",
+              letterSpacing: "0.38em",
               textTransform: "uppercase",
-              fontWeight: 500,
-              color: "var(--color-muted-foreground)",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.25)",
             }}
-            className="mb-1"
+            className="mb-1.5"
           >
-            WV Detailing · Book Now
+            WV Detailing · Booking
           </p>
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-white leading-none">
-            {STEPS[currentStep - 1]?.title}
+          <h2
+            style={{
+              fontSize: "1.2rem",
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              color: "#fff",
+              lineHeight: 1,
+            }}
+          >
+            {STEPS[currentStep - 1]?.label}
           </h2>
         </div>
         <span
           style={{
-            fontSize: "0.65rem",
-            letterSpacing: "0.2em",
+            fontSize: "0.6rem",
+            letterSpacing: "0.18em",
             fontFamily: "monospace",
+            color: "rgba(255,255,255,0.35)",
+            paddingBottom: 2,
           }}
-          className="text-white/50 pb-0.5"
         >
-          {currentStep} / {totalSteps}
+          {String(currentStep).padStart(2, "0")} / {String(totalSteps).padStart(2, "0")}
         </span>
       </div>
 
-      {/* Progress track */}
-      <div className="relative h-px w-full bg-white/10 mb-7">
+      {/* Progress bar */}
+      <div
+        style={{
+          position: "relative",
+          height: 1,
+          background: "rgba(255,255,255,0.07)",
+          marginBottom: 24,
+          borderRadius: 999,
+        }}
+      >
         <div
-          ref={progressBarRef}
-          className="absolute left-0 top-0 h-full bg-white rounded-full"
-          style={{ width: "0%" }}
+          ref={barRef}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            height: "100%",
+            background: "rgba(255,255,255,0.85)",
+            borderRadius: 999,
+            width: "0%",
+            boxShadow: "0 0 8px rgba(255,255,255,0.2)",
+          }}
         />
       </div>
 
-      {/* Step dots */}
+      {/* Dots row */}
       <div className="flex items-start justify-between">
         {STEPS.map((step) => {
-          const isCompleted = currentStep > step.id;
-          const isCurrent = currentStep === step.id;
+          const done = currentStep > step.id;
+          const active = currentStep === step.id;
+          const clickable = done;
 
           return (
             <button
               key={step.id}
               type="button"
-              onClick={() => isCompleted && onStepClick(step.id)}
-              disabled={!isCompleted}
-              className="group flex flex-col items-center gap-2 transition-all duration-300"
-              style={{ cursor: isCompleted ? "pointer" : "default" }}
+              onClick={() => clickable && onStepClick(step.id)}
+              disabled={!clickable}
+              className="flex flex-col items-center gap-2"
+              style={{ cursor: clickable ? "pointer" : "default" }}
             >
+              {/* Dot */}
               <div
-                className="relative flex items-center justify-center transition-all duration-500"
                 style={{
-                  width: isCurrent ? 28 : isCompleted ? 18 : 14,
-                  height: isCurrent ? 28 : isCompleted ? 18 : 14,
+                  width: active ? 26 : done ? 18 : 12,
+                  height: active ? 26 : done ? 18 : 12,
                   borderRadius: "50%",
-                  background: isCurrent
-                    ? "rgba(255,255,255,1)"
-                    : isCompleted
-                    ? "rgba(255,255,255,0.12)"
+                  background: active
+                    ? "#fff"
+                    : done
+                    ? "rgba(255,255,255,0.1)"
                     : "rgba(255,255,255,0.04)",
-                  border: isCurrent
+                  border: active
                     ? "none"
-                    : isCompleted
-                    ? "1px solid rgba(255,255,255,0.35)"
-                    : "1px solid rgba(255,255,255,0.10)",
-                  boxShadow: isCurrent ? "0 0 18px rgba(255,255,255,0.25)" : "none",
+                    : done
+                    ? "1px solid rgba(255,255,255,0.3)"
+                    : "1px solid rgba(255,255,255,0.09)",
+                  boxShadow: active ? "0 0 16px rgba(255,255,255,0.22)" : "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)",
+                  flexShrink: 0,
                 }}
               >
-                {isCurrent ? (
-                  <span style={{ fontSize: 9, fontWeight: 700, color: "#000" }}>{step.id}</span>
-                ) : isCompleted ? (
-                  <Check style={{ width: 9, height: 9, color: "rgba(255,255,255,0.8)", strokeWidth: 3 }} />
-                ) : null}
+                {active && (
+                  <span style={{ fontSize: 8, fontWeight: 800, color: "#000" }}>
+                    {step.id}
+                  </span>
+                )}
+                {done && (
+                  <Check
+                    style={{
+                      width: 8,
+                      height: 8,
+                      color: "rgba(255,255,255,0.7)",
+                      strokeWidth: 3,
+                    }}
+                  />
+                )}
               </div>
+
+              {/* Label */}
               <span
-                className="hidden sm:block transition-colors duration-300"
+                className="hidden sm:block"
                 style={{
-                  fontSize: "0.55rem",
-                  letterSpacing: "0.22em",
+                  fontSize: "0.5rem",
+                  letterSpacing: "0.2em",
                   textTransform: "uppercase",
                   fontWeight: 500,
-                  color: isCurrent
-                    ? "rgba(255,255,255,0.9)"
-                    : isCompleted
-                    ? "rgba(255,255,255,0.4)"
-                    : "rgba(255,255,255,0.16)",
+                  color: active
+                    ? "rgba(255,255,255,0.85)"
+                    : done
+                    ? "rgba(255,255,255,0.35)"
+                    : "rgba(255,255,255,0.14)",
+                  transition: "color 0.3s",
                 }}
               >
-                {step.title}
+                {step.label}
               </span>
             </button>
           );
