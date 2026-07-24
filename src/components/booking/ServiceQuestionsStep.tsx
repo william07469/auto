@@ -4,7 +4,7 @@ import { SERVICE_QUESTIONS } from "./bookingData";
 import {
   Car, Armchair, Star, Sparkles, ShieldCheck,
   Search, Check, AlertCircle, XCircle, X, Droplets,
-  Layers, Dog, Minus, Sun, HelpCircle, Clock, Circle,
+  Layers, Dog, Minus, Sun, HelpCircle, Clock,
   CheckCircle,
 } from "lucide-react";
 import gsap from "gsap";

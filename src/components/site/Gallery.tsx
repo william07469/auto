@@ -6,15 +6,17 @@ import img2 from "@/assets/detail-2.jpg";
 import img3 from "@/assets/detail-3.jpg";
 import img4 from "@/assets/detail-4.jpg";
 import heroImg from "@/assets/hero.jpg";
+import extBefore from "@/assets/before_after/exterior_body_before.jpg";
+import extAfter from "@/assets/before_after/exterior_body_after.jpg";
 import { supabase } from "@/integrations/client";
 
 // Fallback images shown while DB loads or if DB has no active items
 const FALLBACK_ITEMS = [
-  { id: "f0", src: heroImg, label: "Exterior", span: "col-span-2 row-span-2", before_url: img3, after_url: img3 },
-  { id: "f1", src: img1, label: "Handwerk", span: "", before_url: img1, after_url: img1 },
-  { id: "f2", src: img2, label: "Interior", span: "", before_url: img2, after_url: img2 },
-  { id: "f3", src: img3, label: "Keramikversiegelung", span: "col-span-2", before_url: img3, after_url: img3 },
-  { id: "f4", src: img4, label: "Räder", span: "", before_url: img4, after_url: img4 },
+  { id: "f0", src: heroImg, label: "Jeep Trackhawk Exterior", span: "col-span-2 row-span-2", before_url: extBefore, after_url: extAfter },
+  { id: "f1", src: img1, label: "Lackkorrektur Handwerk", span: "", before_url: extBefore, after_url: extAfter },
+  { id: "f2", src: img2, label: "Interior Cockpit", span: "", before_url: extBefore, after_url: extAfter },
+  { id: "f3", src: img3, label: "Keramikversiegelung", span: "col-span-2", before_url: extBefore, after_url: extAfter },
+  { id: "f4", src: img4, label: "Brembo Räder & Performance", span: "", before_url: extBefore, after_url: extAfter },
 ];
 
 // Grid span assignment by index for dynamic items
@@ -168,7 +170,7 @@ function Lightbox({
 
 export function Gallery() {
   const [items, setItems] = useState<GalleryItem[]>(FALLBACK_ITEMS);
-  const [beforeAfter, setBeforeAfter] = useState({ before: img3, after: img3 });
+  const [beforeAfter, setBeforeAfter] = useState({ before: extBefore, after: extAfter });
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   useEffect(() => {

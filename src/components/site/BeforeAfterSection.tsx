@@ -1,11 +1,25 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, MoveHorizontal } from "lucide-react";
-import img1 from "@/assets/detail-1.jpg";
-import img2 from "@/assets/detail-2.jpg";
-import img3 from "@/assets/detail-3.jpg";
-import img4 from "@/assets/detail-4.jpg";
-import heroImg from "@/assets/hero.jpg";
+import extBefore from "@/assets/before_after/exterior_body_before.jpg";
+import extAfter from "@/assets/before_after/exterior_body_after.jpg";
+import wheelBefore from "@/assets/before_after/wheel_before.jpg";
+import wheelAfter from "@/assets/before_after/wheel_after.jpg";
+import hlBefore from "@/assets/before_after/headlight_before.jpg";
+import hlAfter from "@/assets/before_after/headlight_after.jpg";
+import swirlsBefore from "@/assets/before_after/paint_swirls_before.jpg";
+import swirlsAfter from "@/assets/before_after/paint_swirls_after.jpg";
+import oxBefore from "@/assets/before_after/paint_ox_before.jpg";
+import oxAfter from "@/assets/before_after/paint_ox_after.jpg";
+import ceramicBeadsBefore from "@/assets/before_after/ceramic_beads_before.jpg";
+import ceramicBeadsAfter from "@/assets/before_after/ceramic_beads_after.jpg";
+import ceramicGlossBefore from "@/assets/before_after/ceramic_gloss_before.jpg";
+import ceramicGlossAfter from "@/assets/before_after/ceramic_gloss_after.jpg";
+import engineBefore from "@/assets/before_after/engine_before.jpg";
+import engineAfter from "@/assets/before_after/engine_after.jpg";
+import interiorBefore from "@/assets/before_after/interior_before.jpg";
+import interiorAfter from "@/assets/before_after/interior_after.jpg";
+
 import { supabase } from "@/integrations/client";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -17,46 +31,46 @@ type Case = { label: string; desc: string; pairs: Pair[] };
 const FALLBACK_CASES: Case[] = [
   {
     label: "Innenreinigung",
-    desc: "Tiefenreinigung von Sitzen, Armaturenbrett und Fußraum. Flecken, Gerüche und Staub werden vollständig beseitigt.",
+    desc: "Tiefenreinigung von Sitzen, Armaturenbrett und Fußraum des Trackhawks. Flecken, Gerüche und Staub werden vollständig beseitigt.",
     pairs: [
-      { title: "Sitze & Polster",   before: img1,    after: img2    },
-      { title: "Armaturenbrett",    before: img4,    after: img3    },
-      { title: "Fußraum",           before: img2,    after: img1    },
+      { title: "Sitze & Polster",   before: interiorBefore, after: interiorAfter },
+      { title: "Armaturenbrett",    before: interiorBefore, after: interiorAfter },
+      { title: "Fußraum",           before: interiorBefore, after: interiorAfter },
     ],
   },
   {
     label: "Außenreinigung",
-    desc: "Handwäsche nach dem Zwei-Eimer-Prinzip. Hologramme, Wasserflecken und Straßenschmutz verschwinden spurlos.",
+    desc: "Handwäsche nach dem Zwei-Eimer-Prinzip am Jeep Trackhawk. Hologramme, Wasserflecken und Straßenschmutz verschwinden spurlos.",
     pairs: [
-      { title: "Lack & Karosserie", before: img3,    after: heroImg },
-      { title: "Felgen & Reifen",   before: img4,    after: img2    },
-      { title: "Scheinwerfer",      before: img1,    after: img3    },
+      { title: "Lack & Karosserie", before: extBefore,        after: extAfter },
+      { title: "Felgen & Reifen",   before: wheelBefore,      after: wheelAfter },
+      { title: "Scheinwerfer",      before: hlBefore,         after: hlAfter },
     ],
   },
   {
     label: "Lackkorrektur",
-    desc: "Maschinelle Politur entfernt Kratzer, Swirls und Oxidation. Der Lack erstrahlt wie am ersten Tag.",
+    desc: "Maschinelle Politur entfernt Kratzer, Swirls und Oxidation auf dem weißen Trackhawk-Lack.",
     pairs: [
-      { title: "Kratzer entfernt",  before: img4,    after: heroImg },
-      { title: "Swirl-Marks",       before: img1,    after: img3    },
-      { title: "Oxidation",         before: img2,    after: heroImg },
+      { title: "Kratzer entfernt",  before: swirlsBefore,     after: swirlsAfter },
+      { title: "Swirl-Marks",       before: swirlsBefore,     after: swirlsAfter },
+      { title: "Oxidation",         before: oxBefore,         after: oxAfter },
     ],
   },
   {
     label: "Keramikversiegelung",
-    desc: "Nano-Keramik legt einen permanenten Schutzfilm über den Lack. Wasser perlt ab, Schmutz haftet kaum.",
+    desc: "Nano-Keramik legt einen permanenten Schutzfilm über den weißen Lack. Wasser perlt extrem ab.",
     pairs: [
-      { title: "Hydrophob-Effekt",  before: img3,    after: img2    },
-      { title: "Hochglanz",         before: img1,    after: heroImg },
-      { title: "Schutzfilm",        before: img4,    after: img3    },
+      { title: "Hydrophob-Effekt",  before: ceramicBeadsBefore, after: ceramicBeadsAfter },
+      { title: "Hochglanz",         before: ceramicGlossBefore, after: ceramicGlossAfter },
+      { title: "Schutzfilm",        before: ceramicBeadsBefore, after: ceramicGlossAfter },
     ],
   },
   {
     label: "Motorraumreinigung",
-    desc: "Fett, Öl und Staub werden schonend aus dem Motorraum entfernt — für ein gepflegtes Bild unter der Haube.",
+    desc: "Fett, Öl und Staub werden schonend aus dem 6.2L Supercharged V8 Motorraum des Trackhawks entfernt.",
     pairs: [
-      { title: "Motor vorher/nachher", before: img2, after: img4    },
-      { title: "Kabelstränge",         before: img1, after: img2    },
+      { title: "Motor vorher/nachher", before: engineBefore,    after: engineAfter },
+      { title: "Kabelstränge",         before: engineBefore,    after: engineAfter },
     ],
   },
 ];
@@ -154,13 +168,12 @@ export function BeforeAfterSection() {
 
   // Load from DB — group by category, preserve sort_order within each group
   useEffect(() => {
-    supabase
-      .from("gallery_items")
+    (supabase.from("gallery_items") as any)
       .select("*")
       .eq("is_active", true)
       .neq("category", "Galerie")   // Galerie items go to the photo grid, not here
       .order("sort_order")
-      .then(({ data }) => {
+      .then(({ data }: { data: any[] | null }) => {
         if (!data || data.length === 0) return; // keep fallback
 
         // Group rows by category, preserving first-seen order

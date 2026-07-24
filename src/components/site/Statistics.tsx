@@ -4,7 +4,7 @@ import { ShieldCheck, Star, Users, Clock, Award } from "lucide-react";
 
 const stats = [
   { icon: Users, value: 500, suffix: "+", label: "Zufriedene Kunden", sub: "Und täglich mehr" },
-  { icon: Award, value: 1500, suffix: "+", label: "Aufbereitete Fahrzeuge", sub: "Porsche, AMG, Ferrari & mehr" },
+  { icon: Award, value: 1500, suffix: "+", label: "Aufbereitete Fahrzeuge", sub: "Jeep Trackhawk & Performance SUVs" },
   { icon: Star, value: 4.9, suffix: "★", label: "Google Bewertung", sub: "240+ verifizierte Reviews", decimal: 1 },
   { icon: Clock, value: 10, suffix: "+", label: "Jahre Erfahrung", sub: "Handwerk seit 2014" },
 ];

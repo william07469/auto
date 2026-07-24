@@ -46,8 +46,7 @@ export function AdminGallery() {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("gallery_items")
+    const { data, error } = await (supabase.from("gallery_items") as any)
       .select("*")
       .order("sort_order");
     if (error) toast.error(error.message);
@@ -99,8 +98,7 @@ export function AdminGallery() {
 
       const { data } = supabase.storage.from("gallery").getPublicUrl(path);
       const colName = field === "before" ? "before_url" : "after_url";
-      const { error } = await supabase
-        .from("gallery_items")
+      const { error } = await (supabase.from("gallery_items") as any)
         .update({ [colName]: data.publicUrl })
         .eq("id", itemId);
       if (error) throw error;
@@ -123,7 +121,7 @@ export function AdminGallery() {
       return toast.error("Titel sowie Vorher- und Nachher-Bild erforderlich");
     }
     setBusy((b) => ({ ...b, add: true }));
-    const { error } = await supabase.from("gallery_items").insert({
+    const { error } = await (supabase.from("gallery_items") as any).insert({
       ...draft,
       description: draft.description || null,
       is_active: true,
@@ -139,15 +137,13 @@ export function AdminGallery() {
 
   const update = async (it: Item) => {
     setBusy((b) => ({ ...b, [it.id]: true }));
-    const { error } = await supabase
-      .from("gallery_items")
+    const { error } = await (supabase.from("gallery_items") as any)
       .update({
         title: it.title,
         category: it.category,
         description: it.description || null,
         before_url: it.before_url,
         after_url: it.after_url,
-        sort_order: it.sort_order,
         is_active: it.is_active,
       })
       .eq("id", it.id);
