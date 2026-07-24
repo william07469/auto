@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import { TIME_SLOTS } from "./bookingData";
-import { Check } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Check, AlertCircle } from "lucide-react";
 import gsap from "gsap";
 
 interface DateStepProps {
@@ -14,28 +14,24 @@ interface TimeStepProps {
   onSelectTimeSlot: (slot: string) => void;
 }
 
-// ─── Step 4: Choose Date ───────────────────────────────────────────────────────
-
+// ─── Date Step ───────────────────────────────────────────────────────────────
 export const DateStep: React.FC<DateStepProps> = ({ selectedDate, onSelectDate }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const availableDates = useMemo(() => {
-    const list: { iso: string; dayName: string; dayNum: number; monthName: string; isWeekend: boolean }[] = [];
+    const list: { iso: string; dayName: string; dayNum: number; monthName: string; monthShort: string; isWeekend: boolean }[] = [];
     const today = new Date();
-
     for (let i = 1; i <= 28; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
-
       const iso = d.toISOString().split("T")[0];
       const dayName = d.toLocaleDateString("en-GB", { weekday: "short" });
       const dayNum = d.getDate();
       const monthName = d.toLocaleDateString("en-GB", { month: "long" });
+      const monthShort = d.toLocaleDateString("en-GB", { month: "short" });
       const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-
-      list.push({ iso, dayName, dayNum, monthName, isWeekend });
+      list.push({ iso, dayName, dayNum, monthName, monthShort, isWeekend });
     }
-
     return list;
   }, []);
 
@@ -49,149 +45,70 @@ export const DateStep: React.FC<DateStepProps> = ({ selectedDate, onSelectDate }
   }, [availableDates]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    gsap.fromTo(
-      containerRef.current.children,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.08, ease: "power3.out" }
-    );
+    if (containerRef.current) {
+      gsap.fromTo(
+        Array.from(containerRef.current.children),
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }
+      );
+    }
   }, []);
 
   const selectedInfo = availableDates.find((d) => d.iso === selectedDate);
 
   return (
-    <div ref={containerRef} style={{ maxWidth: 840, margin: "0 auto" }}>
-      {/* Header */}
-      <div style={{ marginBottom: "3.5rem" }}>
-        <p
-          style={{
-            fontSize: "0.6rem",
-            letterSpacing: "0.38em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.3)",
-            fontWeight: 500,
-            marginBottom: "1rem",
-          }}
-        >
-          Step 4 — Date Selection
-        </p>
-        <h2
-          style={{
-            fontSize: "clamp(2rem, 5vw, 3.25rem)",
-            fontWeight: 300,
-            letterSpacing: "-0.04em",
-            color: "#ffffff",
-            lineHeight: 1,
-            marginBottom: "1rem",
-          }}
-        >
-          {selectedDate && selectedInfo ? (
-            <>
-              {selectedInfo.dayName}, {selectedInfo.dayNum} {selectedInfo.monthName}
-            </>
-          ) : (
-            "Select an appointment date"
-          )}
-        </h2>
-        <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.7, maxWidth: 420 }}>
-          Choose your preferred service date. Time slots are selected on the next step.
+    <div ref={containerRef} className="space-y-10 max-w-4xl mx-auto">
+      {/* Step header */}
+      <div className="space-y-2">
+        <p className="text-eyebrow">Appointment Date</p>
+        <h3 className="text-display text-3xl sm:text-4xl text-white leading-[0.95]">
+          {selectedDate
+            ? <>
+                <span className="text-white/70">{selectedInfo?.dayName}</span>
+                {", "}
+                {selectedInfo?.dayNum} {selectedInfo?.monthName}
+              </>
+            : "Choose a date"}
+        </h3>
+        <p className="text-[var(--color-muted-foreground)] text-sm max-w-md mt-3">
+          All available dates are shown below. Weekends are accepted.
         </p>
       </div>
 
-      {/* Calendar Strip */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+      {/* Calendar by month */}
+      <div className="space-y-8">
         {grouped.map(([month, days]) => (
           <div key={month}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                marginBottom: "1.25rem",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "0.65rem",
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.3)",
-                  fontFamily: "monospace",
-                }}
-              >
-                {month}
-              </span>
-              <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-[9px] uppercase tracking-[0.3em] text-white/30 font-medium">{month}</span>
+              <div className="flex-1 h-px bg-white/6" />
             </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))",
-                gap: "0.6rem",
-              }}
-            >
+            <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-none">
               {days.map((item) => {
                 const isSelected = selectedDate === item.iso;
-
                 return (
                   <button
                     key={item.iso}
                     type="button"
                     id={`date-${item.iso}`}
                     onClick={() => onSelectDate(item.iso)}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "1rem 0.5rem",
-                      borderRadius: 14,
-                      border: isSelected
-                        ? "1px solid rgba(96,165,250,0.8)"
-                        : "1px solid rgba(255,255,255,0.07)",
-                      background: isSelected
-                        ? "rgba(96,165,250,0.15)"
-                        : "rgba(255,255,255,0.02)",
-                      boxShadow: isSelected ? "0 0 25px rgba(96,165,250,0.2)" : "none",
-                      cursor: "pointer",
-                      transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isSelected) {
-                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)";
-                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isSelected) {
-                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)";
-                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
-                      }
-                    }}
+                    className={`flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-xl border transition-all duration-300 ${
+                      isSelected
+                        ? "bg-white border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                        : "bg-white/[0.02] border-white/8 hover:border-white/20 hover:bg-white/[0.05]"
+                    }`}
                   >
-                    <span
-                      style={{
-                        fontSize: "0.55rem",
-                        letterSpacing: "0.2em",
-                        textTransform: "uppercase",
-                        color: isSelected ? "rgba(96,165,250,0.9)" : "rgba(255,255,255,0.3)",
-                        marginBottom: "0.2rem",
-                      }}
-                    >
+                    <span className={`text-[9px] font-medium uppercase tracking-[0.15em] ${isSelected ? "text-black/60" : "text-white/30"}`}>
                       {item.dayName}
                     </span>
-                    <span
-                      style={{
-                        fontSize: "1.35rem",
-                        fontWeight: 600,
-                        fontFamily: "monospace",
-                        color: isSelected ? "#ffffff" : "rgba(255,255,255,0.75)",
-                        lineHeight: 1,
-                      }}
-                    >
+                    <span className={`text-2xl font-bold font-mono my-0.5 ${isSelected ? "text-black" : "text-white/70"}`}>
                       {item.dayNum}
                     </span>
+                    {item.isWeekend && (
+                      <span className={`text-[7px] font-medium uppercase tracking-wide ${isSelected ? "text-black/40" : "text-white/25"}`}>
+                        WE
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -199,195 +116,110 @@ export const DateStep: React.FC<DateStepProps> = ({ selectedDate, onSelectDate }
           </div>
         ))}
       </div>
+
+      {selectedDate && (
+        <div className="flex items-center gap-3 text-xs text-white/30">
+          <CalendarIcon className="w-3.5 h-3.5 text-white/40" />
+          <span>Selected: <span className="text-white/50 font-mono">{selectedDate}</span></span>
+        </div>
+      )}
     </div>
   );
 };
 
-// ─── Step 5: Choose Time ───────────────────────────────────────────────────────
-
+// ─── Time Step ────────────────────────────────────────────────────────────────
 export const TimeStep: React.FC<TimeStepProps> = ({ selectedDate, selectedTimeSlot, onSelectTimeSlot }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    gsap.fromTo(
-      containerRef.current.children,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.08, ease: "power3.out" }
-    );
+    if (containerRef.current) {
+      gsap.fromTo(
+        Array.from(containerRef.current.children),
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }
+      );
+    }
   }, []);
 
   const periodOrder = ["Morning", "Afternoon", "Evening"];
-  const grouped = periodOrder
-    .map((period) => ({
-      period,
-      slots: TIME_SLOTS.filter((ts) => ts.period === period),
-    }))
-    .filter((g) => g.slots.length > 0);
+  const grouped = periodOrder.map((period) => ({
+    period,
+    slots: TIME_SLOTS.filter((ts) => ts.period === period),
+  })).filter((g) => g.slots.length > 0);
 
   return (
-    <div ref={containerRef} style={{ maxWidth: 840, margin: "0 auto" }}>
-      {/* Header */}
-      <div style={{ marginBottom: "3.5rem" }}>
-        <p
-          style={{
-            fontSize: "0.6rem",
-            letterSpacing: "0.38em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.3)",
-            fontWeight: 500,
-            marginBottom: "1rem",
-          }}
-        >
-          Step 5 — Time Slot
-        </p>
-        <h2
-          style={{
-            fontSize: "clamp(2rem, 5vw, 3.25rem)",
-            fontWeight: 300,
-            letterSpacing: "-0.04em",
-            color: "#ffffff",
-            lineHeight: 1,
-            marginBottom: "1rem",
-          }}
-        >
-          {selectedTimeSlot ? `Drop-off at ${selectedTimeSlot}` : "Choose drop-off time"}
-        </h2>
-        <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.7, maxWidth: 420 }}>
-          {selectedDate ? (
-            <>Available arrival times for <span style={{ color: "#fff", fontFamily: "monospace" }}>{selectedDate}</span>.</>
-          ) : (
-            "Please select a date on step 4 first."
-          )}
+    <div ref={containerRef} className="space-y-10 max-w-4xl mx-auto">
+      {/* Step header */}
+      <div className="space-y-2">
+        <p className="text-eyebrow">Drop-off Time</p>
+        <h3 className="text-display text-3xl sm:text-4xl text-white leading-[0.95]">
+          {selectedTimeSlot
+            ? <><span className="text-white/70">{selectedTimeSlot}</span></>
+            : "Choose a time slot"}
+        </h3>
+        <p className="text-[var(--color-muted-foreground)] text-sm max-w-md mt-3">
+          {selectedDate
+            ? <>Available slots for <span className="text-white/70 font-mono">{selectedDate}</span></>
+            : "Please go back and select a date first."}
         </p>
       </div>
 
-      {/* Time Slots Grid */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
-        {grouped.map(({ period, slots }) => (
-          <div key={period}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                marginBottom: "1.25rem",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "0.65rem",
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.3)",
-                  fontFamily: "monospace",
-                }}
-              >
-                {period}
-              </span>
-              <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-                gap: "1rem",
-              }}
-            >
-              {slots.map((ts) => {
-                const isSelected = selectedTimeSlot === ts.slot;
-
-                return (
-                  <button
-                    key={ts.slot}
-                    type="button"
-                    id={`time-${ts.slot}`}
-                    disabled={!ts.available}
-                    onClick={() => ts.available && onSelectTimeSlot(ts.slot)}
-                    style={{
-                      position: "relative",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1.25rem 1.5rem",
-                      borderRadius: 16,
-                      border: !ts.available
-                        ? "1px solid rgba(255,255,255,0.04)"
-                        : isSelected
-                        ? "1px solid rgba(96,165,250,0.8)"
-                        : "1px solid rgba(255,255,255,0.07)",
-                      background: !ts.available
-                        ? "rgba(255,255,255,0.01)"
-                        : isSelected
-                        ? "rgba(96,165,250,0.12)"
-                        : "rgba(255,255,255,0.02)",
-                      boxShadow: isSelected ? "0 0 25px rgba(96,165,250,0.15)" : "none",
-                      opacity: ts.available ? 1 : 0.25,
-                      cursor: ts.available ? "pointer" : "not-allowed",
-                      transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (ts.available && !isSelected) {
-                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)";
-                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (ts.available && !isSelected) {
-                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)";
-                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
-                      }
-                    }}
-                  >
-                    <div>
-                      <span
-                        style={{
-                          fontSize: "1.35rem",
-                          fontWeight: 600,
-                          fontFamily: "monospace",
-                          color: isSelected ? "#ffffff" : ts.available ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.2)",
-                          letterSpacing: "-0.02em",
-                          display: "block",
-                        }}
-                      >
-                        {ts.slot}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.55rem",
-                          letterSpacing: "0.15em",
-                          textTransform: "uppercase",
-                          color: isSelected ? "rgba(96,165,250,0.8)" : "rgba(255,255,255,0.25)",
-                        }}
-                      >
-                        {ts.available ? "Available" : "Booked"}
-                      </span>
-                    </div>
-
-                    <div
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: isSelected ? "1px solid rgba(96,165,250,0.8)" : "1px solid rgba(255,255,255,0.12)",
-                        background: isSelected ? "rgba(96,165,250,0.2)" : "transparent",
-                      }}
+      {!selectedDate ? (
+        <div className="flex items-center gap-3 p-5 rounded-xl bg-white/[0.03] border border-white/8 text-white/40 text-sm">
+          <AlertCircle className="w-4 h-4 text-white/30 shrink-0" />
+          <span>Select a date on the previous step to see available times.</span>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {grouped.map(({ period, slots }) => (
+            <div key={period}>
+              <div className="flex items-center gap-3 mb-4">
+                <Clock className="w-3.5 h-3.5 text-white/20" />
+                <span className="text-[9px] uppercase tracking-[0.3em] text-white/30">{period}</span>
+                <div className="flex-1 h-px bg-white/6" />
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {slots.map((ts) => {
+                  const isSelected = selectedTimeSlot === ts.slot;
+                  return (
+                    <button
+                      key={ts.slot}
+                      type="button"
+                      id={`time-${ts.slot}`}
+                      disabled={!ts.available}
+                      onClick={() => ts.available && onSelectTimeSlot(ts.slot)}
+                      className={`relative p-5 rounded-xl border text-left transition-all duration-300 ${
+                        !ts.available
+                          ? "opacity-25 cursor-not-allowed bg-white/[0.01] border-white/5"
+                          : isSelected
+                          ? "bg-white/[0.08] border-white/40 shadow-[0_0_25px_rgba(255,255,255,0.08)] ring-1 ring-white/20"
+                          : "bg-white/[0.02] border-white/8 hover:border-white/18 hover:bg-white/[0.04] cursor-pointer"
+                      }`}
                     >
-                      {isSelected && <Check size={10} color="rgba(96,165,250,1)" strokeWidth={3} />}
-                    </div>
-                  </button>
-                );
-              })}
+                      {isSelected && (
+                        <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-white flex items-center justify-center">
+                          <Check className="w-2.5 h-2.5 text-black stroke-[3]" />
+                        </div>
+                      )}
+                      <div className={`text-2xl font-bold font-mono tracking-tight transition-colors ${isSelected ? "text-white" : ts.available ? "text-white/65" : "text-white/20"}`}>
+                        {ts.slot}
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className={`text-[9px] uppercase tracking-[0.2em] transition-colors ${isSelected ? "text-white/60" : "text-white/25"}`}>
+                          {ts.available ? "Available" : "Booked"}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
+// Legacy export
 export const DateTimeStep = DateStep;

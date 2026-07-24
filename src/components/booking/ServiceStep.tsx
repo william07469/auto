@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { ServiceId } from "./types";
+import { ServiceId, ServiceOption } from "./types";
 import { SERVICES_DATA } from "./bookingData";
-import { Check } from "lucide-react";
+import {
+  Sparkles, ShieldCheck, Car, Armchair, Star, Check, ArrowRight
+} from "lucide-react";
 import gsap from "gsap";
 
 interface ServiceStepProps {
@@ -9,46 +11,46 @@ interface ServiceStepProps {
   onSelectService: (serviceId: ServiceId) => void;
 }
 
+const ICON_MAP: Record<string, React.ReactNode> = {
+  Sparkles: <Sparkles className="w-5 h-5" />,
+  ShieldCheck: <ShieldCheck className="w-5 h-5" />,
+  Car: <Car className="w-5 h-5" />,
+  Armchair: <Armchair className="w-5 h-5" />,
+  Star: <Star className="w-5 h-5" />,
+  Gauge: <Sparkles className="w-5 h-5" />,
+  Wrench: <ArrowRight className="w-5 h-5" />,
+};
+
 export const ServiceStep: React.FC<ServiceStepProps> = ({ selectedServiceId, onSelectService }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    const items = containerRef.current.querySelectorAll(".service-row");
-    gsap.fromTo(items,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: "power3.out", delay: 0.1 }
-    );
+    if (containerRef.current) {
+      const cards = containerRef.current.querySelectorAll(".service-card");
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 28, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.55, stagger: 0.07, ease: "power3.out" }
+      );
+    }
   }, []);
 
   return (
-    <div ref={containerRef} style={{ maxWidth: 760, margin: "0 auto" }}>
-      {/* Heading */}
-      <div style={{ marginBottom: "3.5rem" }}>
-        <p style={{
-          fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase",
-          color: "rgba(255,255,255,0.3)", fontWeight: 500, marginBottom: "1rem"
-        }}>
-          Step 1 — Service
-        </p>
-        <h2 style={{
-          fontSize: "clamp(2rem, 5vw, 3.25rem)",
-          fontWeight: 300,
-          letterSpacing: "-0.04em",
-          color: "#ffffff",
-          lineHeight: 1,
-          marginBottom: "1rem"
-        }}>
-          What does your vehicle<br />need today?
-        </h2>
-        <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.7, maxWidth: 380 }}>
-          Select the primary treatment to get started. Add-ons are configured in the next step.
+    <div ref={containerRef} className="space-y-10 max-w-4xl mx-auto">
+      {/* Step header */}
+      <div className="space-y-2">
+        <p className="text-eyebrow">Choose Your Service</p>
+        <h3 className="text-display text-3xl sm:text-4xl text-white leading-[0.95]">
+          What does your vehicle need?
+        </h3>
+        <p className="text-[var(--color-muted-foreground)] text-sm max-w-md mt-3">
+          Select the primary treatment. Package options and add-ons will be configured in the next steps.
         </p>
       </div>
 
-      {/* Service list */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-        {SERVICES_DATA.map((service, idx) => {
+      {/* Service cards grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {SERVICES_DATA.map((service: ServiceOption) => {
           const isSelected = selectedServiceId === service.id;
           return (
             <button
@@ -56,103 +58,78 @@ export const ServiceStep: React.FC<ServiceStepProps> = ({ selectedServiceId, onS
               type="button"
               id={`service-${service.id}`}
               onClick={() => onSelectService(service.id)}
-              className="service-row"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "2rem",
-                padding: "1.75rem 0",
-                background: "transparent",
-                border: "none",
-                borderBottom: "1px solid rgba(255,255,255,0.07)",
-                borderTop: idx === 0 ? "1px solid rgba(255,255,255,0.07)" : "none",
-                cursor: "pointer",
-                textAlign: "left",
-                width: "100%",
-                transition: "all 0.25s ease",
-              }}
-              onMouseEnter={(e) => {
-                if (!isSelected) {
-                  (e.currentTarget as HTMLElement).style.paddingLeft = "0.75rem";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isSelected) {
-                  (e.currentTarget as HTMLElement).style.paddingLeft = "0";
-                }
-              }}
+              className={`service-card group relative text-left p-6 rounded-2xl cursor-pointer transition-all duration-400 border flex flex-col justify-between min-h-[220px] ${
+                isSelected
+                  ? "bg-white/[0.06] border-white/40 shadow-[0_0_40px_rgba(255,255,255,0.08)] ring-1 ring-white/20"
+                  : "bg-white/[0.02] border-white/8 hover:border-white/16 hover:bg-white/[0.04]"
+              }`}
             >
-              {/* Left: number + name */}
-              <div style={{ display: "flex", alignItems: "baseline", gap: "1.5rem", flex: 1 }}>
-                <span style={{
-                  fontSize: "0.65rem", fontFamily: "monospace",
-                  color: isSelected ? "rgba(96,165,250,0.7)" : "rgba(255,255,255,0.2)",
-                  minWidth: 20, transition: "color 0.25s",
-                }}>
-                  0{idx + 1}
-                </span>
+              {/* Badge */}
+              {service.badge && (
+                <div className="absolute top-4 right-4">
+                  <span
+                    className={`text-[9px] font-semibold tracking-[0.2em] uppercase px-2.5 py-1 rounded-full border ${
+                      service.popular
+                        ? "bg-white/10 border-white/25 text-white/70"
+                        : "bg-white/5 border-white/12 text-white/40"
+                    }`}
+                  >
+                    {service.badge}
+                  </span>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                {/* Icon */}
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 border ${
+                    isSelected
+                      ? "bg-white/10 border-white/25 text-white"
+                      : "bg-white/5 border-white/8 text-white/40 group-hover:text-white/60 group-hover:border-white/16"
+                  }`}
+                >
+                  {ICON_MAP[service.iconName]}
+                </div>
+
+                {/* Text */}
                 <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.3rem" }}>
-                    <h3 style={{
-                      fontSize: "1.1rem", fontWeight: isSelected ? 500 : 400,
-                      color: isSelected ? "#fff" : "rgba(255,255,255,0.65)",
-                      letterSpacing: "-0.01em", transition: "all 0.25s",
-                    }}>
-                      {service.name}
-                    </h3>
-                    {service.badge && (
-                      <span style={{
-                        fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase",
-                        padding: "0.2rem 0.6rem", borderRadius: 4,
-                        background: "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        color: "rgba(255,255,255,0.35)",
-                      }}>
-                        {service.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p style={{
-                    fontSize: "0.75rem", color: "rgba(255,255,255,0.3)",
-                    lineHeight: 1.5, transition: "color 0.25s",
-                  }}>
+                  <h4 className={`text-base font-semibold tracking-tight transition-colors leading-tight ${isSelected ? "text-white" : "text-white/80 group-hover:text-white"}`}>
+                    {service.name}
+                  </h4>
+                  <p className={`text-[11px] mt-1 leading-snug transition-colors ${isSelected ? "text-white/60" : "text-white/35 group-hover:text-white/50"}`}>
                     {service.tagline}
                   </p>
                 </div>
+
+                <p className="text-[11px] text-white/35 leading-relaxed line-clamp-2 group-hover:text-white/45 transition-colors">
+                  {service.description}
+                </p>
               </div>
 
-              {/* Right: duration + price + check */}
-              <div style={{ display: "flex", alignItems: "center", gap: "2rem", shrink: 0 } as any}>
-                <span style={{
-                  fontSize: "0.7rem", color: "rgba(255,255,255,0.22)",
-                  display: "none",
-                }} className="hidden sm:block">
-                  {service.duration}
-                </span>
-                <div style={{ textAlign: "right" }}>
-                  <span style={{
-                    display: "block", fontSize: "0.55rem", letterSpacing: "0.2em",
-                    textTransform: "uppercase", color: "rgba(255,255,255,0.25)", marginBottom: "0.15rem"
-                  }}>from</span>
-                  <span style={{
-                    fontSize: "1.1rem", fontWeight: 600, fontFamily: "monospace",
-                    color: isSelected ? "#fff" : "rgba(255,255,255,0.5)",
-                    transition: "color 0.25s",
-                  }}>
+              {/* Footer */}
+              <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/6">
+                <div>
+                  <span className="text-[9px] uppercase tracking-[0.2em] text-white/25 block">from</span>
+                  <span className={`text-lg font-bold font-mono tracking-tight transition-colors ${isSelected ? "text-white" : "text-white/60 group-hover:text-white/80"}`}>
                     €{service.startingPrice}
                   </span>
                 </div>
-                <div style={{
-                  width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  border: isSelected ? "1px solid rgba(96,165,250,0.6)" : "1px solid rgba(255,255,255,0.1)",
-                  background: isSelected ? "rgba(96,165,250,0.12)" : "transparent",
-                  transition: "all 0.3s",
-                }}>
-                  {isSelected
-                    ? <Check size={13} color="rgba(96,165,250,1)" strokeWidth={2.5} />
-                    : <div style={{ width: 5, height: 5, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />}
+                <div
+                  className={`flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] transition-all ${
+                    isSelected ? "text-white" : "text-white/25 group-hover:text-white/50"
+                  }`}
+                >
+                  {isSelected ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Selected</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Select</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </>
+                  )}
                 </div>
               </div>
             </button>
@@ -160,17 +137,13 @@ export const ServiceStep: React.FC<ServiceStepProps> = ({ selectedServiceId, onS
         })}
       </div>
 
-      {/* Selected duration note */}
+      {/* Duration hint */}
       {selectedServiceId && (() => {
         const s = SERVICES_DATA.find(x => x.id === selectedServiceId);
         return s ? (
-          <div style={{
-            marginTop: "2rem", display: "flex", alignItems: "center", gap: "0.75rem",
-          }}>
-            <div style={{ width: 32, height: 1, background: "rgba(255,255,255,0.12)" }} />
-            <span style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>
-              Estimated time: <span style={{ color: "rgba(255,255,255,0.5)", fontFamily: "monospace" }}>{s.duration}</span>
-            </span>
+          <div className="flex items-center gap-3 text-xs text-white/30">
+            <div className="w-4 h-px bg-white/10" />
+            <span>Estimated duration: <span className="text-white/50 font-mono">{s.duration}</span></span>
           </div>
         ) : null;
       })()}

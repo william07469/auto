@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { Check } from "lucide-react";
 import gsap from "gsap";
 
 interface StepIndicatorProps {
@@ -8,133 +9,126 @@ interface StepIndicatorProps {
 }
 
 const STEPS = [
-  { id: 1, label: "Service" },
-  { id: 2, label: "Vehicle" },
-  { id: 3, label: "Add-ons" },
-  { id: 4, label: "Date" },
-  { id: 5, label: "Time" },
-  { id: 6, label: "Contact" },
-  { id: 7, label: "Summary" },
+  { id: 1, title: "Service" },
+  { id: 2, title: "Vehicle" },
+  { id: 3, title: "Add-ons" },
+  { id: 4, title: "Date" },
+  { id: 5, title: "Time" },
+  { id: 6, title: "Contact" },
+  { id: 7, title: "Summary" },
 ];
 
 export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, totalSteps, onStepClick }) => {
-  const lineRef = useRef<HTMLDivElement>(null);
-  const percentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const percentage = Math.round(((currentStep - 1) / (totalSteps - 1)) * 100);
 
   useEffect(() => {
-    if (lineRef.current) {
-      gsap.to(lineRef.current, {
+    if (progressBarRef.current) {
+      gsap.to(progressBarRef.current, {
         width: `${percentage}%`,
-        duration: 0.6,
+        duration: 0.65,
         ease: "power3.out",
       });
     }
   }, [percentage]);
 
   return (
-    <div style={{ maxWidth: 840, margin: "0 auto 4rem" }}>
-      {/* Top Meta info */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "1rem" }}>
+    <div className="w-full max-w-4xl mx-auto mb-14">
+      {/* Header */}
+      <div className="flex items-end justify-between mb-5">
+        <div>
+          <p
+            style={{
+              fontSize: "0.6rem",
+              letterSpacing: "0.35em",
+              textTransform: "uppercase",
+              fontWeight: 500,
+              color: "var(--color-muted-foreground)",
+            }}
+            className="mb-1"
+          >
+            WV Detailing · Book Now
+          </p>
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-white leading-none">
+            {STEPS[currentStep - 1]?.title}
+          </h2>
+        </div>
         <span
           style={{
-            fontSize: "0.6rem",
-            letterSpacing: "0.35em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.25)",
-            fontFamily: "monospace",
-          }}
-        >
-          {STEPS[currentStep - 1]?.label}
-        </span>
-        <span
-          style={{
-            fontSize: "0.6rem",
+            fontSize: "0.65rem",
             letterSpacing: "0.2em",
             fontFamily: "monospace",
-            color: "rgba(96,165,250,0.8)",
           }}
+          className="text-white/50 pb-0.5"
         >
-          0{currentStep} / 0{totalSteps}
+          {currentStep} / {totalSteps}
         </span>
       </div>
 
-      {/* Progress Track */}
-      <div
-        style={{
-          position: "relative",
-          height: 1,
-          background: "rgba(255,255,255,0.08)",
-          borderRadius: 99,
-          marginBottom: "1.5rem",
-        }}
-      >
+      {/* Progress track */}
+      <div className="relative h-px w-full bg-white/10 mb-7">
         <div
-          ref={lineRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            height: "100%",
-            width: "0%",
-            background: "rgb(96,165,250)",
-            boxShadow: "0 0 12px rgba(96,165,250,0.6)",
-            borderRadius: 99,
-          }}
+          ref={progressBarRef}
+          className="absolute left-0 top-0 h-full bg-white rounded-full"
+          style={{ width: "0%" }}
         />
       </div>
 
-      {/* Minimal Dots & Labels */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        {STEPS.map((s) => {
-          const isCompleted = currentStep > s.id;
-          const isCurrent = currentStep === s.id;
+      {/* Step dots */}
+      <div className="flex items-start justify-between">
+        {STEPS.map((step) => {
+          const isCompleted = currentStep > step.id;
+          const isCurrent = currentStep === step.id;
 
           return (
             <button
-              key={s.id}
+              key={step.id}
               type="button"
-              onClick={() => isCompleted && onStepClick(s.id)}
+              onClick={() => isCompleted && onStepClick(step.id)}
               disabled={!isCompleted}
-              style={{
-                background: "none",
-                border: "none",
-                padding: 0,
-                cursor: isCompleted ? "pointer" : "default",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "0.4rem",
-              }}
+              className="group flex flex-col items-center gap-2 transition-all duration-300"
+              style={{ cursor: isCompleted ? "pointer" : "default" }}
             >
               <div
+                className="relative flex items-center justify-center transition-all duration-500"
                 style={{
-                  width: isCurrent ? 8 : isCompleted ? 6 : 4,
-                  height: isCurrent ? 8 : isCompleted ? 6 : 4,
+                  width: isCurrent ? 28 : isCompleted ? 18 : 14,
+                  height: isCurrent ? 28 : isCompleted ? 18 : 14,
                   borderRadius: "50%",
                   background: isCurrent
-                    ? "rgb(96,165,250)"
+                    ? "rgba(255,255,255,1)"
                     : isCompleted
-                    ? "rgba(96,165,250,0.4)"
-                    : "rgba(255,255,255,0.12)",
-                  boxShadow: isCurrent ? "0 0 12px rgba(96,165,250,0.8)" : "none",
-                  transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                    ? "rgba(255,255,255,0.12)"
+                    : "rgba(255,255,255,0.04)",
+                  border: isCurrent
+                    ? "none"
+                    : isCompleted
+                    ? "1px solid rgba(255,255,255,0.35)"
+                    : "1px solid rgba(255,255,255,0.10)",
+                  boxShadow: isCurrent ? "0 0 18px rgba(255,255,255,0.25)" : "none",
                 }}
-              />
+              >
+                {isCurrent ? (
+                  <span style={{ fontSize: 9, fontWeight: 700, color: "#000" }}>{step.id}</span>
+                ) : isCompleted ? (
+                  <Check style={{ width: 9, height: 9, color: "rgba(255,255,255,0.8)", strokeWidth: 3 }} />
+                ) : null}
+              </div>
               <span
+                className="hidden sm:block transition-colors duration-300"
                 style={{
                   fontSize: "0.55rem",
-                  letterSpacing: "0.2em",
+                  letterSpacing: "0.22em",
                   textTransform: "uppercase",
+                  fontWeight: 500,
                   color: isCurrent
-                    ? "#ffffff"
+                    ? "rgba(255,255,255,0.9)"
                     : isCompleted
-                    ? "rgba(255,255,255,0.35)"
-                    : "rgba(255,255,255,0.1)",
-                  transition: "color 0.3s",
+                    ? "rgba(255,255,255,0.4)"
+                    : "rgba(255,255,255,0.16)",
                 }}
-                className="hidden sm:inline"
               >
-                {s.label}
+                {step.title}
               </span>
             </button>
           );

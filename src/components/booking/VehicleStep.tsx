@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { VehicleDetails, VehicleSizeCategory } from "./types";
 import { VEHICLE_SIZES } from "./bookingData";
-import { Check } from "lucide-react";
+import { Car, CarFront, Truck, Bus, Check } from "lucide-react";
 import gsap from "gsap";
 
 interface VehicleStepProps {
@@ -9,206 +9,141 @@ interface VehicleStepProps {
   onChangeVehicle: (updated: Partial<VehicleDetails>) => void;
 }
 
-const VEHICLE_IMAGES: Record<string, string> = {
-  coupe: "/vehicle-coupe.png",
-  sedan: "/vehicle-sedan.png",
-  suv: "/vehicle-suv.png",
-  van: "/vehicle-van.png",
+const SIZE_ICONS: Record<string, React.ReactNode> = {
+  coupe: <Car className="w-5 h-5" />,
+  sedan: <CarFront className="w-5 h-5" />,
+  suv: <Truck className="w-5 h-5" />,
+  van: <Bus className="w-5 h-5" />,
 };
+
+const POPULAR_MAKES = [
+  "Porsche", "BMW", "Mercedes-Benz", "Audi", "Volkswagen",
+  "Tesla", "Lamborghini", "Ferrari", "Land Rover", "Aston Martin",
+];
 
 export const VehicleStep: React.FC<VehicleStepProps> = ({ vehicle, onChangeVehicle }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    const cards = containerRef.current.querySelectorAll(".vehicle-card");
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 24, scale: 0.96 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.08, ease: "power3.out" }
-    );
+    if (containerRef.current) {
+      gsap.fromTo(
+        Array.from(containerRef.current.children),
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }
+      );
+    }
   }, []);
 
   return (
-    <div ref={containerRef} style={{ maxWidth: 900, margin: "0 auto" }}>
-      {/* Header */}
-      <div style={{ marginBottom: "3.5rem" }}>
-        <p
-          style={{
-            fontSize: "0.6rem",
-            letterSpacing: "0.38em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.3)",
-            fontWeight: 500,
-            marginBottom: "1rem",
-          }}
-        >
-          Step 2 — Vehicle Class
-        </p>
-        <h2
-          style={{
-            fontSize: "clamp(2rem, 5vw, 3.25rem)",
-            fontWeight: 300,
-            letterSpacing: "-0.04em",
-            color: "#ffffff",
-            lineHeight: 1,
-            marginBottom: "1rem",
-          }}
-        >
-          Select your vehicle
-        </h2>
-        <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.7, maxWidth: 420 }}>
-          Vehicle size determines treatment duration and pricing adjustment.
+    <div ref={containerRef} className="space-y-10 max-w-4xl mx-auto">
+      {/* Step header */}
+      <div className="space-y-2">
+        <p className="text-eyebrow">Vehicle Profile</p>
+        <h3 className="text-display text-3xl sm:text-4xl text-white leading-[0.95]">
+          Tell us about your car
+        </h3>
+        <p className="text-[var(--color-muted-foreground)] text-sm max-w-md mt-3">
+          This helps us prepare the right products and allocate the correct appointment time.
         </p>
       </div>
 
-      {/* Grid of Vehicle Image Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "1.25rem",
-        }}
-      >
-        {VEHICLE_SIZES.map((size) => {
-          const isSelected = vehicle.sizeCategory === size.id;
-          const imageSrc = VEHICLE_IMAGES[size.id];
-
-          return (
-            <button
-              key={size.id}
-              type="button"
-              id={`vehicle-${size.id}`}
-              onClick={() => onChangeVehicle({ sizeCategory: size.id as VehicleSizeCategory })}
-              className="vehicle-card group"
-              style={{
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-                textAlign: "left",
-                borderRadius: 20,
-                padding: "1.25rem",
-                background: isSelected
-                  ? "linear-gradient(180deg, rgba(96,165,250,0.08) 0%, rgba(8,8,12,0.95) 100%)"
-                  : "rgba(255,255,255,0.02)",
-                border: isSelected
-                  ? "1px solid rgba(96,165,250,0.5)"
-                  : "1px solid rgba(255,255,255,0.07)",
-                boxShadow: isSelected
-                  ? "0 0 35px rgba(96,165,250,0.15), inset 0 0 20px rgba(96,165,250,0.05)"
-                  : "0 10px 30px rgba(0,0,0,0.4)",
-                cursor: "pointer",
-                transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                overflow: "hidden",
-              }}
-              onMouseEnter={(e) => {
-                if (!isSelected) {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)";
-                  (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isSelected) {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)";
-                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                }
-              }}
-            >
-              {/* Check badge */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: 16,
-                  right: 16,
-                  width: 22,
-                  height: 22,
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: isSelected ? "1px solid rgba(96,165,250,0.8)" : "1px solid rgba(255,255,255,0.12)",
-                  background: isSelected ? "rgba(96,165,250,0.2)" : "rgba(255,255,255,0.03)",
-                  transition: "all 0.3s",
-                  zIndex: 2,
-                }}
+      {/* Vehicle size selector */}
+      <div className="space-y-3">
+        <label className="text-eyebrow block">Vehicle Class</label>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {VEHICLE_SIZES.map((size) => {
+            const isSelected = vehicle.sizeCategory === size.id;
+            return (
+              <button
+                key={size.id}
+                type="button"
+                id={`vehicle-size-${size.id}`}
+                onClick={() => onChangeVehicle({ sizeCategory: size.id as VehicleSizeCategory })}
+                className={`relative p-5 rounded-xl cursor-pointer transition-all duration-300 border text-left ${
+                  isSelected
+                    ? "bg-white/[0.06] border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.06)] ring-1 ring-white/20"
+                    : "bg-white/[0.02] border-white/8 hover:border-white/16 hover:bg-white/[0.04]"
+                }`}
               >
-                {isSelected && <Check size={11} color="rgba(96,165,250,1)" strokeWidth={3} />}
-              </div>
+                {/* Selection dot */}
+                {isSelected && (
+                  <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-white flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-black stroke-[3]" />
+                  </div>
+                )}
 
-              {/* Large vehicle image */}
-              <div
-                style={{
-                  width: "100%",
-                  aspectRatio: "16/10",
-                  borderRadius: 14,
-                  overflow: "hidden",
-                  marginBottom: "1.25rem",
-                  background: "#0a0a0e",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <img
-                  src={imageSrc}
-                  alt={size.label}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-                    filter: isSelected ? "brightness(1.1) contrast(1.05)" : "brightness(0.85) contrast(1)",
-                  }}
-                  className="group-hover:scale-105"
-                />
-              </div>
-
-              {/* Title & info */}
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <h3
-                    style={{
-                      fontSize: "1.1rem",
-                      fontWeight: isSelected ? 500 : 400,
-                      color: isSelected ? "#fff" : "rgba(255,255,255,0.75)",
-                      letterSpacing: "-0.01em",
-                      marginBottom: "0.25rem",
-                    }}
-                  >
-                    {size.label}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: "0.72rem",
-                      color: "rgba(255,255,255,0.32)",
-                      marginBottom: "0.75rem",
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {size.subtext}
-                  </p>
-                </div>
-
+                {/* Icon */}
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingTop: "0.75rem",
-                    borderTop: "1px solid rgba(255,255,255,0.06)",
-                    fontSize: "0.62rem",
-                    fontFamily: "monospace",
-                    letterSpacing: "0.1em",
-                    color: isSelected ? "rgba(96,165,250,0.8)" : "rgba(255,255,255,0.25)",
-                  }}
+                  className={`mb-3 w-9 h-9 rounded-lg flex items-center justify-center border transition-all ${
+                    isSelected
+                      ? "bg-white/10 border-white/25 text-white"
+                      : "bg-white/5 border-white/8 text-white/35"
+                  }`}
                 >
-                  <span>{size.example.split(",")[0]}</span>
-                  <span>{size.multiplier > 1.0 ? `+${Math.round((size.multiplier - 1) * 100)}%` : "Base"}</span>
+                  {SIZE_ICONS[size.id]}
                 </div>
-              </div>
-            </button>
-          );
-        })}
+
+                <h4 className={`text-sm font-semibold transition-colors ${isSelected ? "text-white" : "text-white/70"}`}>
+                  {size.label}
+                </h4>
+                <p className="text-[10px] text-white/30 mt-0.5 leading-snug">{size.subtext}</p>
+                <p className="text-[9px] text-white/20 mt-2 italic">{size.example}</p>
+                {size.multiplier > 1.0 && (
+                  <div className={`mt-3 text-[9px] font-mono uppercase tracking-wider transition-colors ${isSelected ? "text-white/60" : "text-white/25"}`}>
+                    +{Math.round((size.multiplier - 1) * 100)}% size adj.
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Vehicle details form */}
+      <div className="p-7 rounded-2xl bg-white/[0.02] border border-white/8 space-y-6">
+        {/* Quick-select make badges */}
+        <div>
+          <span className="text-[9px] uppercase tracking-[0.25em] text-white/25 block mb-3">Quick select make</span>
+          <div className="flex flex-wrap gap-2">
+            {POPULAR_MAKES.map((mk) => (
+              <button
+                key={mk}
+                type="button"
+                onClick={() => onChangeVehicle({ make: mk })}
+                className={`text-[10px] px-3 py-1.5 rounded-full border transition-all tracking-wide ${
+                  vehicle.make.toLowerCase() === mk.toLowerCase()
+                    ? "bg-white/10 border-white/35 text-white font-medium"
+                    : "bg-white/3 border-white/8 text-white/35 hover:border-white/16 hover:text-white/55"
+                }`}
+              >
+                {mk}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Form inputs */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {[
+            { key: "make", label: "Make", placeholder: "e.g. Porsche, BMW, Audi", type: "text" },
+            { key: "model", label: "Model", placeholder: "e.g. 911 Carrera, M5, Golf R", type: "text" },
+            { key: "year", label: "Year", placeholder: "e.g. 2024", type: "text" },
+            { key: "color", label: "Colour", placeholder: "e.g. Midnight Black Metallic", type: "text" },
+          ].map((field) => (
+            <div key={field.key} className="group">
+              <label className="block text-[9px] uppercase tracking-[0.25em] text-white/35 mb-2 transition-colors group-focus-within:text-white/70">
+                {field.label} *
+              </label>
+              <input
+                type={field.type}
+                value={vehicle[field.key as keyof VehicleDetails] as string}
+                onChange={(e) => onChangeVehicle({ [field.key]: e.target.value })}
+                placeholder={field.placeholder}
+                className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/35 focus:ring-1 focus:ring-white/15 transition-all"
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

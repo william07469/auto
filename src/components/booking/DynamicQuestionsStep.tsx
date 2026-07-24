@@ -51,7 +51,6 @@ export const DynamicQuestionsStep: React.FC<DynamicQuestionsStepProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {dynamicGroup.options.map((option) => {
           const isSelected = selectedSubOptionId === option.id;
-
           return (
             <button
               key={option.id}
@@ -60,17 +59,17 @@ export const DynamicQuestionsStep: React.FC<DynamicQuestionsStepProps> = ({
               onClick={() => onSelectSubOption(option.id)}
               className={`option-card group relative text-left p-6 rounded-2xl cursor-pointer transition-all duration-300 border flex flex-col justify-between min-h-[260px] ${
                 isSelected
-                  ? "bg-blue-950/20 border-blue-400/60 shadow-[0_0_40px_rgba(96,165,250,0.15)] ring-1 ring-blue-400/30"
+                  ? "bg-white/[0.06] border-white/40 shadow-[0_0_40px_rgba(255,255,255,0.07)] ring-1 ring-white/20"
                   : "bg-white/[0.02] border-white/8 hover:border-white/16 hover:bg-white/[0.04]"
               }`}
             >
-              {/* Recommended badge */}
+              {/* Recommended top line */}
               {option.recommended && (
-                <div className="absolute -top-px left-6 right-6 h-px bg-gradient-to-r from-transparent via-blue-400/60 to-transparent" />
+                <div className="absolute -top-px left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
               )}
               {option.recommended && (
                 <div className="absolute top-3 right-3">
-                  <span className="text-[8px] font-semibold tracking-[0.2em] uppercase px-2.5 py-1 rounded-full bg-blue-400/10 border border-blue-400/30 text-blue-300">
+                  <span className="text-[8px] font-semibold tracking-[0.2em] uppercase px-2.5 py-1 rounded-full bg-white/8 border border-white/20 text-white/50">
                     Recommended
                   </span>
                 </div>
@@ -85,7 +84,7 @@ export const DynamicQuestionsStep: React.FC<DynamicQuestionsStepProps> = ({
                   <div
                     className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center border transition-all mt-0.5 ${
                       isSelected
-                        ? "bg-blue-400 border-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.7)]"
+                        ? "bg-white border-white"
                         : "border-white/16 bg-transparent"
                     }`}
                   >
@@ -101,7 +100,7 @@ export const DynamicQuestionsStep: React.FC<DynamicQuestionsStepProps> = ({
                 <ul className="space-y-2">
                   {option.features.map((feat, idx) => (
                     <li key={idx} className="flex items-start gap-2.5 text-[10px] text-white/40 group-hover:text-white/50 transition-colors">
-                      <div className={`w-1 h-1 rounded-full mt-1.5 shrink-0 transition-colors ${isSelected ? "bg-blue-400" : "bg-white/20"}`} />
+                      <div className={`w-1 h-1 rounded-full mt-1.5 shrink-0 transition-colors ${isSelected ? "bg-white/70" : "bg-white/20"}`} />
                       {feat}
                     </li>
                   ))}
@@ -124,8 +123,8 @@ export const DynamicQuestionsStep: React.FC<DynamicQuestionsStepProps> = ({
 
       {/* Custom note for "other" service */}
       {selectedServiceId === "other" && (
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-blue-400/20">
-          <div className="flex items-center gap-2 text-blue-400/80 mb-3">
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/12">
+          <div className="flex items-center gap-2 text-white/50 mb-3">
             <Info className="w-4 h-4" />
             <h4 className="text-xs font-semibold uppercase tracking-[0.2em]">Special Requirements</h4>
           </div>
@@ -134,7 +133,7 @@ export const DynamicQuestionsStep: React.FC<DynamicQuestionsStepProps> = ({
             onChange={(e) => onChangeCustomNote(e.target.value)}
             rows={3}
             placeholder="Describe specific requirements (e.g. matte paint, colour sanding, fleet prep)…"
-            className="w-full bg-transparent border border-white/10 rounded-xl p-4 text-sm text-white placeholder-white/20 focus:outline-none focus:border-blue-400/50 focus:ring-1 focus:ring-blue-400/20 transition-all resize-none"
+            className="w-full bg-transparent border border-white/10 rounded-xl p-4 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/35 focus:ring-1 focus:ring-white/15 transition-all resize-none"
           />
         </div>
       )}
