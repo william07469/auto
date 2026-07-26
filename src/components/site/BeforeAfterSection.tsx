@@ -3,6 +3,8 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, MoveHorizontal } from "lucide-react";
 import wheelBefore from "@/assets/before_after/Jeep_wheel_with_brake_dust_202607260112.jpeg";
 import wheelAfter from "@/assets/before_after/Create_wheel_images_first_2K_202607260107.jpeg";
+import interiorDirtyBefore from "@/assets/before_after/White_Jeep_interior_dirty_2K_202607260134.jpeg";
+import interiorCleanAfter from "@/assets/before_after/Create_interior_image_202607261229.jpeg";
 import interiorBefore from "@/assets/before_after/interior_before.jpeg";
 import interiorAfter from "@/assets/before_after/interior_after.jpeg";
 import seatBefore from "@/assets/before_after/seat_before.jpeg";
@@ -23,30 +25,24 @@ const FALLBACK_CASES: Case[] = [
     label: "Interior Detail",
     desc: "Deep extraction cleaning of seats, carpets and dashboard. Stains, odours and embedded dirt completely removed from every surface.",
     pairs: [
-      { title: "Driver Seat",  before: seatBefore,          after: seatAfter },
-      { title: "Floor & Mats", before: floorBefore,         after: floorAfter },
-      { title: "Cabin",        before: interiorBefore, after: interiorAfter },
-    ],
-  },
-  {
-    label: "Wheel Detail",
-    desc: "Brake dust, iron fallout and road grime removed using specialist degreasers, soft brushes and pressure washing.",
-    pairs: [
-      { title: "Wheels & Tyres", before: wheelBefore, after: wheelAfter },
+      { title: "Driver Seat",  before: seatBefore,         after: seatAfter },
+      { title: "Floor & Mats", before: floorAfter,         after: floorBefore },
+      { title: "Cabin",        before: interiorDirtyBefore, after: interiorCleanAfter },
     ],
   },
   {
     label: "Exterior Detail",
-    desc: "Two-bucket hand wash, iron decontamination, clay bar treatment and ceramic spray sealant for a flawless protected finish.",
+    desc: "Two-bucket hand wash, clay bar decontamination, wheel cleaning and ceramic spray sealant for a flawless protected finish.",
     pairs: [
-      { title: "Ceramic Gloss", before: ceramicBefore, after: ceramicAfter },
+      { title: "Wheels & Tyres", before: wheelBefore, after: wheelAfter },
+      { title: "Bodywork",       before: interiorBefore, after: interiorAfter },
     ],
   },
   {
     label: "Paint Correction",
     desc: "Machine polishing removes swirl marks, scratches and oxidation — restoring optical clarity, depth and showroom gloss.",
     pairs: [
-      { title: "Swirl Removal", before: interiorBefore,  after: interiorAfter },
+      { title: "Swirl Removal", before: ceramicBefore, after: ceramicAfter },
     ],
   },
   {
