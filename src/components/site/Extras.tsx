@@ -2,14 +2,14 @@ import { motion } from "motion/react";
 import { Link } from "@tanstack/react-router";
 
 const extras = [
-  { title: "Cabrioverdeck Aufbereitung", desc: "Reinigung, Imprägnierung und Auffrischung des Verdecks.", price: "ab 89€" },
-  { title: "Tiefenreinigung Sitze", desc: "Nass-Trocken-Extraktion für Stoff- und Kindersitze.", price: "ab 49€" },
-  { title: "Kunstlederauffrischung", desc: "Farbauffrischung matter oder ausgeblichener Kunststoffe.", price: "ab 39€" },
-  { title: "Innenraumversiegelung", desc: "Langzeitschutz für Leder und Kunststoffe mit Nano-Coating.", price: "ab 149€" },
-  { title: "Scheibentönungspflege", desc: "Fachgerechte Pflege und Konservierung getönter Scheiben.", price: "ab 29€" },
-  { title: "Motorwäsche & Konservierung", desc: "Schonende Reinigung und Konservierung aller Komponenten.", price: "ab 79€" },
-  { title: "Alcantara Aufbereitung", desc: "Texturerhaltende Tiefenreinigung von Alcantara-Oberflächen.", price: "ab 59€" },
-  { title: "Hol- & Bringservice", desc: "Komfortabler Abhol- und Rückbringservice innerhalb 20 km.", price: "ab 49€" },
+  { title: "Scheinwerfer Aufbereitung", desc: "Kristallklare Sicht wiederhergestellt.", price: "90€" },
+  { title: "Tierhaarentfernung", desc: "Gründliche Fellentfernung.", price: "40€" },
+  { title: "Geruchsentfernung", desc: "Beseitigen Sie unerwünschte Gerüche.", price: "110€/Std." },
+  { title: "Innenraumversiegelung", desc: "Weist Flecken ab & schützt vor UV-Schäden.", price: "150€" },
+  { title: "Windschutzscheibenversiegelung", desc: "Regenabweisender Schutz.", price: "100€" },
+  { title: "Motorraumreinigung", desc: "Makelloser Motorraum.", price: "85€" },
+  { title: "Keramikversiegelung für Felgen", desc: "Langlebiger Felgenschutz.", price: "120€/Felge" },
+  { title: "Ausbesserungsservice", desc: "Steinschläge & tiefe Kratzer reparieren.", price: "ab 50€" },
 ];
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -33,7 +33,7 @@ export function Extras() {
               <span className="italic text-muted-foreground">Zusatzleistungen.</span>
             </h2>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
-              Jede Leistung ist einzeln oder als Ergänzung zu einem Paket buchbar.
+              Passen Sie Ihren Service mit unseren Spezialbehandlungen an.
             </p>
           </div>
           <Link

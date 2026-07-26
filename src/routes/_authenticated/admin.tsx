@@ -10,6 +10,7 @@ import { AdminVideos } from "@/components/admin/AdminVideos";
 import { AdminGallery } from "@/components/admin/AdminGallery";
 import { AdminTestimonials } from "@/components/admin/AdminTestimonials";
 import { AdminFaq } from "@/components/admin/AdminFaq";
+import { AdminBeforeAfter } from "@/components/admin/AdminBeforeAfter";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
@@ -73,6 +74,7 @@ function AdminPage() {
             <TabsTrigger value="gallery" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Galerie</TabsTrigger>
             <TabsTrigger value="testimonials" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Bewertungen</TabsTrigger>
             <TabsTrigger value="faq" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">FAQ</TabsTrigger>
+            <TabsTrigger value="beforeafter" className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-xs uppercase tracking-[0.2em]">Vorher/Nachher</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings" className="mt-8"><AdminBookings /></TabsContent>
           <TabsContent value="pricing" className="mt-8"><AdminPricing /></TabsContent>
@@ -80,6 +82,7 @@ function AdminPage() {
           <TabsContent value="gallery" className="mt-8"><AdminGallery /></TabsContent>
           <TabsContent value="testimonials" className="mt-8"><AdminTestimonials /></TabsContent>
           <TabsContent value="faq" className="mt-8"><AdminFaq /></TabsContent>
+          <TabsContent value="beforeafter" className="mt-8"><AdminBeforeAfter /></TabsContent>
         </Tabs>
       </main>
     </div>
