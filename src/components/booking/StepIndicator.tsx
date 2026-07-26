@@ -8,11 +8,13 @@ interface StepIndicatorProps {
 }
 
 const STEPS = [
-  { id: 1, label: "Service" },
-  { id: 2, label: "Package" },
-  { id: 3, label: "Extras" },
-  { id: 4, label: "Date & Time" },
-  { id: 5, label: "Summary" },
+  { id: 1, label: "Kategorie" },
+  { id: 2, label: "Leistung" },
+  { id: 3, label: "Fahrzeug" },
+  { id: 4, label: "Extras" },
+  { id: 5, label: "Termin" },
+  { id: 6, label: "Kontakt" },
+  { id: 7, label: "Übersicht" },
 ];
 
 export const StepIndicator: React.FC<StepIndicatorProps> = ({
@@ -35,13 +37,16 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
                 onClick={() => clickable && onStepClick(step.id)}
                 disabled={!clickable}
                 className="flex flex-col items-center gap-2"
-                style={{ cursor: clickable ? "pointer" : "default", minWidth: 0 }}
+                style={{
+                  cursor: clickable ? "pointer" : "default",
+                  minWidth: 0,
+                }}
               >
                 {/* Circle */}
                 <div
                   style={{
-                    width: 36,
-                    height: 36,
+                    width: 32,
+                    height: 32,
                     borderRadius: "50%",
                     border: active
                       ? "2px solid #fff"
@@ -58,12 +63,17 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
                 >
                   {done ? (
                     <Check
-                      style={{ width: 14, height: 14, color: "#000", strokeWidth: 2.5 }}
+                      style={{
+                        width: 13,
+                        height: 13,
+                        color: "#000",
+                        strokeWidth: 2.5,
+                      }}
                     />
                   ) : (
                     <span
                       style={{
-                        fontSize: "0.75rem",
+                        fontSize: "0.7rem",
                         fontWeight: 700,
                         color: active ? "#000" : "rgba(255,255,255,0.3)",
                         lineHeight: 1,
@@ -78,7 +88,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
                 <span
                   className="hidden sm:block text-center"
                   style={{
-                    fontSize: "0.62rem",
+                    fontSize: "0.58rem",
                     fontWeight: active ? 700 : 500,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",

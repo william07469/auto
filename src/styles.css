@@ -35,26 +35,26 @@
 
 :root {
   --radius: 0.5rem;
-  /* Luxury dark — deep navy with cool blue undertone */
-  --background: oklch(0.10 0.025 255);
+  /* Luxury dark — deep black with the faintest cool undertone */
+  --background: oklch(0.08 0.008 255);
   --foreground: oklch(0.97 0.006 255);
-  --card: oklch(0.13 0.025 255);
+  --card: oklch(0.10 0.008 255);
   --card-foreground: oklch(0.97 0.006 255);
-  --popover: oklch(0.13 0.025 255);
+  --popover: oklch(0.10 0.008 255);
   --popover-foreground: oklch(0.97 0.006 255);
   --primary: oklch(0.97 0.006 255);
-  --primary-foreground: oklch(0.10 0.025 255);
-  --secondary: oklch(0.18 0.025 255);
+  --primary-foreground: oklch(0.08 0.008 255);
+  --secondary: oklch(0.14 0.008 255);
   --secondary-foreground: oklch(0.97 0.006 255);
-  --muted: oklch(0.16 0.022 255);
-  --muted-foreground: oklch(0.58 0.018 255);
-  --accent: oklch(0.20 0.025 255);
+  --muted: oklch(0.13 0.006 255);
+  --muted-foreground: oklch(0.58 0.012 255);
+  --accent: oklch(0.16 0.008 255);
   --accent-foreground: oklch(0.97 0.006 255);
   --destructive: oklch(0.55 0.2 25);
   --destructive-foreground: oklch(0.97 0 0);
-  --border: oklch(0.22 0.022 255);
-  --input: oklch(0.22 0.022 255);
-  --ring: oklch(0.70 0.018 255);
+  --border: oklch(0.18 0.008 255);
+  --input: oklch(0.18 0.008 255);
+  --ring: oklch(0.70 0.012 255);
   --gold: oklch(0.78 0.12 85);
 }
 

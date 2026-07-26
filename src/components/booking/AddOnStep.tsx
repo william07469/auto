@@ -1,6 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import { ADDONS_DATA } from "./bookingData";
-import { Gauge, Lightbulb, Wind, Circle, Sparkles, ShieldCheck, Check, Droplets, Wrench } from "lucide-react";
+import {
+  Gauge,
+  Lightbulb,
+  Wind,
+  Circle,
+  Sparkles,
+  ShieldCheck,
+  Check,
+  Droplets,
+  Wrench,
+} from "lucide-react";
 import gsap from "gsap";
 
 interface Props {
@@ -19,7 +29,10 @@ const ICONS: Record<string, React.ReactNode> = {
   Wrench: <Wrench className="w-5 h-5" />,
 };
 
-export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) => {
+export const AddOnStep: React.FC<Props> = ({
+  selectedAddOnIds,
+  onToggleAddOn,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,23 +44,47 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
     );
   }, []);
 
-  const selectedTotal = ADDONS_DATA.filter((a) => selectedAddOnIds.includes(a.id)).reduce(
-    (s, a) => s + a.price,
-    0
-  );
+  const selectedTotal = ADDONS_DATA.filter((a) =>
+    selectedAddOnIds.includes(a.id)
+  ).reduce((s, a) => s + a.price, 0);
 
   return (
     <div ref={ref} className="space-y-8 max-w-3xl mx-auto">
       {/* Header */}
       <div>
-        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
-          Step 3 of 5
+        <p
+          style={{
+            fontSize: "0.65rem",
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            fontWeight: 600,
+            color: "rgba(255,255,255,0.35)",
+            marginBottom: 8,
+          }}
+        >
+          Schritt 4
         </p>
-        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.15, marginBottom: 8 }}>
-          Any extras?
+        <h3
+          style={{
+            fontSize: "clamp(1.6rem,3.5vw,2.25rem)",
+            fontWeight: 700,
+            letterSpacing: "-0.03em",
+            color: "#fff",
+            lineHeight: 1.15,
+            marginBottom: 8,
+          }}
+        >
+          Zusatzleistungen
         </h3>
-        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65, maxWidth: 440 }}>
-          Optional add-ons performed by the same technician during your appointment.
+        <p
+          style={{
+            fontSize: "0.9rem",
+            color: "rgba(255,255,255,0.45)",
+            lineHeight: 1.65,
+            maxWidth: 440,
+          }}
+        >
+          Optionale Extras, die beim selben Termin vom Techniker durchgeführt werden.
         </p>
       </div>
 
@@ -64,9 +101,14 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
             color: "#fff",
           }}
         >
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff" }} />
-          <span style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.05em" }}>
-            {selectedAddOnIds.length} extra{selectedAddOnIds.length > 1 ? "s" : ""} — +€{selectedTotal}
+          <div
+            style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff" }}
+          />
+          <span
+            style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.05em" }}
+          >
+            {selectedAddOnIds.length}{" "}
+            {selectedAddOnIds.length === 1 ? "Extra" : "Extras"} — +€{selectedTotal}
           </span>
         </div>
       )}
@@ -96,7 +138,9 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
                 gap: "1rem",
                 padding: "1.1rem 1.25rem",
                 background: selected ? "rgba(255,255,255,0.06)" : "transparent",
-                borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.06)",
+                borderBottom: isLast
+                  ? "none"
+                  : "1px solid rgba(255,255,255,0.06)",
                 cursor: "pointer",
                 transition: "background 0.18s ease",
               }}
@@ -107,7 +151,9 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
                   width: 22,
                   height: 22,
                   borderRadius: "0.35rem",
-                  border: selected ? "none" : "1.5px solid rgba(255,255,255,0.2)",
+                  border: selected
+                    ? "none"
+                    : "1.5px solid rgba(255,255,255,0.2)",
                   background: selected ? "#fff" : "transparent",
                   display: "flex",
                   alignItems: "center",
@@ -116,7 +162,11 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
                   transition: "all 0.18s ease",
                 }}
               >
-                {selected && <Check style={{ width: 12, height: 12, color: "#000", strokeWidth: 3 }} />}
+                {selected && (
+                  <Check
+                    style={{ width: 12, height: 12, color: "#000", strokeWidth: 3 }}
+                  />
+                )}
               </div>
 
               {/* Icon */}
@@ -125,9 +175,13 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
                   width: 38,
                   height: 38,
                   borderRadius: "0.55rem",
-                  background: selected ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)",
+                  background: selected
+                    ? "rgba(255,255,255,0.1)"
+                    : "rgba(255,255,255,0.05)",
                   border: "1px solid",
-                  borderColor: selected ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)",
+                  borderColor: selected
+                    ? "rgba(255,255,255,0.2)"
+                    : "rgba(255,255,255,0.08)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -141,7 +195,15 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
 
               {/* Content */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2, flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 2,
+                    flexWrap: "wrap",
+                  }}
+                >
                   <h5
                     style={{
                       fontSize: "0.9rem",
@@ -170,7 +232,13 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
                     </span>
                   )}
                 </div>
-                <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.5 }}>
+                <p
+                  style={{
+                    fontSize: "0.78rem",
+                    color: "rgba(255,255,255,0.35)",
+                    lineHeight: 1.5,
+                  }}
+                >
                   {addon.description}
                 </p>
               </div>
@@ -195,7 +263,9 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
       </div>
 
       <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.25)" }}>
-        All extras are optional — press <strong style={{ color: "rgba(255,255,255,0.5)" }}>Continue</strong> to skip.
+        Alle Extras sind optional —{" "}
+        <strong style={{ color: "rgba(255,255,255,0.5)" }}>Weiter</strong> drücken
+        um zu überspringen.
       </p>
     </div>
   );

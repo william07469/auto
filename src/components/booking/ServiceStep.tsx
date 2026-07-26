@@ -33,19 +33,46 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
     <div ref={ref} className="space-y-8 max-w-3xl mx-auto">
       {/* Header */}
       <div>
-        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
-          Step 1 of 5
+        <p
+          style={{
+            fontSize: "0.65rem",
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            fontWeight: 600,
+            color: "rgba(255,255,255,0.35)",
+            marginBottom: 8,
+          }}
+        >
+          Schritt 1
         </p>
-        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.15, marginBottom: 8 }}>
-          What do you need?
+        <h3
+          style={{
+            fontSize: "clamp(1.6rem,3.5vw,2.25rem)",
+            fontWeight: 700,
+            letterSpacing: "-0.03em",
+            color: "#fff",
+            lineHeight: 1.15,
+            marginBottom: 8,
+          }}
+        >
+          Was benötigen Sie?
         </h3>
-        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65, maxWidth: 440 }}>
-          Choose the type of service for your vehicle. You'll pick a package in the next step.
+        <p
+          style={{
+            fontSize: "0.9rem",
+            color: "rgba(255,255,255,0.45)",
+            lineHeight: 1.65,
+            maxWidth: 480,
+          }}
+        >
+          Wählen Sie eine Kategorie. Im nächsten Schritt können Sie ein{" "}
+          <strong style={{ color: "rgba(255,255,255,0.7)" }}>Paket</strong> oder eine{" "}
+          <strong style={{ color: "rgba(255,255,255,0.7)" }}>Einzelleistung</strong> buchen.
         </p>
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {SERVICES_DATA.map((svc) => {
           const selected = selectedServiceId === svc.id;
           return (
@@ -57,36 +84,41 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
               style={{
                 padding: "1.25rem",
                 borderRadius: "0.875rem",
-                border: selected ? "2px solid #fff" : "1.5px solid rgba(255,255,255,0.1)",
+                border: selected
+                  ? "2px solid #fff"
+                  : "1.5px solid rgba(255,255,255,0.1)",
                 background: selected ? "#fff" : "#141414",
                 boxShadow: selected
                   ? "0 4px 24px rgba(255,255,255,0.08)"
                   : "none",
                 transition: "all 0.22s ease",
                 cursor: "pointer",
-                position: "relative",
               }}
             >
-              {/* Badge */}
+              {/* Badge — inline at top, not absolute */}
               {svc.badge && (
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 12,
-                    right: 12,
-                    fontSize: "0.55rem",
-                    letterSpacing: "0.15em",
-                    textTransform: "uppercase",
-                    fontWeight: 700,
-                    padding: "3px 8px",
-                    borderRadius: 999,
-                    background: selected ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.07)",
-                    color: selected ? "#111827" : "rgba(255,255,255,0.5)",
-                    border: selected ? "1px solid rgba(0,0,0,0.12)" : "1px solid rgba(255,255,255,0.12)",
-                  }}
-                >
-                  {svc.badge}
-                </span>
+                <div style={{ marginBottom: "0.625rem" }}>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      fontSize: "0.55rem",
+                      letterSpacing: "0.15em",
+                      textTransform: "uppercase",
+                      fontWeight: 700,
+                      padding: "3px 8px",
+                      borderRadius: 999,
+                      background: selected
+                        ? "rgba(0,0,0,0.1)"
+                        : "rgba(255,255,255,0.07)",
+                      color: selected ? "#111827" : "rgba(255,255,255,0.5)",
+                      border: selected
+                        ? "1px solid rgba(0,0,0,0.12)"
+                        : "1px solid rgba(255,255,255,0.12)",
+                    }}
+                  >
+                    {svc.badge}
+                  </span>
+                </div>
               )}
 
               {/* Icon box */}
@@ -95,8 +127,12 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
                   width: 40,
                   height: 40,
                   borderRadius: "0.6rem",
-                  background: selected ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.06)",
-                  border: selected ? "1px solid rgba(0,0,0,0.1)" : "1px solid rgba(255,255,255,0.1)",
+                  background: selected
+                    ? "rgba(0,0,0,0.08)"
+                    : "rgba(255,255,255,0.06)",
+                  border: selected
+                    ? "1px solid rgba(0,0,0,0.1)"
+                    : "1px solid rgba(255,255,255,0.1)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -123,17 +159,22 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
                 </h4>
                 <p
                   style={{
-                    fontSize: "0.7rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em",
+                    fontSize: "0.72rem",
                     fontWeight: 600,
                     color: selected ? "#6b7280" : "rgba(255,255,255,0.35)",
                     marginBottom: 8,
+                    lineHeight: 1.4,
                   }}
                 >
                   {svc.tagline}
                 </p>
-                <p style={{ fontSize: "0.78rem", color: selected ? "#6b7280" : "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
+                <p
+                  style={{
+                    fontSize: "0.78rem",
+                    color: selected ? "#6b7280" : "rgba(255,255,255,0.4)",
+                    lineHeight: 1.6,
+                  }}
+                >
                   {svc.description}
                 </p>
               </div>
@@ -143,7 +184,9 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
                 style={{
                   marginTop: "1rem",
                   paddingTop: "0.875rem",
-                  borderTop: selected ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.07)",
+                  borderTop: selected
+                    ? "1px solid rgba(0,0,0,0.08)"
+                    : "1px solid rgba(255,255,255,0.07)",
                   display: "flex",
                   alignItems: "center",
                   gap: 6,
@@ -155,13 +198,19 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
                     height: 18,
                     borderRadius: "50%",
                     background: selected ? "#111827" : "transparent",
-                    border: selected ? "none" : "1.5px solid rgba(255,255,255,0.2)",
+                    border: selected
+                      ? "none"
+                      : "1.5px solid rgba(255,255,255,0.2)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                   }}
                 >
-                  {selected && <Check style={{ width: 10, height: 10, color: "#fff", strokeWidth: 3 }} />}
+                  {selected && (
+                    <Check
+                      style={{ width: 10, height: 10, color: "#fff", strokeWidth: 3 }}
+                    />
+                  )}
                 </div>
                 <span
                   style={{
@@ -172,7 +221,7 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
                     color: selected ? "#374151" : "rgba(255,255,255,0.25)",
                   }}
                 >
-                  {selected ? "Selected" : "Select"}
+                  {selected ? "Ausgewählt" : "Auswählen"}
                 </span>
               </div>
             </button>

@@ -164,7 +164,8 @@ export function Nav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-40 bg-background/80 backdrop-blur-md lg:hidden"
+              className="fixed inset-0 z-40 backdrop-blur-md lg:hidden"
+              style={{ background: "rgba(0,0,0,0.85)" }}
               onClick={() => setOpen(false)}
             />
             <motion.div
@@ -173,7 +174,8 @@ export function Nav() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.4, ease }}
-              className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[90vw] flex-col bg-card border-l border-border lg:hidden"
+              className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[90vw] flex-col border-l border-border lg:hidden"
+              style={{ background: "#0a0a0a" }}
             >
               <div className="flex h-16 items-center justify-between px-6 md:h-20">
                 <img src="/second_logo.jpeg" alt="UV Detailing" className="h-12 w-auto object-contain" style={{ mixBlendMode: "screen", filter: "brightness(1.3) contrast(1.1)" }} />
