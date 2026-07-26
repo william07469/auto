@@ -79,7 +79,7 @@ export function Nav() {
           {/* Logo */}
           <Link to="/" className="group flex items-center shrink-0">
             <img
-              src="/logo.svg"
+              src="/main_logo.jpeg"
               alt="WV Detailing"
               className="h-10 md:h-14 w-auto transition-opacity duration-300 group-hover:opacity-80"
             />
