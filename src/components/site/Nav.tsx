@@ -175,7 +175,7 @@ export function Nav() {
               className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[90vw] flex-col bg-card border-l border-border lg:hidden"
             >
               <div className="flex h-16 items-center justify-between px-6 md:h-20">
-                <img src="/logo.svg" alt="WV Detailing" className="h-10 w-auto" />
+                <img src="/second_logo.jpeg" alt="WV Detailing" className="h-12 w-auto object-contain" />
                 <button
                   onClick={() => setOpen(false)}
                   aria-label="Schließen"
