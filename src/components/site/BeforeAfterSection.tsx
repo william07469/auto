@@ -3,13 +3,14 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, MoveHorizontal } from "lucide-react";
 import wheelBefore from "@/assets/before_after/Jeep_wheel_with_brake_dust_202607260112.jpeg";
 import wheelAfter from "@/assets/before_after/Create_wheel_images_first_2K_202607260107.jpeg";
-import interiorDirtyBefore from "@/assets/before_after/White_Jeep_interior_dirty_2K_202607260134.jpeg";
-import interiorAfter from "@/assets/before_after/Create_interior_image_202607261229.jpeg";
+import interiorBefore from "@/assets/before_after/interior_before.jpeg";
+import interiorAfter from "@/assets/before_after/interior_after.jpeg";
 import seatBefore from "@/assets/before_after/seat_before.jpeg";
 import seatAfter from "@/assets/before_after/seat_after.jpeg";
 import floorBefore from "@/assets/before_after/floor_before.jpeg";
 import floorAfter from "@/assets/before_after/floor_after.jpeg";
-import whatsappImg from "@/assets/before_after/floor_before.jpeg";
+import ceramicBefore from "@/assets/before_after/ceramic_before.jpeg";
+import ceramicAfter from "@/assets/before_after/ceramic_after.jpeg";
 import { supabase } from "@/integrations/client";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -24,7 +25,7 @@ const FALLBACK_CASES: Case[] = [
     pairs: [
       { title: "Driver Seat",  before: seatBefore,          after: seatAfter },
       { title: "Floor & Mats", before: floorBefore,         after: floorAfter },
-      { title: "Cabin",        before: interiorDirtyBefore, after: interiorAfter },
+      { title: "Cabin",        before: interiorBefore, after: interiorAfter },
     ],
   },
   {
@@ -39,14 +40,14 @@ const FALLBACK_CASES: Case[] = [
     desc: "Two-bucket hand wash, iron decontamination, clay bar treatment and ceramic spray sealant for a flawless protected finish.",
     pairs: [
       { title: "Bodywork",      before: wheelBefore, after: wheelAfter },
-      { title: "Ceramic Gloss", before: whatsappImg, after: wheelAfter },
+      { title: "Ceramic Gloss", before: ceramicBefore, after: ceramicAfter },
     ],
   },
   {
     label: "Paint Correction",
     desc: "Machine polishing removes swirl marks, scratches and oxidation — restoring optical clarity, depth and showroom gloss.",
     pairs: [
-      { title: "Swirl Removal", before: interiorDirtyBefore,  after: interiorAfter },
+      { title: "Swirl Removal", before: interiorBefore,  after: interiorAfter },
       { title: "Oxidation",     before: wheelBefore,  after: wheelAfter },
     ],
   },
@@ -54,8 +55,8 @@ const FALLBACK_CASES: Case[] = [
     label: "Ceramic Coating",
     desc: "Nano-ceramic applied over corrected paint for long-term protection, UV resistance and extreme hydrophobic beading.",
     pairs: [
-      { title: "Hydrophobic Effect", before: whatsappImg, after: wheelAfter },
-      { title: "High Gloss",         before: wheelBefore, after: wheelAfter },
+      { title: "Hydrophobic Effect", before: ceramicBefore, after: ceramicAfter },
+      { title: "High Gloss",         before: wheelBefore, after: ceramicAfter },
     ],
   },
 ];
