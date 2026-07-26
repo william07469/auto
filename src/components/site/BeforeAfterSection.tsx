@@ -47,7 +47,6 @@ const FALLBACK_CASES: Case[] = [
     desc: "Machine polishing removes swirl marks, scratches and oxidation — restoring optical clarity, depth and showroom gloss.",
     pairs: [
       { title: "Swirl Removal", before: interiorBefore,  after: interiorAfter },
-      { title: "Oxidation",     before: wheelBefore,  after: wheelAfter },
     ],
   },
   {
@@ -55,7 +54,6 @@ const FALLBACK_CASES: Case[] = [
     desc: "Nano-ceramic applied over corrected paint for long-term protection, UV resistance and extreme hydrophobic beading.",
     pairs: [
       { title: "Hydrophobic Effect", before: ceramicBefore, after: ceramicAfter },
-      { title: "High Gloss",         before: wheelBefore, after: ceramicAfter },
     ],
   },
 ];
