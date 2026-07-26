@@ -78,13 +78,11 @@ export function Nav() {
         <div className="container-lux flex h-16 items-center justify-between md:h-20">
           {/* Logo */}
           <Link to="/" className="group flex items-center shrink-0">
-            <div className="flex items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2">
-              <img
-                src="/main_logo.jpeg"
-                alt="WV Detailing"
-                className="h-8 md:h-11 w-auto brightness-0 invert"
-              />
-            </div>
+            <img
+              src="/logo.svg"
+              alt="WV Detailing"
+              className="h-10 md:h-14 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}
