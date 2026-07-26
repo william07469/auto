@@ -5,10 +5,10 @@ import wheelBefore from "@/assets/before_after/Jeep_wheel_with_brake_dust_202607
 import wheelAfter from "@/assets/before_after/Create_wheel_images_first_2K_202607260107.jpeg";
 import interiorDirtyBefore from "@/assets/before_after/White_Jeep_interior_dirty_2K_202607260134.jpeg";
 import interiorAfter from "@/assets/before_after/Create_interior_image_202607261229.jpeg";
-import seatBefore from "@/assets/before_after/Driver's_seat_before_detailing_2K_202607261413.jpeg";
-import seatAfter from "@/assets/before_after/Driver's_seat_after_detailing_2K_202607261413.jpeg";
+import seatBefore from "@/assets/before_after/seat_before.jpeg";
+import seatAfter from "@/assets/before_after/seat_after.jpeg";
 import floorBefore from "@/assets/before_after/Floor_mat_before_detailing_2K_202607261439.jpeg";
-import whatsappImg from "@/assets/before_after/WhatsApp Image 2026-07-26 at 16.05.37.jpeg";
+import whatsappImg from "@/assets/before_after/ceramic_before.jpeg";
 import { supabase } from "@/integrations/client";
 
 const ease = [0.16, 1, 0.3, 1] as const;
