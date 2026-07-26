@@ -6,7 +6,7 @@ import img2 from "@/assets/detail-2.jpg";
 import img3 from "@/assets/detail-3.jpg";
 import img4 from "@/assets/detail-4.jpg";
 import heroImg from "@/assets/hero.jpg";
-import extBefore from "@/assets/before_after/White_Jeep_interior_dirty_2K_202607260134.jpeg";
+import extBefore from "@/assets/before_after/floor_before.jpeg";
 import extAfter from "@/assets/before_after/Create_interior_image_202607261229.jpeg";
 import { supabase } from "@/integrations/client";
 

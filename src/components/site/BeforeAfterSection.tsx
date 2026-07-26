@@ -7,8 +7,8 @@ import interiorDirtyBefore from "@/assets/before_after/White_Jeep_interior_dirty
 import interiorAfter from "@/assets/before_after/Create_interior_image_202607261229.jpeg";
 import seatBefore from "@/assets/before_after/seat_before.jpeg";
 import seatAfter from "@/assets/before_after/seat_after.jpeg";
-import floorBefore from "@/assets/before_after/Floor_mat_before_detailing_2K_202607261439.jpeg";
-import whatsappImg from "@/assets/before_after/ceramic_before.jpeg";
+import floorBefore from "@/assets/before_after/floor_before.jpeg";
+import whatsappImg from "@/assets/before_after/floor_before.jpeg";
 import { supabase } from "@/integrations/client";
 
 const ease = [0.16, 1, 0.3, 1] as const;
