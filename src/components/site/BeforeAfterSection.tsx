@@ -103,7 +103,7 @@ function Slider({ before, after, title }: { before: string; after: string; title
         {/* Before — clipped left */}
         <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${pos}%` }}>
           <img src={before} alt="Before" draggable={false}
-            className="absolute inset-0 h-full object-cover brightness-90 saturate-[0.3]"
+            className="absolute inset-0 h-full object-cover"
             style={{ width: `${(100 / pos) * 100}%` }} />
         </div>
 
