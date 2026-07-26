@@ -306,31 +306,6 @@ function BookingPage() {
             Back
           </Link>
 
-          {/* Logo — try SVG, fall back to text */}
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <img
-              src="/logo.svg"
-              alt="WV Detailing"
-              style={{ height: 36, width: "auto" }}
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-                const next = e.currentTarget.nextElementSibling as HTMLElement | null;
-                if (next) next.style.display = "block";
-              }}
-            />
-            <span
-              style={{
-                display: "none",
-                fontSize: "0.85rem",
-                fontWeight: 800,
-                letterSpacing: "-0.02em",
-                color: "#111827",
-              }}
-            >
-              WV Detailing
-            </span>
-          </Link>
-
           <Link
             to="/kunden-login"
             search={{ redirect: "/buchen" }}
