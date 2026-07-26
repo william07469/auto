@@ -1,22 +1,22 @@
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
-import img1 from "@/assets/detail-1.jpg";
-import img2 from "@/assets/detail-2.jpg";
-import img3 from "@/assets/detail-3.jpg";
-import img4 from "@/assets/detail-4.jpg";
-import heroImg from "@/assets/hero.jpg";
-import extBefore from "@/assets/before_after/interior_before.jpeg";
-import extAfter from "@/assets/before_after/interior_after.jpeg";
+import img1 from "@/assets/gallery-1.jpeg";
+import img2 from "@/assets/gallery-2.jpeg";
+import img3 from "@/assets/gallery-3.jpeg";
+import img4 from "@/assets/gallery-4.jpeg";
+import img5 from "@/assets/gallery-5.jpeg";
+import img6 from "@/assets/gallery-6.jpeg";
 import { supabase } from "@/integrations/client";
 
 // Fallback images shown while DB loads or if DB has no active items
 const FALLBACK_ITEMS = [
-  { id: "f0", src: heroImg, label: "Jeep Trackhawk Exterior", span: "col-span-2 row-span-2", before_url: extBefore, after_url: extAfter },
-  { id: "f1", src: img1, label: "Lackkorrektur Handwerk", span: "", before_url: extBefore, after_url: extAfter },
-  { id: "f2", src: img2, label: "Interior Cockpit", span: "", before_url: extBefore, after_url: extAfter },
-  { id: "f3", src: img3, label: "Keramikversiegelung", span: "col-span-2", before_url: extBefore, after_url: extAfter },
-  { id: "f4", src: img4, label: "Brembo Räder & Performance", span: "", before_url: extBefore, after_url: extAfter },
+  { id: "f0", src: img1, label: "", span: "col-span-2 row-span-2" },
+  { id: "f1", src: img2, label: "", span: "" },
+  { id: "f2", src: img3, label: "", span: "" },
+  { id: "f3", src: img4, label: "", span: "col-span-2" },
+  { id: "f4", src: img5, label: "", span: "" },
+  { id: "f5", src: img6, label: "", span: "" },
 ];
 
 // Grid span assignment by index for dynamic items
@@ -26,6 +26,7 @@ const SPAN_PATTERN = [
   "",
   "col-span-2",
   "",
+  "",
 ];
 
 type GalleryItem = {
@@ -33,79 +34,9 @@ type GalleryItem = {
   src: string;
   label: string;
   span: string;
-  before_url: string;
-  after_url: string;
 };
 
 const ease = [0.16, 1, 0.3, 1] as const;
-
-function BeforeAfter({ beforeUrl, afterUrl }: { beforeUrl: string; afterUrl: string }) {
-  const [pos, setPos] = useState(50);
-  const [dragging, setDragging] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  const handleMove = useCallback((clientX: number) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const p = ((clientX - rect.left) / rect.width) * 100;
-    setPos(Math.max(2, Math.min(98, p)));
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      role="slider"
-      aria-label="Vorher/Nachher Vergleich"
-      aria-valuenow={Math.round(pos)}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      tabIndex={0}
-      className="relative aspect-[21/9] w-full cursor-ew-resize overflow-hidden rounded-2xl border border-border select-none focus:outline-none focus:ring-2 focus:ring-ring"
-      onMouseMove={(e) => dragging && handleMove(e.clientX)}
-      onMouseDown={(e) => { setDragging(true); handleMove(e.clientX); }}
-      onMouseUp={() => setDragging(false)}
-      onMouseLeave={() => setDragging(false)}
-      onTouchMove={(e) => handleMove(e.touches[0].clientX)}
-      onKeyDown={(e) => {
-        if (e.key === "ArrowLeft") setPos((p) => Math.max(2, p - 2));
-        if (e.key === "ArrowRight") setPos((p) => Math.min(98, p + 2));
-      }}
-    >
-      {/* After (full) */}
-      <img src={afterUrl} alt="Nachher" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-
-      {/* Before (clipped) */}
-      <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${pos}%` }}>
-        <img
-          src={beforeUrl}
-          alt="Vorher"
-          loading="lazy"
-          className="absolute inset-0 h-full object-cover grayscale"
-          style={{ width: `${(100 / pos) * 100}%` }}
-        />
-      </div>
-
-      {/* Divider */}
-      <div
-        className="absolute inset-y-0 z-10 flex items-center justify-center"
-        style={{ left: `${pos}%`, transform: "translateX(-50%)" }}
-      >
-        <div className="w-px h-full bg-white/70" />
-        <div className="absolute flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-background/80 backdrop-blur shadow-lg">
-          <div className="flex items-center gap-0.5">
-            <ChevronLeft className="h-3.5 w-3.5" />
-            <ChevronRight className="h-3.5 w-3.5" />
-          </div>
-        </div>
-      </div>
-
-      {/* Labels */}
-      <span className="absolute bottom-5 left-5 z-10 rounded-full bg-background/70 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] backdrop-blur">Vorher</span>
-      <span className="absolute bottom-5 right-5 z-10 rounded-full bg-foreground/90 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-background backdrop-blur">Nachher</span>
-    </div>
-  );
-}
 
 function Lightbox({
   images,
@@ -170,7 +101,6 @@ function Lightbox({
 
 export function Gallery() {
   const [items, setItems] = useState<GalleryItem[]>(FALLBACK_ITEMS);
-  const [beforeAfter, setBeforeAfter] = useState({ before: extBefore, after: extAfter });
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   useEffect(() => {
@@ -187,14 +117,9 @@ export function Gallery() {
           src: row.after_url,
           label: row.title,
           span: SPAN_PATTERN[i % SPAN_PATTERN.length] ?? "",
-          before_url: row.before_url,
-          after_url: row.after_url,
         }));
 
         setItems(mapped);
-
-        // Use first item's before/after for the slider
-        setBeforeAfter({ before: data[0].before_url, after: data[0].after_url });
       });
   }, []);
 
@@ -246,18 +171,6 @@ export function Gallery() {
             </motion.figure>
           ))}
         </div>
-
-        {/* Before/After */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 1, ease }}
-          className="mt-6"
-        >
-          <p className="text-eyebrow mb-5">Vorher · Nachher Vergleich</p>
-          <BeforeAfter beforeUrl={beforeAfter.before} afterUrl={beforeAfter.after} />
-        </motion.div>
       </div>
 
       {/* Lightbox */}
