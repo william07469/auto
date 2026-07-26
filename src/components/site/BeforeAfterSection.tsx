@@ -24,34 +24,34 @@ type Case = { label: string; desc: string; pairs: Pair[] };
 // ─── Static fallback ──────────────────────────────────────────────────────────
 const FALLBACK_CASES: Case[] = [
   {
-    label: "Interior Detail",
-    desc: "Deep extraction cleaning of seats, carpets and dashboard. Stains, odours and embedded dirt completely removed from every surface.",
+    label: "Innenraum Reinigung",
+    desc: "Tiefenreinigung von Sitzen, Teppichen und Armaturenbrett. Flecken, Gerüche und eingebetteter Schmutz vollständig von allen Oberflächen entfernt.",
     pairs: [
-      { title: "Driver Seat",  before: seatBefore,         after: seatAfter },
-      { title: "Floor & Mats", before: floorAfter,         after: floorBefore },
-      { title: "Cabin",        before: interiorDirtyBefore, after: interiorCleanAfter },
+      { title: "Fahrersitz",  before: seatBefore,         after: seatAfter },
+      { title: "Boden & Matten", before: floorAfter,     after: floorBefore },
+      { title: "Innenraum",        before: interiorDirtyBefore, after: interiorCleanAfter },
     ],
   },
   {
-    label: "Exterior Detail",
-    desc: "Two-bucket hand wash, clay bar decontamination, wheel cleaning and ceramic spray sealant for a flawless protected finish.",
+    label: "Außenreinigung",
+    desc: "Zwei-Eimer-Handwäsche, Clay-Bar-Dekontamination, Radreinigung und keramischer Sprühversiegelung für ein makelloses, geschütztes Finish.",
     pairs: [
-      { title: "Wheels & Tyres", before: wheelBefore, after: wheelAfter },
-      { title: "Bodywork",       before: interiorBefore, after: interiorAfter },
+      { title: "Räder & Reifen", before: wheelBefore, after: wheelAfter },
+      { title: "Karosserie",     before: interiorBefore, after: interiorAfter },
     ],
   },
   {
-    label: "Paint Correction",
-    desc: "Machine polishing removes swirl marks, scratches and oxidation — restoring optical clarity, depth and showroom gloss.",
+    label: "Lackkorrektur",
+    desc: "Maschinelles Polieren entfernt Wirbelspuren, Kratzer und Oxidation – wiederherstellung von optischer Klarheit, Tiefe und Ausstellungsglanz.",
     pairs: [
-      { title: "Swirl Removal", before: paintBefore, after: paintAfter },
+      { title: "Wirbelspuren Entfernung", before: paintBefore, after: paintAfter },
     ],
   },
   {
-    label: "Ceramic Coating",
-    desc: "Nano-ceramic applied over corrected paint for long-term protection, UV resistance and extreme hydrophobic beading.",
+    label: "Keramikversiegelung",
+    desc: "Nano-Keramik auf korrigierten Lack aufgetragen für langfristigen Schutz, UV-Beständigkeit und extreme hydrophobe Perlenbildung.",
     pairs: [
-      { title: "Hydrophobic Effect", before: ceramicBefore, after: ceramicAfter },
+      { title: "Hydrophober Effekt", before: ceramicBefore, after: ceramicAfter },
     ],
   },
 ];
@@ -117,8 +117,8 @@ function Slider({ before, after, title }: { before: string; after: string; title
         </div>
 
         {/* Labels */}
-        <span className="pointer-events-none absolute bottom-4 left-4 z-10 rounded-full bg-background/70 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] backdrop-blur">Before</span>
-        <span className="pointer-events-none absolute bottom-4 right-4 z-10 rounded-full bg-foreground/90 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-background backdrop-blur">After</span>
+        <span className="pointer-events-none absolute bottom-4 left-4 z-10 rounded-full bg-background/70 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] backdrop-blur">Vorher</span>
+        <span className="pointer-events-none absolute bottom-4 right-4 z-10 rounded-full bg-foreground/90 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-background backdrop-blur">Nachher</span>
 
         {/* Drag hint */}
         <AnimatePresence>
@@ -127,7 +127,7 @@ function Slider({ before, after, title }: { before: string; after: string; title
               className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
               <div className="flex items-center gap-3 rounded-full border border-white/20 bg-background/60 px-5 py-2.5 backdrop-blur">
                 <ChevronLeft className="h-3.5 w-3.5 opacity-60" />
-                <span className="text-[0.6rem] uppercase tracking-[0.3em] text-foreground/80">Drag</span>
+                <span className="text-[0.6rem] uppercase tracking-[0.3em] text-foreground/80">Ziehen</span>
                 <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </div>
             </motion.div>
@@ -191,15 +191,15 @@ export function BeforeAfterSection() {
           className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between"
         >
           <div>
-            <p className="text-eyebrow">03 — Results</p>
+            <p className="text-eyebrow">03 — Ergebnisse</p>
             <h2 className="text-display mt-6 text-[clamp(2.5rem,5vw,5rem)]">
-              Before.
+              Vorher.
               <br />
-              <span className="italic text-muted-foreground">After.</span>
+              <span className="italic text-muted-foreground">Nachher.</span>
             </h2>
           </div>
           <p className="max-w-xs text-sm leading-relaxed text-muted-foreground md:text-right">
-            Drag the slider and witness the transformation — across every service we offer.
+            Ziehen Sie den Regler und erleben Sie die Verwandlung – bei jeder Dienstleistung, die wir anbieten.
           </p>
         </motion.div>
 
@@ -252,7 +252,7 @@ export function BeforeAfterSection() {
 
               {current.pairs.length > 1 && (
                 <div className="space-y-2">
-                  <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">Choose example</p>
+                  <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">Beispiel wählen</p>
                   <div className="flex flex-col gap-1.5">
                     {current.pairs.map((p, i) => (
                       <button
@@ -278,7 +278,7 @@ export function BeforeAfterSection() {
                   <button
                     key={i}
                     onClick={() => setPairIndex(i)}
-                    aria-label={`Example ${i + 1}`}
+                    aria-label={`Beispiel ${i + 1}`}
                     className={`h-1 rounded-full transition-all duration-300 ${
                       pairIndex === i ? "w-8 bg-foreground" : "w-4 bg-border hover:bg-foreground/40"
                     }`}
