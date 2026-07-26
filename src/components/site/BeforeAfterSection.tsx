@@ -39,7 +39,6 @@ const FALLBACK_CASES: Case[] = [
     label: "Exterior Detail",
     desc: "Two-bucket hand wash, iron decontamination, clay bar treatment and ceramic spray sealant for a flawless protected finish.",
     pairs: [
-      { title: "Bodywork",      before: wheelBefore, after: wheelAfter },
       { title: "Ceramic Gloss", before: ceramicBefore, after: ceramicAfter },
     ],
   },
