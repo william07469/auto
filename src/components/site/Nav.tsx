@@ -75,13 +75,13 @@ export function Nav() {
           scrolled ? "glass-nav shadow-[0_1px_40px_rgba(0,0,0,0.5)]" : ""
         }`}
       >
-        <div className="container-lux flex h-24 items-center justify-between md:h-28">
+        <div className="container-lux flex h-16 items-center justify-between md:h-18">
           {/* Logo */}
           <Link to="/" className="group flex items-center shrink-0">
             <img
               src="/main_logo.jpeg"
               alt="UV Detailing"
-              className="h-24 w-auto md:h-28 object-contain transition-opacity duration-300 group-hover:opacity-80"
+              className="h-14 w-auto md:h-16 object-contain transition-opacity duration-300 group-hover:opacity-80"
               style={{ mixBlendMode: "screen", filter: "brightness(1.3) contrast(1.1)" }}
             />
           </Link>
