@@ -1,89 +1,71 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, MoveHorizontal } from "lucide-react";
-import extBefore from "@/assets/before_after/exterior_body_before.jpg";
-import extAfter from "@/assets/before_after/exterior_body_after.jpg";
-import wheelBefore from "@/assets/before_after/wheel_before.jpg";
-import wheelAfter from "@/assets/before_after/wheel_after.jpg";
-import hlBefore from "@/assets/before_after/headlight_before.jpg";
-import hlAfter from "@/assets/before_after/headlight_after.jpg";
-import swirlsBefore from "@/assets/before_after/paint_swirls_before.jpg";
-import swirlsAfter from "@/assets/before_after/paint_swirls_after.jpg";
-import oxBefore from "@/assets/before_after/paint_ox_before.jpg";
-import oxAfter from "@/assets/before_after/paint_ox_after.jpg";
-import ceramicBeadsBefore from "@/assets/before_after/ceramic_beads_before.jpg";
-import ceramicBeadsAfter from "@/assets/before_after/ceramic_beads_after.jpg";
-import ceramicGlossBefore from "@/assets/before_after/ceramic_gloss_before.jpg";
-import ceramicGlossAfter from "@/assets/before_after/ceramic_gloss_after.jpg";
-import engineBefore from "@/assets/before_after/engine_before.jpg";
-import engineAfter from "@/assets/before_after/engine_after.jpg";
-import interiorBefore from "@/assets/before_after/interior_before.jpg";
-import interiorAfter from "@/assets/before_after/interior_after.jpg";
-
+import wheelBefore from "@/assets/before_after/Jeep_wheel_with_brake_dust_202607260112.jpeg";
+import wheelAfter from "@/assets/before_after/Create_wheel_images_first_2K_202607260107.jpeg";
+import interiorDirtyBefore from "@/assets/before_after/White_Jeep_interior_dirty_2K_202607260134.jpeg";
+import interiorAfter from "@/assets/before_after/Create_interior_image_202607261229.jpeg";
+import seatBefore from "@/assets/before_after/Driver's_seat_before_detailing_2K_202607261413.jpeg";
+import seatAfter from "@/assets/before_after/Driver's_seat_after_detailing_2K_202607261413.jpeg";
+import floorBefore from "@/assets/before_after/Floor_mat_before_detailing_2K_202607261439.jpeg";
+import whatsappImg from "@/assets/before_after/WhatsApp Image 2026-07-26 at 16.05.37.jpeg";
 import { supabase } from "@/integrations/client";
 
 const ease = [0.16, 1, 0.3, 1] as const;
-
 type Pair = { title: string; before: string; after: string };
 type Case = { label: string; desc: string; pairs: Pair[] };
 
-// ─── Static fallback — shown while DB loads or when DB has no results rows ────
+// ─── Static fallback ──────────────────────────────────────────────────────────
 const FALLBACK_CASES: Case[] = [
   {
-    label: "Innenreinigung",
-    desc: "Tiefenreinigung von Sitzen, Armaturenbrett und Fußraum des Trackhawks. Flecken, Gerüche und Staub werden vollständig beseitigt.",
+    label: "Interior Detail",
+    desc: "Deep extraction cleaning of seats, carpets and dashboard. Stains, odours and embedded dirt completely removed from every surface.",
     pairs: [
-      { title: "Sitze & Polster",   before: interiorBefore, after: interiorAfter },
-      { title: "Armaturenbrett",    before: interiorBefore, after: interiorAfter },
-      { title: "Fußraum",           before: interiorBefore, after: interiorAfter },
+      { title: "Driver Seat",  before: seatBefore,          after: seatAfter },
+      { title: "Floor & Mats", before: floorBefore,         after: seatAfter },
+      { title: "Cabin",        before: interiorDirtyBefore, after: interiorAfter },
     ],
   },
   {
-    label: "Außenreinigung",
-    desc: "Handwäsche nach dem Zwei-Eimer-Prinzip am Jeep Trackhawk. Hologramme, Wasserflecken und Straßenschmutz verschwinden spurlos.",
+    label: "Wheel Detail",
+    desc: "Brake dust, iron fallout and road grime removed using specialist degreasers, soft brushes and pressure washing.",
     pairs: [
-      { title: "Lack & Karosserie", before: extBefore,        after: extAfter },
-      { title: "Felgen & Reifen",   before: wheelBefore,      after: wheelAfter },
-      { title: "Scheinwerfer",      before: hlBefore,         after: hlAfter },
+      { title: "Wheels & Tyres", before: wheelBefore, after: wheelAfter },
     ],
   },
   {
-    label: "Lackkorrektur",
-    desc: "Maschinelle Politur entfernt Kratzer, Swirls und Oxidation auf dem weißen Trackhawk-Lack.",
+    label: "Exterior Detail",
+    desc: "Two-bucket hand wash, iron decontamination, clay bar treatment and ceramic spray sealant for a flawless protected finish.",
     pairs: [
-      { title: "Kratzer entfernt",  before: swirlsBefore,     after: swirlsAfter },
-      { title: "Swirl-Marks",       before: swirlsBefore,     after: swirlsAfter },
-      { title: "Oxidation",         before: oxBefore,         after: oxAfter },
+      { title: "Bodywork",      before: interiorDirtyBefore, after: interiorAfter },
+      { title: "Ceramic Gloss", before: wheelBefore,         after: wheelAfter },
     ],
   },
   {
-    label: "Keramikversiegelung",
-    desc: "Nano-Keramik legt einen permanenten Schutzfilm über den weißen Lack. Wasser perlt extrem ab.",
+    label: "Paint Correction",
+    desc: "Machine polishing removes swirl marks, scratches and oxidation — restoring optical clarity, depth and showroom gloss.",
     pairs: [
-      { title: "Hydrophob-Effekt",  before: ceramicBeadsBefore, after: ceramicBeadsAfter },
-      { title: "Hochglanz",         before: ceramicGlossBefore, after: ceramicGlossAfter },
-      { title: "Schutzfilm",        before: ceramicBeadsBefore, after: ceramicGlossAfter },
+      { title: "Swirl Removal", before: floorBefore,  after: seatAfter },
+      { title: "Oxidation",     before: floorBefore,  after: interiorAfter },
     ],
   },
   {
-    label: "Motorraumreinigung",
-    desc: "Fett, Öl und Staub werden schonend aus dem 6.2L Supercharged V8 Motorraum des Trackhawks entfernt.",
+    label: "Ceramic Coating",
+    desc: "Nano-ceramic applied over corrected paint for long-term protection, UV resistance and extreme hydrophobic beading.",
     pairs: [
-      { title: "Motor vorher/nachher", before: engineBefore,    after: engineAfter },
-      { title: "Kabelstränge",         before: engineBefore,    after: engineAfter },
+      { title: "Hydrophobic Effect", before: whatsappImg, after: wheelAfter },
+      { title: "High Gloss",         before: wheelBefore, after: wheelAfter },
     ],
   },
 ];
 
 // ─── Single drag slider ───────────────────────────────────────────────────────
-
 function Slider({ before, after, title }: { before: string; after: string; title: string }) {
   const [pos, setPos] = useState(42);
   const [dragging, setDragging] = useState(false);
   const [touched, setTouched] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Reset hint when image changes
   useEffect(() => { setPos(42); setTouched(false); }, [before, after]);
 
   const move = useCallback((clientX: number) => {
@@ -100,7 +82,7 @@ function Slider({ before, after, title }: { before: string; after: string; title
       <div
         ref={ref}
         role="slider"
-        aria-label={`Vorher/Nachher: ${title}`}
+        aria-label={`Before/After: ${title}`}
         aria-valuenow={Math.round(pos)}
         aria-valuemin={0}
         aria-valuemax={100}
@@ -118,12 +100,12 @@ function Slider({ before, after, title }: { before: string; after: string; title
         }}
       >
         {/* After — full-width baseline */}
-        <img src={after} alt="Nachher" draggable={false}
+        <img src={after} alt="After" draggable={false}
           className="absolute inset-0 h-full w-full object-cover" />
 
         {/* Before — clipped left */}
         <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${pos}%` }}>
-          <img src={before} alt="Vorher" draggable={false}
+          <img src={before} alt="Before" draggable={false}
             className="absolute inset-0 h-full object-cover brightness-90 saturate-[0.3]"
             style={{ width: `${(100 / pos) * 100}%` }} />
         </div>
@@ -138,8 +120,8 @@ function Slider({ before, after, title }: { before: string; after: string; title
         </div>
 
         {/* Labels */}
-        <span className="pointer-events-none absolute bottom-4 left-4 z-10 rounded-full bg-background/70 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] backdrop-blur">Vorher</span>
-        <span className="pointer-events-none absolute bottom-4 right-4 z-10 rounded-full bg-foreground/90 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-background backdrop-blur">Nachher</span>
+        <span className="pointer-events-none absolute bottom-4 left-4 z-10 rounded-full bg-background/70 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] backdrop-blur">Before</span>
+        <span className="pointer-events-none absolute bottom-4 right-4 z-10 rounded-full bg-foreground/90 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-background backdrop-blur">After</span>
 
         {/* Drag hint */}
         <AnimatePresence>
@@ -148,7 +130,7 @@ function Slider({ before, after, title }: { before: string; after: string; title
               className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
               <div className="flex items-center gap-3 rounded-full border border-white/20 bg-background/60 px-5 py-2.5 backdrop-blur">
                 <ChevronLeft className="h-3.5 w-3.5 opacity-60" />
-                <span className="text-[0.6rem] uppercase tracking-[0.3em] text-foreground/80">Schieben</span>
+                <span className="text-[0.6rem] uppercase tracking-[0.3em] text-foreground/80">Drag</span>
                 <ChevronRight className="h-3.5 w-3.5 opacity-60" />
               </div>
             </motion.div>
@@ -160,30 +142,24 @@ function Slider({ before, after, title }: { before: string; after: string; title
 }
 
 // ─── Main section ─────────────────────────────────────────────────────────────
-
 export function BeforeAfterSection() {
   const [cases, setCases] = useState<Case[]>(FALLBACK_CASES);
   const [active, setActive] = useState(0);
   const [pairIndex, setPairIndex] = useState(0);
 
-  // Load from DB — group by category, preserve sort_order within each group
+  // Load from DB
   useEffect(() => {
     (supabase.from("gallery_items") as any)
       .select("*")
       .eq("is_active", true)
-      .neq("category", "Galerie")   // Galerie items go to the photo grid, not here
+      .neq("category", "Galerie")
       .order("sort_order")
       .then(({ data }: { data: any[] | null }) => {
-        if (!data || data.length === 0) return; // keep fallback
-
-        // Group rows by category, preserving first-seen order
+        if (!data || data.length === 0) return;
         const map = new Map<string, { desc: string; pairs: Pair[] }>();
         for (const row of data) {
           if (!map.has(row.category)) {
-            map.set(row.category, {
-              desc: row.description ?? "",
-              pairs: [],
-            });
+            map.set(row.category, { desc: row.description ?? "", pairs: [] });
           }
           map.get(row.category)!.pairs.push({
             title: row.title,
@@ -191,30 +167,24 @@ export function BeforeAfterSection() {
             after: row.after_url,
           });
         }
-
         const built: Case[] = Array.from(map.entries()).map(([label, { desc, pairs }]) => ({
-          label,
-          desc,
-          pairs,
+          label, desc, pairs,
         }));
-
         if (built.length > 0) setCases(built);
       });
   }, []);
 
-  // Reset pair index whenever the active category changes
   useEffect(() => { setPairIndex(0); }, [active]);
 
   const current = cases[active] ?? cases[0];
   const pair = current.pairs[pairIndex] ?? current.pairs[0];
-
   if (!current || !pair) return null;
 
   return (
     <section id="ergebnisse" className="relative py-32 md:py-48 overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_100%,rgba(255,255,255,0.03),transparent)]" />
-
       <div className="container-lux">
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -224,15 +194,15 @@ export function BeforeAfterSection() {
           className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between"
         >
           <div>
-            <p className="text-eyebrow">03 — Ergebnisse</p>
+            <p className="text-eyebrow">03 — Results</p>
             <h2 className="text-display mt-6 text-[clamp(2.5rem,5vw,5rem)]">
-              Vorher.
+              Before.
               <br />
-              <span className="italic text-muted-foreground">Nachher.</span>
+              <span className="italic text-muted-foreground">After.</span>
             </h2>
           </div>
           <p className="max-w-xs text-sm leading-relaxed text-muted-foreground md:text-right">
-            Schieben Sie den Regler und erleben Sie den Unterschied — für jede Leistung.
+            Drag the slider and witness the transformation — across every service we offer.
           </p>
         </motion.div>
 
@@ -285,7 +255,7 @@ export function BeforeAfterSection() {
 
               {current.pairs.length > 1 && (
                 <div className="space-y-2">
-                  <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">Beispiel wählen</p>
+                  <p className="text-[0.6rem] uppercase tracking-[0.3em] text-muted-foreground">Choose example</p>
                   <div className="flex flex-col gap-1.5">
                     {current.pairs.map((p, i) => (
                       <button
@@ -311,7 +281,7 @@ export function BeforeAfterSection() {
                   <button
                     key={i}
                     onClick={() => setPairIndex(i)}
-                    aria-label={`Beispiel ${i + 1}`}
+                    aria-label={`Example ${i + 1}`}
                     className={`h-1 rounded-full transition-all duration-300 ${
                       pairIndex === i ? "w-8 bg-foreground" : "w-4 bg-border hover:bg-foreground/40"
                     }`}
@@ -344,10 +314,10 @@ export function BeforeAfterSection() {
           className="mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4"
         >
           {[
-            { value: "500+", label: "Fahrzeuge aufbereitet" },
-            { value: "4.9★", label: "Google Bewertung" },
-            { value: "100%", label: "Handarbeit" },
-            { value: "5J.",  label: "Keramikschutz" },
+            { value: "500+", label: "Vehicles Detailed" },
+            { value: "4.9★", label: "Google Rating" },
+            { value: "100%", label: "Hand Applied" },
+            { value: "5yr",  label: "Ceramic Guarantee" },
           ].map((s) => (
             <div key={s.label} className="flex flex-col items-center gap-1.5 bg-card px-6 py-8 text-center">
               <span className="text-display text-3xl">{s.value}</span>
@@ -355,6 +325,7 @@ export function BeforeAfterSection() {
             </div>
           ))}
         </motion.div>
+
       </div>
     </section>
   );
