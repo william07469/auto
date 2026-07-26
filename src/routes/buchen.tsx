@@ -307,9 +307,9 @@ function BookingPage() {
 
           <Link to="/">
             <img
-              src="/logo.jpeg"
+              src="/logo.svg"
               alt="WV Detailing"
-              style={{ height: 36, width: "auto", objectFit: "contain", opacity: 0.9 }}
+              className="h-9 w-auto opacity-90"
             />
           </Link>
 

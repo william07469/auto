@@ -58,9 +58,9 @@ export function Footer() {
           <div>
             <Link to="/" className="inline-block">
               <img
-                src="/main_logo.jpeg"
+                src="/logo.svg"
                 alt="WV Detailing"
-                className="h-20 w-auto object-contain hover:opacity-80 transition-opacity"
+                className="h-16 md:h-20 w-auto hover:opacity-80 transition-opacity"
               />
             </Link>
             <p className="mt-5 max-w-[20rem] text-sm leading-relaxed text-muted-foreground md:max-w-[22rem]">

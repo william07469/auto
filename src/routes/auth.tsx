@@ -99,7 +99,7 @@ function AuthPage() {
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <Link to="/" className="block text-center mb-10" aria-label="WV Detailing">
-          <img src="/logo.jpeg" alt="WV Detailing" className="mx-auto h-16 w-auto object-contain" />
+           <img src="/logo.svg" alt="WV Detailing" className="mx-auto h-14 w-auto" />
         </Link>
         <div className="border border-border p-8">
           <p className="text-eyebrow">Admin Bereich</p>

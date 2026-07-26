@@ -42,7 +42,7 @@ function AdminPage() {
         <div className="container-lux flex h-16 md:h-20 items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center">
-              <img src="/logo.jpeg" alt="WV Detailing"                className="h-12 w-auto object-contain" />
+              <img                src="/logo.svg" alt="WV Detailing" className="h-10 w-auto" />
             </Link>
             <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground hidden sm:inline">Admin Panel</span>
           </div>
