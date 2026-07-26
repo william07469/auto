@@ -58,9 +58,9 @@ export function Footer() {
           <div>
             <Link to="/" className="inline-block">
               <img
-                src="/logo.jpeg"
+                src="/main_logo.jpeg"
                 alt="WV Detailing"
-                className="h-14 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
+                className="h-14 w-auto object-contain hover:opacity-80 transition-opacity"
               />
             </Link>
             <p className="mt-5 max-w-[20rem] text-sm leading-relaxed text-muted-foreground md:max-w-[22rem]">
@@ -162,7 +162,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-border/60 pt-8 text-[0.6875rem] uppercase tracking-[0.2em] text-muted-foreground md:flex-row md:items-center">
-          <p>© {new Date().getFullYear()} WV Detailing. Alle Rechte vorbehalten.</p>
+          <p>© {new Date().getFullYear()} UV Detailing. Alle Rechte vorbehalten.</p>
           <div className="flex items-center gap-6">
             <Link to="/auth" className="hover:text-foreground transition-colors">
               Admin
