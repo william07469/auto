@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import { CustomerStep } from "@/components/booking/CustomerStep";
 import { SummaryStep } from "@/components/booking/SummaryStep";
 import { BookingSummaryDrawer } from "@/components/booking/BookingSummaryDrawer";
 import { SERVICES_DATA, ADDONS_DATA, PACKAGES_DATA } from "@/components/booking/bookingData";
+import { createBooking } from "@/functions/createBooking";
 import { supabase } from "@/integrations/client";
 
 export const Route = createFileRoute("/buchen")({
@@ -54,6 +55,7 @@ const INITIAL_STATE: BookingState = {
 };
 
 function BookingPage() {
+  const navigate = useNavigate();
   const [booking, setBooking] = useState<BookingState>(INITIAL_STATE);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -195,6 +197,12 @@ function BookingPage() {
   const handleConfirmBooking = async () => {
     setSubmitting(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate({ to: "/kunden-login", search: { redirect: "/buchen" } });
+        return;
+      }
+
       const service = SERVICES_DATA.find((s) => s.id === booking.selectedServiceId);
       const packages = booking.selectedServiceId ? PACKAGES_DATA[booking.selectedServiceId] : [];
       const pkg = packages.find((p) => p.id === booking.selectedPackageId);
@@ -207,25 +215,27 @@ function BookingPage() {
         addons.length > 0 ? ` + [${addons.map((a) => a.name).join(", ")}]` : ""
       }`;
 
-      const { error } = await supabase.from("bookings").insert({
-        service: serviceStr,
-        vehicle: "—",
-        booking_date: booking.selectedDate ?? "",
-        booking_time: booking.selectedTimeSlot ?? "",
-        customer_name: booking.customer.fullName,
-        email: booking.customer.email,
-        phone: booking.customer.phone,
-        notes: booking.customer.notes || null,
-        estimated_price: estimatedPrice,
+      const result = await createBooking({
+        data: {
+          service: serviceStr,
+          vehicle: "—",
+          booking_date: booking.selectedDate ?? "",
+          booking_time: booking.selectedTimeSlot ?? "",
+          customer_name: booking.customer.fullName,
+          email: booking.customer.email,
+          phone: booking.customer.phone,
+          notes: booking.customer.notes || null,
+          estimated_price: estimatedPrice,
+        },
       });
 
-      if (error) console.warn("Supabase notice:", error.message);
-      setDone(true);
-      toast.success("Appointment booked successfully!");
+      if (result.success) {
+        setDone(true);
+        toast.success("Buchung erfolgreich! Bestätigung wurde an Ihre E-Mail gesendet.");
+      }
     } catch (err) {
-      console.error(err);
-      setDone(true);
-      toast.success("Booking request received!");
+      const msg = err instanceof Error ? err.message : "Buchung fehlgeschlagen";
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -314,7 +324,8 @@ function BookingPage() {
           </Link>
 
           <Link
-            to="/auth"
+            to="/kunden-login"
+            search={{ redirect: "/buchen" }}
             style={{
               fontSize: "0.6rem",
               letterSpacing: "0.28em",
