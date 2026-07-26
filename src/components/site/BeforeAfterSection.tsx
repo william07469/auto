@@ -22,7 +22,7 @@ const FALLBACK_CASES: Case[] = [
     desc: "Deep extraction cleaning of seats, carpets and dashboard. Stains, odours and embedded dirt completely removed from every surface.",
     pairs: [
       { title: "Driver Seat",  before: seatBefore,          after: seatAfter },
-      { title: "Floor & Mats", before: floorBefore,         after: seatAfter },
+      { title: "Floor & Mats", before: floorBefore,         after: interiorAfter },
       { title: "Cabin",        before: interiorDirtyBefore, after: interiorAfter },
     ],
   },
@@ -37,16 +37,16 @@ const FALLBACK_CASES: Case[] = [
     label: "Exterior Detail",
     desc: "Two-bucket hand wash, iron decontamination, clay bar treatment and ceramic spray sealant for a flawless protected finish.",
     pairs: [
-      { title: "Bodywork",      before: interiorDirtyBefore, after: interiorAfter },
-      { title: "Ceramic Gloss", before: wheelBefore,         after: wheelAfter },
+      { title: "Bodywork",      before: wheelBefore, after: wheelAfter },
+      { title: "Ceramic Gloss", before: whatsappImg, after: wheelAfter },
     ],
   },
   {
     label: "Paint Correction",
     desc: "Machine polishing removes swirl marks, scratches and oxidation — restoring optical clarity, depth and showroom gloss.",
     pairs: [
-      { title: "Swirl Removal", before: floorBefore,  after: seatAfter },
-      { title: "Oxidation",     before: floorBefore,  after: interiorAfter },
+      { title: "Swirl Removal", before: interiorDirtyBefore,  after: interiorAfter },
+      { title: "Oxidation",     before: wheelBefore,  after: wheelAfter },
     ],
   },
   {
