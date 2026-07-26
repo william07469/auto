@@ -1,21 +1,30 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import { TIME_SLOTS } from "./bookingData";
-import { Calendar, Clock, Check, AlertCircle } from "lucide-react";
+import { Check } from "lucide-react";
 import gsap from "gsap";
 
-// ─── Date Step ────────────────────────────────────────────────────────────────
-interface DateProps {
+interface Props {
   selectedDate: string | null;
+  selectedTimeSlot: string | null;
   onSelectDate: (iso: string) => void;
+  onSelectTimeSlot: (slot: string) => void;
 }
 
-export const DateStep: React.FC<DateProps> = ({ selectedDate, onSelectDate }) => {
+export const DateTimeStep: React.FC<Props> = ({
+  selectedDate,
+  selectedTimeSlot,
+  onSelectDate,
+  onSelectTimeSlot,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const dates = useMemo(() => {
     const list: {
-      iso: string; dayName: string; dayNum: number;
-      monthName: string; isWeekend: boolean;
+      iso: string;
+      dayName: string;
+      dayNum: number;
+      monthName: string;
+      isWeekend: boolean;
     }[] = [];
     const today = new Date();
     for (let i = 1; i <= 30; i++) {
@@ -41,264 +50,123 @@ export const DateStep: React.FC<DateProps> = ({ selectedDate, onSelectDate }) =>
     return Array.from(map.entries());
   }, [dates]);
 
-  useEffect(() => {
-    if (!ref.current) return;
-    gsap.fromTo(
-      Array.from(ref.current.children),
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }
-    );
-  }, []);
-
-  const sel = dates.find((d) => d.iso === selectedDate);
-
-  return (
-    <div ref={ref} className="space-y-10 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="space-y-3">
-        <p style={{ fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", fontWeight: 500, color: "rgba(255,255,255,0.28)" }}>
-          Step 05
-        </p>
-        <h3 style={{ fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff" }}>
-          {selectedDate
-            ? <><span style={{ color: "rgba(255,255,255,0.5)" }}>{sel?.dayName}, </span>{sel?.dayNum} {sel?.monthName}</>
-            : "Choose a date"}
-        </h3>
-        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.38)", maxWidth: 420, marginTop: 8, lineHeight: 1.6 }}>
-          All available dates shown below. Weekends are accepted.
-        </p>
-      </div>
-
-      {/* Calendar */}
-      <div className="space-y-8">
-        {grouped.map(([month, days]) => (
-          <div key={month}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-              <span style={{ fontSize: "0.58rem", letterSpacing: "0.35em", textTransform: "uppercase", fontWeight: 500, color: "rgba(255,255,255,0.25)" }}>
-                {month}
-              </span>
-              <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
-            </div>
-            <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
-              {days.map((item) => {
-                const active = selectedDate === item.iso;
-                return (
-                  <button
-                    key={item.iso}
-                    type="button"
-                    onClick={() => onSelectDate(item.iso)}
-                    style={{
-                      flexShrink: 0,
-                      width: 64,
-                      height: 80,
-                      borderRadius: "0.75rem",
-                      border: active
-                        ? "1px solid rgba(255,255,255,0.0)"
-                        : "1px solid rgba(255,255,255,0.08)",
-                      background: active ? "#fff" : "rgba(255,255,255,0.02)",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 2,
-                      cursor: "pointer",
-                      transition: "all 0.28s cubic-bezier(0.16,1,0.3,1)",
-                      boxShadow: active ? "0 0 24px rgba(255,255,255,0.18)" : "none",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!active) {
-                        (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.18)";
-                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!active) {
-                        (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.08)";
-                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
-                      }
-                    }}
-                  >
-                    <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: active ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.28)" }}>
-                      {item.dayName}
-                    </span>
-                    <span style={{ fontSize: "1.4rem", fontWeight: 700, fontFamily: "monospace", color: active ? "#000" : "rgba(255,255,255,0.65)", lineHeight: 1 }}>
-                      {item.dayNum}
-                    </span>
-                    {item.isWeekend && (
-                      <span style={{ fontSize: "0.45rem", letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: 600, color: active ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.2)" }}>
-                        WE
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {selectedDate && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.72rem", color: "rgba(255,255,255,0.3)" }}>
-          <Calendar style={{ width: 13, height: 13 }} />
-          <span>Selected: <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.5)" }}>{selectedDate}</span></span>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ─── Time Step ────────────────────────────────────────────────────────────────
-interface TimeProps {
-  selectedDate: string | null;
-  selectedTimeSlot: string | null;
-  onSelectTimeSlot: (slot: string) => void;
-}
-
-export const TimeStep: React.FC<TimeProps> = ({
-  selectedDate,
-  selectedTimeSlot,
-  onSelectTimeSlot,
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    gsap.fromTo(
-      Array.from(ref.current.children),
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }
-    );
-  }, []);
-
   const periods = ["Morning", "Afternoon", "Evening"];
-  const grouped = periods
+  const groupedSlots = periods
     .map((p) => ({ period: p, slots: TIME_SLOTS.filter((s) => s.period === p) }))
     .filter((g) => g.slots.length > 0);
 
+  useEffect(() => {
+    if (!ref.current) return;
+    gsap.fromTo(
+      Array.from(ref.current.children),
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power3.out" }
+    );
+  }, []);
+
+  const selDate = dates.find((d) => d.iso === selectedDate);
+
   return (
-    <div ref={ref} className="space-y-10 max-w-4xl mx-auto">
+    <div ref={ref} className="space-y-8 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="space-y-3">
-        <p style={{ fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", fontWeight: 500, color: "rgba(255,255,255,0.28)" }}>
-          Step 06
+      <div>
+        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "#9ca3af", marginBottom: 8 }}>
+          Step 4 of 5
         </p>
-        <h3 style={{ fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff" }}>
-          {selectedTimeSlot
-            ? <><span style={{ color: "rgba(255,255,255,0.5)" }}>Drop-off at </span>{selectedTimeSlot}</>
-            : "Choose a time slot"}
+        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#111827", lineHeight: 1.15, marginBottom: 8 }}>
+          Pick a date & time
         </h3>
-        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.38)", maxWidth: 420, marginTop: 8, lineHeight: 1.6 }}>
-          {selectedDate
-            ? <>Available slots for <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.55)" }}>{selectedDate}</span></>
-            : "Go back and select a date first."}
+        <p style={{ fontSize: "0.9rem", color: "#6b7280", lineHeight: 1.65, maxWidth: 440 }}>
+          Select an available date, then choose your preferred drop-off time.
         </p>
       </div>
 
-      {!selectedDate ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            padding: "1.2rem",
-            borderRadius: "0.75rem",
-            border: "1px solid rgba(255,255,255,0.07)",
-            background: "rgba(255,255,255,0.02)",
-            color: "rgba(255,255,255,0.35)",
-            fontSize: "0.85rem",
-          }}
-        >
-          <AlertCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
-          Please go back and select a date.
-        </div>
-      ) : (
-        <div className="space-y-8">
-          {grouped.map(({ period, slots }) => (
-            <div key={period}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-                <Clock style={{ width: 12, height: 12, color: "rgba(255,255,255,0.2)" }} />
-                <span style={{ fontSize: "0.58rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontWeight: 500 }}>
-                  {period}
+      {/* ── DATE PICKER ── */}
+      <div
+        style={{
+          borderRadius: "1rem",
+          border: "1.5px solid #e5e7eb",
+          background: "#fff",
+          padding: "1.5rem",
+        }}
+      >
+        <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#374151", marginBottom: "1.25rem" }}>
+          Date
+        </p>
+
+        <div className="space-y-6">
+          {grouped.map(([month, days]) => (
+            <div key={month}>
+              {/* Month label */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#9ca3af", whiteSpace: "nowrap" }}>
+                  {month}
                 </span>
-                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
+                <div style={{ flex: 1, height: 1, background: "#f3f4f6" }} />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 10 }}>
-                {slots.map((ts) => {
-                  const active = selectedTimeSlot === ts.slot;
+
+              {/* Day buttons */}
+              <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4 }}>
+                {days.map((item) => {
+                  const active = selectedDate === item.iso;
                   return (
                     <button
-                      key={ts.slot}
+                      key={item.iso}
                       type="button"
-                      disabled={!ts.available}
-                      onClick={() => ts.available && onSelectTimeSlot(ts.slot)}
+                      onClick={() => onSelectDate(item.iso)}
                       style={{
-                        padding: "1.1rem 1rem",
+                        flexShrink: 0,
+                        width: 58,
+                        height: 72,
                         borderRadius: "0.75rem",
-                        border: active
-                          ? "1px solid rgba(255,255,255,0.35)"
-                          : "1px solid rgba(255,255,255,0.07)",
-                        background: active
-                          ? "rgba(255,255,255,0.07)"
-                          : "rgba(255,255,255,0.02)",
-                        opacity: ts.available ? 1 : 0.25,
-                        cursor: ts.available ? "pointer" : "not-allowed",
-                        textAlign: "left",
-                        position: "relative",
-                        transition: "all 0.28s cubic-bezier(0.16,1,0.3,1)",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!active && ts.available) {
-                          (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.16)";
-                          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!active && ts.available) {
-                          (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.07)";
-                          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
-                        }
+                        border: active ? "2px solid #111827" : "1.5px solid #e5e7eb",
+                        background: active ? "#111827" : "#fff",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 1,
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                        boxShadow: active ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
                       }}
                     >
-                      {active && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 10,
-                            right: 10,
-                            width: 16,
-                            height: 16,
-                            borderRadius: "50%",
-                            background: "#fff",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Check style={{ width: 9, height: 9, color: "#000", strokeWidth: 3 }} />
-                        </div>
-                      )}
-                      <div
-                        style={{
-                          fontSize: "1.5rem",
-                          fontWeight: 700,
-                          fontFamily: "monospace",
-                          letterSpacing: "-0.02em",
-                          color: active ? "#fff" : ts.available ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.18)",
-                        }}
-                      >
-                        {ts.slot}
-                      </div>
-                      <div
+                      <span
                         style={{
                           fontSize: "0.58rem",
-                          letterSpacing: "0.2em",
+                          fontWeight: 700,
+                          letterSpacing: "0.1em",
                           textTransform: "uppercase",
-                          color: active ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.22)",
-                          marginTop: 4,
+                          color: active ? "rgba(255,255,255,0.55)" : "#9ca3af",
                         }}
                       >
-                        {ts.available ? "Available" : "Booked"}
-                      </div>
+                        {item.dayName}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "1.25rem",
+                          fontWeight: 800,
+                          fontFamily: "monospace",
+                          letterSpacing: "-0.02em",
+                          color: active ? "#fff" : "#111827",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {item.dayNum}
+                      </span>
+                      {item.isWeekend && (
+                        <span
+                          style={{
+                            fontSize: "0.42rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: active ? "rgba(255,255,255,0.4)" : "#d1d5db",
+                          }}
+                        >
+                          WE
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -306,9 +174,160 @@ export const TimeStep: React.FC<TimeProps> = ({
             </div>
           ))}
         </div>
-      )}
+
+        {selDate && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginTop: "1rem",
+              paddingTop: "1rem",
+              borderTop: "1px solid #f3f4f6",
+              fontSize: "0.75rem",
+              color: "#374151",
+            }}
+          >
+            <Check style={{ width: 13, height: 13, color: "#111827", strokeWidth: 2.5 }} />
+            <span>
+              Selected:{" "}
+              <strong>
+                {selDate.dayName}, {selDate.dayNum} {selDate.monthName}
+              </strong>
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── TIME PICKER ── */}
+      <div
+        style={{
+          borderRadius: "1rem",
+          border: selectedDate ? "1.5px solid #e5e7eb" : "1.5px solid #f3f4f6",
+          background: selectedDate ? "#fff" : "#fafafa",
+          padding: "1.5rem",
+          transition: "all 0.2s ease",
+        }}
+      >
+        <p
+          style={{
+            fontSize: "0.65rem",
+            fontWeight: 700,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: selectedDate ? "#374151" : "#d1d5db",
+            marginBottom: "1.25rem",
+          }}
+        >
+          Time {!selectedDate && "— select a date first"}
+        </p>
+
+        {!selectedDate ? (
+          <p style={{ fontSize: "0.82rem", color: "#d1d5db", fontStyle: "italic" }}>
+            Choose a date above to see available time slots.
+          </p>
+        ) : (
+          <div className="space-y-5">
+            {groupedSlots.map(({ period, slots }) => (
+              <div key={period}>
+                {/* Period label */}
+                <p
+                  style={{
+                    fontSize: "0.6rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "#9ca3af",
+                    marginBottom: 8,
+                  }}
+                >
+                  {period}
+                </p>
+
+                {/* Slots grid */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                    gap: 8,
+                  }}
+                >
+                  {slots.map((ts) => {
+                    const active = selectedTimeSlot === ts.slot;
+                    return (
+                      <button
+                        key={ts.slot}
+                        type="button"
+                        disabled={!ts.available}
+                        onClick={() => ts.available && onSelectTimeSlot(ts.slot)}
+                        style={{
+                          padding: "0.75rem 0.875rem",
+                          borderRadius: "0.65rem",
+                          border: active ? "2px solid #111827" : "1.5px solid #e5e7eb",
+                          background: active ? "#111827" : "#fff",
+                          opacity: ts.available ? 1 : 0.35,
+                          cursor: ts.available ? "pointer" : "not-allowed",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: 2,
+                          transition: "all 0.18s ease",
+                          position: "relative",
+                        }}
+                      >
+                        {active && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: 6,
+                              right: 6,
+                              width: 14,
+                              height: 14,
+                              borderRadius: "50%",
+                              background: "#fff",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Check style={{ width: 8, height: 8, color: "#111827", strokeWidth: 3 }} />
+                          </div>
+                        )}
+                        <span
+                          style={{
+                            fontSize: "1rem",
+                            fontWeight: 800,
+                            fontFamily: "monospace",
+                            letterSpacing: "-0.02em",
+                            color: active ? "#fff" : "#111827",
+                          }}
+                        >
+                          {ts.slot}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "0.52rem",
+                            fontWeight: 600,
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: active ? "rgba(255,255,255,0.5)" : ts.available ? "#9ca3af" : "#d1d5db",
+                          }}
+                        >
+                          {ts.available ? "Free" : "Taken"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export const DateTimeStep = DateStep;
+// Keep legacy named exports so any leftover imports don't break
+export const DateStep = DateTimeStep;
+export const TimeStep = DateTimeStep;

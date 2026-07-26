@@ -10,11 +10,11 @@ interface Props {
 }
 
 const ICONS: Record<string, React.ReactNode> = {
-  Car: <Car className="w-6 h-6" />,
-  Armchair: <Armchair className="w-6 h-6" />,
-  Star: <Star className="w-6 h-6" />,
-  Sparkles: <Sparkles className="w-6 h-6" />,
-  ShieldCheck: <ShieldCheck className="w-6 h-6" />,
+  Car: <Car className="w-5 h-5" />,
+  Armchair: <Armchair className="w-5 h-5" />,
+  Star: <Star className="w-5 h-5" />,
+  Sparkles: <Sparkles className="w-5 h-5" />,
+  ShieldCheck: <ShieldCheck className="w-5 h-5" />,
 };
 
 export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectService }) => {
@@ -24,28 +24,28 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
     if (!ref.current) return;
     gsap.fromTo(
       ref.current.querySelectorAll(".svc-card"),
-      { opacity: 0, y: 32, scale: 0.96 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.08, ease: "power3.out" }
+      { opacity: 0, y: 24, scale: 0.98 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.07, ease: "power3.out" }
     );
   }, []);
 
   return (
-    <div ref={ref} className="space-y-10 max-w-4xl mx-auto">
+    <div ref={ref} className="space-y-8 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="space-y-3">
-        <p style={{ fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", fontWeight: 500, color: "rgba(255,255,255,0.28)" }}>
-          Step 01
+      <div>
+        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
+          Step 1 of 5
         </p>
-        <h3 style={{ fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff" }}>
-          Choose your service
+        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.15, marginBottom: 8 }}>
+          What do you need?
         </h3>
-        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.38)", maxWidth: 420, marginTop: 8, lineHeight: 1.6 }}>
-          Select the primary treatment for your vehicle. Package options follow in the next step.
+        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65, maxWidth: 440 }}>
+          Choose the type of service for your vehicle. You'll pick a package in the next step.
         </p>
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {SERVICES_DATA.map((svc) => {
           const selected = selectedServiceId === svc.id;
           return (
@@ -53,32 +53,18 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
               key={svc.id}
               type="button"
               onClick={() => onSelectService(svc.id)}
-              className="svc-card group relative text-left flex flex-col"
+              className="svc-card text-left flex flex-col"
               style={{
-                padding: "1.5rem",
-                borderRadius: "1rem",
-                border: selected
-                  ? "1px solid rgba(255,255,255,0.35)"
-                  : "1px solid rgba(255,255,255,0.07)",
-                background: selected
-                  ? "rgba(255,255,255,0.06)"
-                  : "rgba(255,255,255,0.02)",
-                boxShadow: selected ? "0 0 40px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.08)" : "none",
-                transition: "all 0.35s cubic-bezier(0.16,1,0.3,1)",
+                padding: "1.25rem",
+                borderRadius: "0.875rem",
+                border: selected ? "2px solid #fff" : "1.5px solid rgba(255,255,255,0.1)",
+                background: selected ? "#fff" : "#141414",
+                boxShadow: selected
+                  ? "0 4px 24px rgba(255,255,255,0.08)"
+                  : "none",
+                transition: "all 0.22s ease",
                 cursor: "pointer",
-                minHeight: 200,
-              }}
-              onMouseEnter={(e) => {
-                if (!selected) {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.14)";
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.035)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!selected) {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.07)";
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
-                }
+                position: "relative",
               }}
             >
               {/* Badge */}
@@ -86,37 +72,36 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
                 <span
                   style={{
                     position: "absolute",
-                    top: 14,
-                    right: 14,
+                    top: 12,
+                    right: 12,
                     fontSize: "0.55rem",
-                    letterSpacing: "0.2em",
+                    letterSpacing: "0.15em",
                     textTransform: "uppercase",
-                    fontWeight: 600,
-                    padding: "3px 10px",
+                    fontWeight: 700,
+                    padding: "3px 8px",
                     borderRadius: 999,
-                    border: svc.popular ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(255,255,255,0.1)",
-                    color: svc.popular ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.35)",
-                    background: svc.popular ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.03)",
+                    background: selected ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.07)",
+                    color: selected ? "#111827" : "rgba(255,255,255,0.5)",
+                    border: selected ? "1px solid rgba(0,0,0,0.12)" : "1px solid rgba(255,255,255,0.12)",
                   }}
                 >
                   {svc.badge}
                 </span>
               )}
 
-              {/* Icon */}
+              {/* Icon box */}
               <div
                 style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: "0.65rem",
-                  border: selected ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(255,255,255,0.08)",
-                  background: selected ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
+                  width: 40,
+                  height: 40,
+                  borderRadius: "0.6rem",
+                  background: selected ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.06)",
+                  border: selected ? "1px solid rgba(0,0,0,0.1)" : "1px solid rgba(255,255,255,0.1)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: selected ? "#fff" : "rgba(255,255,255,0.38)",
-                  marginBottom: "1rem",
-                  transition: "all 0.3s",
+                  color: selected ? "#111827" : "rgba(255,255,255,0.6)",
+                  marginBottom: "0.875rem",
                   flexShrink: 0,
                 }}
               >
@@ -125,47 +110,70 @@ export const ServiceStep: React.FC<Props> = ({ selectedServiceId, onSelectServic
 
               {/* Text */}
               <div style={{ flex: 1 }}>
-                <h4 style={{ fontSize: "1rem", fontWeight: 600, letterSpacing: "-0.02em", color: selected ? "#fff" : "rgba(255,255,255,0.75)", marginBottom: 4, transition: "color 0.3s" }}>
+                <h4
+                  style={{
+                    fontSize: "0.9375rem",
+                    fontWeight: 700,
+                    letterSpacing: "-0.01em",
+                    color: selected ? "#111827" : "#fff",
+                    marginBottom: 3,
+                  }}
+                >
                   {svc.name}
                 </h4>
-                <p style={{ fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", color: selected ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.25)", marginBottom: 10, transition: "color 0.3s" }}>
+                <p
+                  style={{
+                    fontSize: "0.7rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                    fontWeight: 600,
+                    color: selected ? "#6b7280" : "rgba(255,255,255,0.35)",
+                    marginBottom: 8,
+                  }}
+                >
                   {svc.tagline}
                 </p>
-                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.3)", lineHeight: 1.6 }}>
+                <p style={{ fontSize: "0.78rem", color: selected ? "#6b7280" : "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
                   {svc.description}
                 </p>
               </div>
 
-              {/* Selected indicator */}
+              {/* Selected row */}
               <div
                 style={{
-                  marginTop: "1.2rem",
-                  paddingTop: "1rem",
-                  borderTop: "1px solid rgba(255,255,255,0.06)",
+                  marginTop: "1rem",
+                  paddingTop: "0.875rem",
+                  borderTop: selected ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.07)",
                   display: "flex",
                   alignItems: "center",
                   gap: 6,
-                  fontSize: "0.6rem",
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  fontWeight: 600,
-                  color: selected ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
-                  transition: "color 0.3s",
                 }}
               >
-                {selected ? (
-                  <>
-                    <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <Check style={{ width: 9, height: 9, color: "#000", strokeWidth: 3 }} />
-                    </div>
-                    Selected
-                  </>
-                ) : (
-                  <>
-                    <div style={{ width: 16, height: 16, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.15)" }} />
-                    Select
-                  </>
-                )}
+                <div
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    background: selected ? "#111827" : "transparent",
+                    border: selected ? "none" : "1.5px solid rgba(255,255,255,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {selected && <Check style={{ width: 10, height: 10, color: "#fff", strokeWidth: 3 }} />}
+                </div>
+                <span
+                  style={{
+                    fontSize: "0.6rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.15em",
+                    textTransform: "uppercase",
+                    color: selected ? "#374151" : "rgba(255,255,255,0.25)",
+                  }}
+                >
+                  {selected ? "Selected" : "Select"}
+                </span>
               </div>
             </button>
           );

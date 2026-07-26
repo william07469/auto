@@ -3,13 +3,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import gsap from "gsap";
-import { BookingState, ServiceId, PackageId, QuestionAnswer, CustomerDetails } from "@/components/booking/types";
+import {
+  BookingState,
+  ServiceId,
+  PackageId,
+  CustomerDetails,
+} from "@/components/booking/types";
 import { StepIndicator } from "@/components/booking/StepIndicator";
 import { ServiceStep } from "@/components/booking/ServiceStep";
 import { PackageStep } from "@/components/booking/PackageStep";
-import { ServiceQuestionsStep } from "@/components/booking/ServiceQuestionsStep";
 import { AddOnStep } from "@/components/booking/AddOnStep";
-import { DateStep, TimeStep } from "@/components/booking/DateTimeStep";
+import { DateTimeStep } from "@/components/booking/DateTimeStep";
 import { CustomerStep } from "@/components/booking/CustomerStep";
 import { SummaryStep } from "@/components/booking/SummaryStep";
 import { BookingSummaryDrawer } from "@/components/booking/BookingSummaryDrawer";
@@ -31,17 +35,18 @@ export const Route = createFileRoute("/buchen")({
   }),
 });
 
+// ── Step config ───────────────────────────────────────────────────────────────
+// 5-step flow: Service → Package → Extras → Date & Time → Summary
+// Step 5 (Summary) also contains the contact form inline before confirming.
+
+const TOTAL_STEPS = 5;
+
 const NEXT_LABELS: Record<number, string> = {
   1: "Package",
-  2: "Questions",
-  3: "Add-ons",
-  4: "Date",
-  5: "Time",
-  6: "Contact",
-  7: "Summary",
+  2: "Extras",
+  3: "Date & Time",
+  4: "Summary",
 };
-
-const TOTAL_STEPS = 8;
 
 const INITIAL_STATE: BookingState = {
   step: 1,
@@ -53,6 +58,8 @@ const INITIAL_STATE: BookingState = {
   selectedTimeSlot: null,
   customer: { fullName: "", phone: "", email: "", notes: "" },
 };
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 function BookingPage() {
   const navigate = useNavigate();
@@ -71,21 +78,27 @@ function BookingPage() {
         if (!data?.length) return;
         data.forEach((pkg: any) => {
           const cat = (pkg.category ?? "").toLowerCase();
-          const svc = SERVICES_DATA.find((s) => s.id === cat || s.name.toLowerCase().includes(cat));
+          const svc = SERVICES_DATA.find(
+            (s) => s.id === cat || s.name.toLowerCase().includes(cat)
+          );
           if (!svc) return;
-          // Update matching package price in PACKAGES_DATA
-          Object.values(PACKAGES_DATA).flat().forEach((p) => {
-            if (p.id === "premium" && pkg.price > 0) p.price = pkg.price;
-          });
+          Object.values(PACKAGES_DATA)
+            .flat()
+            .forEach((p) => {
+              if (p.id === "premium" && pkg.price > 0) p.price = pkg.price;
+            });
         });
       });
   }, []);
 
-  // Pre-fill email
+  // Pre-fill email from auth
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user?.email) {
-        setBooking((p) => ({ ...p, customer: { ...p.customer, email: user.email! } }));
+        setBooking((p) => ({
+          ...p,
+          customer: { ...p.customer, email: user.email! },
+        }));
       }
     });
   }, []);
@@ -103,13 +116,6 @@ function BookingPage() {
 
   const handleSelectPackage = (id: PackageId) => {
     setBooking((p) => ({ ...p, selectedPackageId: id }));
-  };
-
-  const handleAnswer = (questionId: string, answerId: string) => {
-    setBooking((p) => {
-      const filtered = p.questionAnswers.filter((a) => a.questionId !== questionId);
-      return { ...p, questionAnswers: [...filtered, { questionId, answerId }] };
-    });
   };
 
   const handleToggleAddOn = (id: string) => {
@@ -131,17 +137,9 @@ function BookingPage() {
     switch (step) {
       case 1: return !!booking.selectedServiceId;
       case 2: return !!booking.selectedPackageId;
-      case 3: return true; // questions optional
-      case 4: return true; // add-ons optional
-      case 5: return !!booking.selectedDate;
-      case 6: return !!booking.selectedTimeSlot;
-      case 7:
-        return (
-          !!booking.customer.fullName.trim() &&
-          !!booking.customer.phone.trim() &&
-          !!booking.customer.email.trim()
-        );
-      case 8: return true;
+      case 3: return true;            // add-ons optional
+      case 4: return !!booking.selectedDate && !!booking.selectedTimeSlot;
+      case 5: return true;
       default: return false;
     }
   };
@@ -153,16 +151,16 @@ function BookingPage() {
     if (stepRef.current) {
       gsap.to(stepRef.current, {
         opacity: 0,
-        y: -16,
-        duration: 0.2,
+        y: -12,
+        duration: 0.18,
         ease: "power2.in",
         onComplete: () => {
           setBooking((p) => ({ ...p, step: next }));
           window.scrollTo({ top: 0, behavior: "smooth" });
           gsap.fromTo(
             stepRef.current,
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }
           );
         },
       });
@@ -177,9 +175,7 @@ function BookingPage() {
       const msgs: Record<number, string> = {
         1: "Please select a service to continue.",
         2: "Please choose a package.",
-        5: "Please choose a date.",
-        6: "Please select a time slot.",
-        7: "Please fill in your name, phone and email.",
+        4: "Please choose a date and a time slot.",
       };
       const msg = msgs[booking.step];
       if (msg) toast.error(msg);
@@ -195,6 +191,16 @@ function BookingPage() {
   // ── Submit ────────────────────────────────────────────────────────────────
 
   const handleConfirmBooking = async () => {
+    // Validate contact details before submitting
+    if (
+      !booking.customer.fullName.trim() ||
+      !booking.customer.phone.trim() ||
+      !booking.customer.email.trim()
+    ) {
+      toast.error("Please fill in your name, phone and email.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -204,15 +210,21 @@ function BookingPage() {
       }
 
       const service = SERVICES_DATA.find((s) => s.id === booking.selectedServiceId);
-      const packages = booking.selectedServiceId ? PACKAGES_DATA[booking.selectedServiceId] : [];
+      const packages = booking.selectedServiceId
+        ? PACKAGES_DATA[booking.selectedServiceId]
+        : [];
       const pkg = packages.find((p) => p.id === booking.selectedPackageId);
-      const addons = ADDONS_DATA.filter((a) => booking.selectedAddOnIds.includes(a.id));
+      const addons = ADDONS_DATA.filter((a) =>
+        booking.selectedAddOnIds.includes(a.id)
+      );
       const basePrice = pkg?.price ?? 0;
       const addonsTotal = addons.reduce((s, a) => s + a.price, 0);
       const estimatedPrice = basePrice + addonsTotal;
 
       const serviceStr = `${service?.name ?? ""}${pkg ? ` — ${pkg.name}` : ""}${
-        addons.length > 0 ? ` + [${addons.map((a) => a.name).join(", ")}]` : ""
+        addons.length > 0
+          ? ` + [${addons.map((a) => a.name).join(", ")}]`
+          : ""
       }`;
 
       const result = await createBooking({
@@ -231,10 +243,11 @@ function BookingPage() {
 
       if (result.success) {
         setDone(true);
-        toast.success("Buchung erfolgreich! Bestätigung wurde an Ihre E-Mail gesendet.");
+        toast.success("Booking confirmed! Check your email for a confirmation.");
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Buchung fehlgeschlagen";
+      const msg =
+        err instanceof Error ? err.message : "Booking failed. Please try again.";
       toast.error(msg);
     } finally {
       setSubmitting(false);
@@ -247,51 +260,25 @@ function BookingPage() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#08080c",
+        background: "#000",
         color: "#fff",
         fontFamily: "var(--font-sans, Inter, sans-serif)",
         WebkitFontSmoothing: "antialiased",
         paddingBottom: "9rem",
       }}
     >
-      {/* Ambient glow */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          pointerEvents: "none",
-          overflow: "hidden",
-          zIndex: 0,
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: -180,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 600,
-            height: 450,
-            background: "radial-gradient(ellipse, rgba(255,255,255,0.025) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
-      </div>
-
-      {/* Header */}
+      {/* ── Header ── */}
       <header
         style={{
           position: "sticky",
           top: 0,
           zIndex: 30,
-          background: "rgba(8,8,12,0.9)",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
+          background: "#000",
+          borderBottom: "1px solid #1f1f1f",
         }}
       >
         <div
-          className="max-w-5xl mx-auto flex items-center justify-between"
+          className="max-w-3xl mx-auto flex items-center justify-between"
           style={{ padding: "0 1.5rem", height: 56 }}
         >
           <Link
@@ -300,55 +287,77 @@ function BookingPage() {
               display: "flex",
               alignItems: "center",
               gap: 6,
-              fontSize: "0.6rem",
-              letterSpacing: "0.28em",
+              fontSize: "0.65rem",
+              letterSpacing: "0.2em",
               textTransform: "uppercase",
-              fontWeight: 500,
-              color: "rgba(255,255,255,0.28)",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.35)",
               textDecoration: "none",
-              transition: "color 0.2s",
+              transition: "color 0.18s",
             }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.28)")}
+            onMouseEnter={(e) =>
+              ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.75)")
+            }
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.35)")
+            }
           >
-            <ArrowLeft style={{ width: 12, height: 12 }} />
-            <span>Back</span>
+            <ArrowLeft style={{ width: 13, height: 13 }} />
+            Back
           </Link>
 
-          <Link to="/">
+          {/* Logo — try SVG, fall back to text */}
+          <Link to="/" style={{ textDecoration: "none" }}>
             <img
               src="/logo.svg"
               alt="WV Detailing"
-              className="h-9 w-auto opacity-90"
+              style={{ height: 36, width: "auto" }}
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+                const next = e.currentTarget.nextElementSibling as HTMLElement | null;
+                if (next) next.style.display = "block";
+              }}
             />
+            <span
+              style={{
+                display: "none",
+                fontSize: "0.85rem",
+                fontWeight: 800,
+                letterSpacing: "-0.02em",
+                color: "#111827",
+              }}
+            >
+              WV Detailing
+            </span>
           </Link>
 
           <Link
             to="/kunden-login"
             search={{ redirect: "/buchen" }}
             style={{
-              fontSize: "0.6rem",
-              letterSpacing: "0.28em",
+              fontSize: "0.65rem",
+              letterSpacing: "0.2em",
               textTransform: "uppercase",
-              fontWeight: 500,
-              color: "rgba(255,255,255,0.28)",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.35)",
               textDecoration: "none",
-              transition: "color 0.2s",
+              transition: "color 0.18s",
             }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.28)")}
+            onMouseEnter={(e) =>
+              ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.75)")
+            }
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.35)")
+            }
           >
             Sign in
           </Link>
         </div>
       </header>
 
-      {/* Main */}
-      <main
-        className="relative z-10 max-w-5xl mx-auto"
-        style={{ padding: "3rem 1.5rem 0" }}
-      >
-        {/* Progress indicator */}
+      {/* ── Main ── */}
+      <main className="max-w-3xl mx-auto" style={{ padding: "2.5rem 1.5rem 0" }}>
+        {/* Step indicator */}
         {!done && (
           <StepIndicator
             currentStep={booking.step}
@@ -358,7 +367,7 @@ function BookingPage() {
         )}
 
         {/* Step content */}
-        <div ref={stepRef} style={{ minHeight: 500 }}>
+        <div ref={stepRef} style={{ minHeight: 480 }}>
           {booking.step === 1 && (
             <ServiceStep
               selectedServiceId={booking.selectedServiceId}
@@ -374,44 +383,47 @@ function BookingPage() {
             />
           )}
 
-          {booking.step === 3 && booking.selectedServiceId && (
-            <ServiceQuestionsStep
-              selectedServiceId={booking.selectedServiceId}
-              answers={booking.questionAnswers}
-              onAnswer={handleAnswer}
-            />
-          )}
-
-          {booking.step === 4 && (
+          {booking.step === 3 && (
             <AddOnStep
               selectedAddOnIds={booking.selectedAddOnIds}
               onToggleAddOn={handleToggleAddOn}
             />
           )}
 
-          {booking.step === 5 && (
-            <DateStep
-              selectedDate={booking.selectedDate}
-              onSelectDate={(d) => setBooking((p) => ({ ...p, selectedDate: d }))}
-            />
-          )}
-
-          {booking.step === 6 && (
-            <TimeStep
+          {booking.step === 4 && (
+            <DateTimeStep
               selectedDate={booking.selectedDate}
               selectedTimeSlot={booking.selectedTimeSlot}
-              onSelectTimeSlot={(t) => setBooking((p) => ({ ...p, selectedTimeSlot: t }))}
+              onSelectDate={(d) =>
+                setBooking((p) => ({ ...p, selectedDate: d, selectedTimeSlot: null }))
+              }
+              onSelectTimeSlot={(t) =>
+                setBooking((p) => ({ ...p, selectedTimeSlot: t }))
+              }
             />
           )}
 
-          {booking.step === 7 && (
-            <CustomerStep
-              customer={booking.customer}
-              onChangeCustomer={handleChangeCustomer}
-            />
+          {booking.step === 5 && !done && (
+            <>
+              {/* Contact details — inline above summary */}
+              <div style={{ marginBottom: "2rem" }}>
+                <CustomerStep
+                  customer={booking.customer}
+                  onChangeCustomer={handleChangeCustomer}
+                />
+              </div>
+
+              <SummaryStep
+                bookingData={booking}
+                onEditStep={goToStep}
+                onConfirmBooking={handleConfirmBooking}
+                submitting={submitting}
+                done={done}
+              />
+            </>
           )}
 
-          {booking.step === 8 && (
+          {done && (
             <SummaryStep
               bookingData={booking}
               onEditStep={goToStep}
@@ -422,16 +434,16 @@ function BookingPage() {
           )}
         </div>
 
-        {/* Back / Continue nav */}
-        {!done && booking.step < 8 && (
+        {/* ── Back / Next navigation ── */}
+        {!done && booking.step < TOTAL_STEPS && (
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginTop: "3.5rem",
+              marginTop: "3rem",
               paddingTop: "1.5rem",
-              borderTop: "1px solid rgba(255,255,255,0.06)",
+              borderTop: "1px solid #1f1f1f",
             }}
           >
             <button
@@ -442,57 +454,61 @@ function BookingPage() {
                 display: "flex",
                 alignItems: "center",
                 gap: 6,
-                fontSize: "0.62rem",
-                letterSpacing: "0.22em",
+                fontSize: "0.65rem",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                fontWeight: 500,
-                color: booking.step === 1 ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.32)",
+                fontWeight: 600,
+                color: booking.step === 1 ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.45)",
                 background: "none",
                 border: "none",
                 cursor: booking.step === 1 ? "not-allowed" : "pointer",
                 padding: 0,
-                transition: "color 0.2s",
+                transition: "color 0.18s",
               }}
-              onMouseEnter={(e) => { if (booking.step > 1) (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = booking.step === 1 ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.32)"; }}
+              onMouseEnter={(e) => {
+                if (booking.step > 1)
+                  (e.currentTarget as HTMLElement).style.color = "#fff";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.color =
+                  booking.step === 1 ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.45)";
+              }}
             >
-              <ArrowLeft style={{ width: 12, height: 12 }} />
-              <span>Back</span>
+              <ArrowLeft style={{ width: 13, height: 13 }} />
+              Back
             </button>
 
             <button
               type="button"
-              id="next-step-btn"
               onClick={handleNext}
-              disabled={!isStepValid(booking.step)}
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
                 padding: "0.75rem 1.75rem",
                 borderRadius: 999,
-                background: isStepValid(booking.step) ? "#fff" : "rgba(255,255,255,0.05)",
-                color: isStepValid(booking.step) ? "#000" : "rgba(255,255,255,0.18)",
+                background: isStepValid(booking.step) ? "#111827" : "#e5e7eb",
+                color: isStepValid(booking.step) ? "#fff" : "#9ca3af",
                 fontWeight: 700,
-                fontSize: "0.62rem",
-                letterSpacing: "0.22em",
+                fontSize: "0.65rem",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                border: isStepValid(booking.step) ? "none" : "1px solid rgba(255,255,255,0.07)",
-                boxShadow: isStepValid(booking.step) ? "0 4px 24px rgba(255,255,255,0.09)" : "none",
-                cursor: isStepValid(booking.step) ? "pointer" : "not-allowed",
-                transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
+                border: "none",
+                cursor: isStepValid(booking.step) ? "pointer" : "default",
+                boxShadow: isStepValid(booking.step)
+                  ? "0 2px 12px rgba(0,0,0,0.12)"
+                  : "none",
+                transition: "all 0.2s ease",
               }}
-              onMouseEnter={(e) => { if (isStepValid(booking.step)) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.9)"; }}
-              onMouseLeave={(e) => { if (isStepValid(booking.step)) (e.currentTarget as HTMLElement).style.background = "#fff"; }}
             >
-              <span>Continue</span>
-              <ArrowRight style={{ width: 12, height: 12, strokeWidth: 2.5 }} />
+              Continue to {NEXT_LABELS[booking.step] ?? "Next"}
+              <ArrowRight style={{ width: 13, height: 13, strokeWidth: 2.5 }} />
             </button>
           </div>
         )}
       </main>
 
-      {/* Floating drawer */}
+      {/* ── Floating bottom drawer ── */}
       {!done && (
         <BookingSummaryDrawer
           bookingData={booking}

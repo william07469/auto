@@ -9,9 +9,33 @@ interface Props {
 }
 
 const FIELDS = [
-  { key: "fullName", label: "Full Name", type: "text", placeholder: "e.g. Max Mustermann", icon: User, span: 2, required: true },
-  { key: "phone", label: "Phone Number", type: "tel", placeholder: "+49 170 123 4567", icon: Phone, span: 1, required: true },
-  { key: "email", label: "Email Address", type: "email", placeholder: "max@example.com", icon: Mail, span: 1, required: true },
+  {
+    key: "fullName",
+    label: "Full Name",
+    type: "text",
+    placeholder: "e.g. Max Mustermann",
+    icon: User,
+    span: 2,
+    required: true,
+  },
+  {
+    key: "phone",
+    label: "Phone Number",
+    type: "tel",
+    placeholder: "+49 170 123 4567",
+    icon: Phone,
+    span: 1,
+    required: true,
+  },
+  {
+    key: "email",
+    label: "Email Address",
+    type: "email",
+    placeholder: "max@example.com",
+    icon: Mail,
+    span: 1,
+    required: true,
+  },
 ];
 
 export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) => {
@@ -21,115 +45,143 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
     if (!ref.current) return;
     gsap.fromTo(
       Array.from(ref.current.children),
-      { opacity: 0, y: 22 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power3.out" }
     );
   }, []);
 
   return (
-    <div ref={ref} className="space-y-10 max-w-3xl mx-auto">
+    <div ref={ref} className="space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="space-y-3">
-        <p style={{ fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", fontWeight: 500, color: "rgba(255,255,255,0.28)" }}>
-          Step 07
+      <div>
+        <p
+          style={{
+            fontSize: "0.65rem",
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            fontWeight: 600,
+            color: "#9ca3af",
+            marginBottom: 8,
+          }}
+        >
+          Contact Details
         </p>
-        <h3 style={{ fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff" }}>
+        <h3
+          style={{
+            fontSize: "clamp(1.4rem,3vw,1.875rem)",
+            fontWeight: 700,
+            letterSpacing: "-0.03em",
+            color: "#111827",
+            lineHeight: 1.15,
+            marginBottom: 6,
+          }}
+        >
           Your details
         </h3>
-        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.38)", maxWidth: 420, marginTop: 8, lineHeight: 1.6 }}>
-          Used to confirm your appointment and send a reminder. Never shared with third parties.
+        <p style={{ fontSize: "0.875rem", color: "#6b7280", lineHeight: 1.65, maxWidth: 400 }}>
+          Used to confirm your appointment. Never shared with third parties.
         </p>
       </div>
 
       {/* Form card */}
       <div
         style={{
-          padding: "2rem",
+          padding: "1.5rem",
           borderRadius: "1rem",
-          border: "1px solid rgba(255,255,255,0.08)",
-          background: "rgba(255,255,255,0.02)",
+          border: "1.5px solid #e5e7eb",
+          background: "#fff",
         }}
       >
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "1.25rem",
+            gap: "1.1rem",
           }}
-          className="grid-cols-1 sm:grid-cols-2"
         >
           {FIELDS.map((field) => {
             const Icon = field.icon;
             return (
               <div
                 key={field.key}
-                style={{ gridColumn: field.span === 2 ? "span 2" : "span 1" }}
-                className="group"
+                style={{
+                  gridColumn: field.span === 2 ? "span 2" : "span 1",
+                }}
               >
                 <label
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 6,
-                    fontSize: "0.6rem",
-                    letterSpacing: "0.28em",
+                    gap: 5,
+                    fontSize: "0.65rem",
+                    letterSpacing: "0.2em",
                     textTransform: "uppercase",
-                    fontWeight: 500,
-                    color: "rgba(255,255,255,0.32)",
-                    marginBottom: 8,
-                    transition: "color 0.2s",
+                    fontWeight: 700,
+                    color: "#374151",
+                    marginBottom: 6,
                   }}
-                  className="group-focus-within:!text-white/60"
                 >
-                  <Icon style={{ width: 11, height: 11 }} />
+                  <Icon style={{ width: 11, height: 11, color: "#9ca3af" }} />
                   {field.label}
-                  {field.required && <span style={{ color: "rgba(255,255,255,0.18)" }}>*</span>}
+                  {field.required && (
+                    <span style={{ color: "#d1d5db", fontWeight: 400 }}>*</span>
+                  )}
                 </label>
                 <input
                   type={field.type}
                   required={field.required}
                   value={customer[field.key as keyof CustomerDetails] as string}
-                  onChange={(e) => onChangeCustomer({ [field.key]: e.target.value })}
+                  onChange={(e) =>
+                    onChangeCustomer({ [field.key]: e.target.value })
+                  }
                   placeholder={field.placeholder}
                   style={{
                     width: "100%",
-                    background: "transparent",
-                    border: "1px solid rgba(255,255,255,0.09)",
+                    background: "#f9fafb",
+                    border: "1.5px solid #e5e7eb",
                     borderRadius: "0.65rem",
-                    padding: "0.9rem 1rem",
-                    fontSize: "0.88rem",
-                    color: "#fff",
+                    padding: "0.8rem 1rem",
+                    fontSize: "0.9rem",
+                    color: "#111827",
                     outline: "none",
-                    transition: "border-color 0.2s",
+                    transition: "border-color 0.18s",
                     boxSizing: "border-box",
                   }}
-                  onFocus={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.3)")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.09)")}
-                  className="placeholder-white/20"
+                  onFocus={(e) => (e.target.style.borderColor = "#111827")}
+                  onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
                 />
               </div>
             );
           })}
 
           {/* Notes */}
-          <div style={{ gridColumn: "span 2" }} className="group">
+          <div style={{ gridColumn: "span 2" }}>
             <label
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 6,
-                fontSize: "0.6rem",
-                letterSpacing: "0.28em",
+                gap: 5,
+                fontSize: "0.65rem",
+                letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                fontWeight: 500,
-                color: "rgba(255,255,255,0.32)",
-                marginBottom: 8,
+                fontWeight: 700,
+                color: "#374151",
+                marginBottom: 6,
               }}
-              className="group-focus-within:!text-white/60"
             >
-              <FileText style={{ width: 11, height: 11 }} />
+              <FileText style={{ width: 11, height: 11, color: "#9ca3af" }} />
               Notes
-              <span style={{ color: "rgba(255,255,255,0.18)", textTransform: "none", letterSpacing: 0, fontSize: "0.7rem" }}>(optional)</span>
+              <span
+                style={{
+                  color: "#9ca3af",
+                  fontWeight: 400,
+                  textTransform: "none",
+                  letterSpacing: 0,
+                  fontSize: "0.72rem",
+                }}
+              >
+                (optional)
+              </span>
             </label>
             <textarea
               value={customer.notes}
@@ -138,53 +190,53 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
               placeholder="Special requests, PPF present, access instructions…"
               style={{
                 width: "100%",
-                background: "transparent",
-                border: "1px solid rgba(255,255,255,0.09)",
+                background: "#f9fafb",
+                border: "1.5px solid #e5e7eb",
                 borderRadius: "0.65rem",
-                padding: "0.9rem 1rem",
-                fontSize: "0.88rem",
-                color: "#fff",
+                padding: "0.8rem 1rem",
+                fontSize: "0.9rem",
+                color: "#111827",
                 outline: "none",
                 resize: "none",
-                transition: "border-color 0.2s",
+                transition: "border-color 0.18s",
                 boxSizing: "border-box",
                 fontFamily: "inherit",
               }}
-              onFocus={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.3)")}
-              onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.09)")}
-              className="placeholder-white/20"
+              onFocus={(e) => (e.target.style.borderColor = "#111827")}
+              onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
             />
           </div>
         </div>
 
-        {/* Privacy */}
+        {/* Privacy note */}
         <div
           style={{
             display: "flex",
             alignItems: "flex-start",
-            gap: 12,
-            marginTop: "1.5rem",
-            paddingTop: "1.5rem",
-            borderTop: "1px solid rgba(255,255,255,0.06)",
+            gap: 10,
+            marginTop: "1.25rem",
+            paddingTop: "1.25rem",
+            borderTop: "1px solid #f3f4f6",
           }}
         >
           <div
             style={{
-              width: 32,
-              height: 32,
+              width: 30,
+              height: 30,
               borderRadius: "0.5rem",
-              border: "1px solid rgba(255,255,255,0.08)",
-              background: "rgba(255,255,255,0.03)",
+              border: "1px solid #e5e7eb",
+              background: "#f9fafb",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
             }}
           >
-            <Lock style={{ width: 13, height: 13, color: "rgba(255,255,255,0.28)" }} />
+            <Lock style={{ width: 12, height: 12, color: "#9ca3af" }} />
           </div>
-          <p style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.22)", lineHeight: 1.65, paddingTop: 2 }}>
-            Your data is encrypted and processed confidentially. Not shared with third parties. Deletion available on request.
+          <p style={{ fontSize: "0.72rem", color: "#9ca3af", lineHeight: 1.6, paddingTop: 2 }}>
+            Your data is encrypted and processed confidentially. Not shared with third parties.
+            Deletion available on request.
           </p>
         </div>
       </div>

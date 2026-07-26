@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ADDONS_DATA } from "./bookingData";
-import {
-  Gauge, Lightbulb, Wind, Circle, Sparkles, ShieldCheck, Check, Plus,
-} from "lucide-react";
+import { Gauge, Lightbulb, Wind, Circle, Sparkles, ShieldCheck, Check } from "lucide-react";
 import gsap from "gsap";
 
 interface Props {
@@ -25,200 +23,177 @@ export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) 
   useEffect(() => {
     if (!ref.current) return;
     gsap.fromTo(
-      ref.current.querySelectorAll(".addon-card"),
-      { opacity: 0, y: 22, scale: 0.98 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.07, ease: "power3.out" }
+      ref.current.querySelectorAll(".addon-row"),
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.45, stagger: 0.06, ease: "power3.out" }
     );
   }, []);
 
-  const totalSelected = selectedAddOnIds.length;
-  const totalPrice = ADDONS_DATA.filter((a) => selectedAddOnIds.includes(a.id)).reduce(
+  const selectedTotal = ADDONS_DATA.filter((a) => selectedAddOnIds.includes(a.id)).reduce(
     (s, a) => s + a.price,
     0
   );
 
   return (
-    <div ref={ref} className="space-y-10 max-w-4xl mx-auto">
+    <div ref={ref} className="space-y-8 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="space-y-3">
-        <p style={{ fontSize: "0.6rem", letterSpacing: "0.38em", textTransform: "uppercase", fontWeight: 500, color: "rgba(255,255,255,0.28)" }}>
-          Step 04
+      <div>
+        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
+          Step 3 of 5
         </p>
-        <h3 style={{ fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff" }}>
-          Recommended add-ons
+        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.15, marginBottom: 8 }}>
+          Any extras?
         </h3>
-        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.38)", maxWidth: 460, marginTop: 8, lineHeight: 1.6 }}>
-          Enhance your appointment with specialist treatments performed by the same technician. All optional.
+        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65, maxWidth: 440 }}>
+          Optional add-ons performed by the same technician during your appointment.
         </p>
       </div>
 
-      {/* Selection bar */}
-      {totalSelected > 0 && (
+      {/* Running total pill */}
+      {selectedAddOnIds.length > 0 && (
         <div
           style={{
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
-            gap: 12,
-            padding: "0.75rem 1.25rem",
-            borderRadius: "0.75rem",
-            border: "1px solid rgba(255,255,255,0.15)",
-            background: "rgba(255,255,255,0.04)",
+            gap: 10,
+            padding: "0.5rem 1rem",
+            borderRadius: 999,
+            background: "#111827",
+            color: "#fff",
           }}
         >
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
-          <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.55)" }}>
-            {totalSelected} add-on{totalSelected > 1 ? "s" : ""} selected
-          </span>
-          <span style={{ fontSize: "0.75rem", fontFamily: "monospace", color: "rgba(255,255,255,0.65)", marginLeft: "auto" }}>
-            +€{totalPrice}
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff" }} />
+          <span style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.05em" }}>
+            {selectedAddOnIds.length} extra{selectedAddOnIds.length > 1 ? "s" : ""} — +€{selectedTotal}
           </span>
         </div>
       )}
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {ADDONS_DATA.map((addon) => {
+      {/* Extras list */}
+      <div
+        style={{
+          borderRadius: "1rem",
+          border: "1.5px solid rgba(255,255,255,0.1)",
+          overflow: "hidden",
+          background: "#141414",
+        }}
+      >
+        {ADDONS_DATA.map((addon, idx) => {
           const selected = selectedAddOnIds.includes(addon.id);
+          const isLast = idx === ADDONS_DATA.length - 1;
+
           return (
             <button
               key={addon.id}
               type="button"
               onClick={() => onToggleAddOn(addon.id)}
-              className="addon-card group relative text-left"
+              className="addon-row w-full text-left"
               style={{
                 display: "flex",
-                alignItems: "flex-start",
+                alignItems: "center",
                 gap: "1rem",
-                padding: "1.2rem 1.25rem",
-                borderRadius: "0.875rem",
-                border: selected
-                  ? "1px solid rgba(255,255,255,0.3)"
-                  : "1px solid rgba(255,255,255,0.07)",
-                background: selected
-                  ? "rgba(255,255,255,0.055)"
-                  : "rgba(255,255,255,0.02)",
-                transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+                padding: "1.1rem 1.25rem",
+                background: selected ? "rgba(255,255,255,0.06)" : "transparent",
+                borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.06)",
                 cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                if (!selected) {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.13)";
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.032)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!selected) {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.07)";
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)";
-                }
+                transition: "background 0.18s ease",
               }}
             >
-              {/* Badge */}
-              {addon.badge && (
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 10,
-                    right: 44,
-                    fontSize: "0.5rem",
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                    fontWeight: 600,
-                    padding: "2px 8px",
-                    borderRadius: 999,
-                    border: "1px solid rgba(255,255,255,0.18)",
-                    color: "rgba(255,255,255,0.45)",
-                    background: "rgba(255,255,255,0.04)",
-                  }}
-                >
-                  {addon.badge}
-                </span>
-              )}
+              {/* Checkbox */}
+              <div
+                style={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: "0.35rem",
+                  border: selected ? "none" : "1.5px solid rgba(255,255,255,0.2)",
+                  background: selected ? "#fff" : "transparent",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  transition: "all 0.18s ease",
+                }}
+              >
+                {selected && <Check style={{ width: 12, height: 12, color: "#000", strokeWidth: 3 }} />}
+              </div>
 
               {/* Icon */}
               <div
                 style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "0.6rem",
-                  border: selected
-                    ? "1px solid rgba(255,255,255,0.22)"
-                    : "1px solid rgba(255,255,255,0.08)",
-                  background: selected
-                    ? "rgba(255,255,255,0.07)"
-                    : "rgba(255,255,255,0.03)",
+                  width: 38,
+                  height: 38,
+                  borderRadius: "0.55rem",
+                  background: selected ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)",
+                  border: "1px solid",
+                  borderColor: selected ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: selected ? "#fff" : "rgba(255,255,255,0.3)",
+                  color: selected ? "#fff" : "rgba(255,255,255,0.4)",
                   flexShrink: 0,
-                  transition: "all 0.3s",
+                  transition: "all 0.18s ease",
                 }}
               >
                 {ICONS[addon.iconName] ?? <Sparkles className="w-5 h-5" />}
               </div>
 
               {/* Content */}
-              <div style={{ flex: 1, minWidth: 0, paddingRight: "0.5rem" }}>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, marginBottom: 4 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2, flexWrap: "wrap" }}>
                   <h5
                     style={{
-                      fontSize: "0.88rem",
-                      fontWeight: 600,
+                      fontSize: "0.9rem",
+                      fontWeight: 700,
                       letterSpacing: "-0.01em",
-                      color: selected ? "#fff" : "rgba(255,255,255,0.65)",
-                      transition: "color 0.3s",
+                      color: selected ? "#fff" : "rgba(255,255,255,0.75)",
                     }}
                   >
                     {addon.name}
                   </h5>
-                  <span
-                    style={{
-                      fontSize: "0.78rem",
-                      fontFamily: "monospace",
-                      fontWeight: 600,
-                      color: selected ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.28)",
-                      flexShrink: 0,
-                      transition: "color 0.3s",
-                    }}
-                  >
-                    +€{addon.price}
-                  </span>
+                  {addon.badge && (
+                    <span
+                      style={{
+                        fontSize: "0.55rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        padding: "2px 7px",
+                        borderRadius: 999,
+                        background: "rgba(255,255,255,0.07)",
+                        color: "rgba(255,255,255,0.4)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                      }}
+                    >
+                      {addon.badge}
+                    </span>
+                  )}
                 </div>
-                <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.3)", lineHeight: 1.55 }}>
+                <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", lineHeight: 1.5 }}>
                   {addon.description}
                 </p>
               </div>
 
-              {/* Toggle */}
-              <div
-                style={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: "0.35rem",
-                  border: selected ? "none" : "1px solid rgba(255,255,255,0.14)",
-                  background: selected ? "#fff" : "transparent",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  marginTop: 2,
-                  transition: "all 0.28s",
-                }}
-              >
-                {selected
-                  ? <Check style={{ width: 12, height: 12, color: "#000", strokeWidth: 3 }} />
-                  : <Plus style={{ width: 12, height: 12, color: "rgba(255,255,255,0.25)" }} />
-                }
+              {/* Price */}
+              <div style={{ flexShrink: 0, textAlign: "right" }}>
+                <span
+                  style={{
+                    fontSize: "1rem",
+                    fontWeight: 800,
+                    fontFamily: "monospace",
+                    letterSpacing: "-0.02em",
+                    color: selected ? "#fff" : "rgba(255,255,255,0.55)",
+                  }}
+                >
+                  +€{addon.price}
+                </span>
               </div>
             </button>
           );
         })}
       </div>
 
-      <p style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.2)", letterSpacing: "0.05em" }}>
-        You can skip add-ons by pressing{" "}
-        <span style={{ color: "rgba(255,255,255,0.35)" }}>Continue</span> below.
+      <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.25)" }}>
+        All extras are optional — press <strong style={{ color: "rgba(255,255,255,0.5)" }}>Continue</strong> to skip.
       </p>
     </div>
   );
