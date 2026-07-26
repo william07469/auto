@@ -13,6 +13,8 @@ import floorBefore from "@/assets/before_after/floor_before.jpeg";
 import floorAfter from "@/assets/before_after/floor_after.jpeg";
 import ceramicBefore from "@/assets/before_after/ceramic_before.jpeg";
 import ceramicAfter from "@/assets/before_after/ceramic_after.jpeg";
+import paintBefore from "@/assets/before_after/paint_before.jpeg";
+import paintAfter from "@/assets/before_after/paint_after.jpeg";
 import { supabase } from "@/integrations/client";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -42,7 +44,7 @@ const FALLBACK_CASES: Case[] = [
     label: "Paint Correction",
     desc: "Machine polishing removes swirl marks, scratches and oxidation — restoring optical clarity, depth and showroom gloss.",
     pairs: [
-      { title: "Swirl Removal", before: ceramicBefore, after: ceramicAfter },
+      { title: "Swirl Removal", before: paintBefore, after: paintAfter },
     ],
   },
   {
