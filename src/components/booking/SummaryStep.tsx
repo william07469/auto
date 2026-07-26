@@ -51,7 +51,6 @@ export const SummaryStep: React.FC<Props> = ({
     }
   }, [done]);
 
-  // ── Success state ──────────────────────────────────────────────────────────
   if (done) {
     return (
       <div ref={successRef} className="max-w-lg mx-auto text-center py-16 px-6">
@@ -60,36 +59,35 @@ export const SummaryStep: React.FC<Props> = ({
             width: 72,
             height: 72,
             borderRadius: "50%",
-            background: "#111827",
+            background: "#fff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             margin: "0 auto 1.5rem",
           }}
         >
-          <CheckCircle2 style={{ width: 32, height: 32, color: "#fff", strokeWidth: 1.5 }} />
+          <CheckCircle2 style={{ width: 32, height: 32, color: "#000", strokeWidth: 1.5 }} />
         </div>
 
-        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 700, color: "#9ca3af", marginBottom: 8 }}>
+        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 700, color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>
           Booking Confirmed
         </p>
-        <h2 style={{ fontSize: "clamp(1.75rem,4vw,2.5rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "#111827", marginBottom: 12, lineHeight: 1.1 }}>
+        <h2 style={{ fontSize: "clamp(1.75rem,4vw,2.5rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "#fff", marginBottom: 12, lineHeight: 1.1 }}>
           You're all set.
         </h2>
-        <p style={{ fontSize: "0.9rem", color: "#6b7280", lineHeight: 1.7, maxWidth: 340, margin: "0 auto 2rem" }}>
-          Thank you, <strong style={{ color: "#111827" }}>{bookingData.customer.fullName}</strong>. Your appointment is confirmed for{" "}
-          <strong style={{ color: "#111827" }}>{bookingData.selectedDate}</strong> at{" "}
-          <strong style={{ color: "#111827" }}>{bookingData.selectedTimeSlot}</strong>.
+        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.7, maxWidth: 340, margin: "0 auto 2rem" }}>
+          Thank you, <strong style={{ color: "#fff" }}>{bookingData.customer.fullName}</strong>. Your appointment is confirmed for{" "}
+          <strong style={{ color: "#fff" }}>{bookingData.selectedDate}</strong> at{" "}
+          <strong style={{ color: "#fff" }}>{bookingData.selectedTimeSlot}</strong>.
         </p>
 
-        {/* Receipt card */}
         <div
           style={{
             textAlign: "left",
             padding: "1.5rem",
             borderRadius: "1rem",
-            border: "1.5px solid #e5e7eb",
-            background: "#fff",
+            border: "1.5px solid rgba(255,255,255,0.1)",
+            background: "#0d0d0d",
           }}
         >
           {[
@@ -116,15 +114,15 @@ export const SummaryStep: React.FC<Props> = ({
                 justifyContent: "space-between",
                 alignItems: "flex-start",
                 padding: "8px 0",
-                borderBottom: "1px solid #f3f4f6",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
               }}
             >
-              <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>{row.label}</span>
+              <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>{row.label}</span>
               <span
                 style={{
                   fontSize: "0.78rem",
                   fontWeight: row.bold ? 700 : 500,
-                  color: row.bold ? "#111827" : "#374151",
+                  color: row.bold ? "#fff" : "rgba(255,255,255,0.6)",
                   textAlign: "right",
                   maxWidth: "55%",
                 }}
@@ -143,14 +141,14 @@ export const SummaryStep: React.FC<Props> = ({
               marginTop: "0.25rem",
             }}
           >
-            <span style={{ fontSize: "0.78rem", color: "#6b7280" }}>Estimated total</span>
+            <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.4)" }}>Estimated total</span>
             <span
               style={{
                 fontSize: "2rem",
                 fontWeight: 800,
                 fontFamily: "monospace",
                 letterSpacing: "-0.04em",
-                color: "#111827",
+                color: "#fff",
               }}
             >
               €{total}
@@ -158,49 +156,44 @@ export const SummaryStep: React.FC<Props> = ({
           </div>
         </div>
 
-        <p style={{ fontSize: "0.7rem", color: "#9ca3af", marginTop: "1.25rem" }}>
+        <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.35)", marginTop: "1.25rem" }}>
           Confirmation sent to{" "}
-          <strong style={{ color: "#374151" }}>{bookingData.customer.email}</strong>
+          <strong style={{ color: "rgba(255,255,255,0.6)" }}>{bookingData.customer.email}</strong>
         </p>
       </div>
     );
   }
 
-  // ── Summary review ─────────────────────────────────────────────────────────
   return (
     <div ref={ref} className="space-y-6 max-w-3xl mx-auto">
-      {/* Header */}
       <div>
-        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "#9ca3af", marginBottom: 8 }}>
+        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
           Step 5 of 5
         </p>
-        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#111827", lineHeight: 1.15, marginBottom: 8 }}>
+        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.15, marginBottom: 8 }}>
           Review & confirm
         </h3>
-        <p style={{ fontSize: "0.9rem", color: "#6b7280", lineHeight: 1.65, maxWidth: 440 }}>
+        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65, maxWidth: 440 }}>
           Check everything looks right before booking. Hit edit to go back and change anything.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Left — detail cards */}
         <div className="lg:col-span-2 space-y-3">
-          {/* Service */}
           <SummaryCard title="Service" onEdit={() => onEditStep(1)}>
-            <p style={{ fontSize: "1rem", fontWeight: 700, color: "#111827", marginBottom: 2 }}>
+            <p style={{ fontSize: "1rem", fontWeight: 700, color: "rgba(255,255,255,0.9)", marginBottom: 2 }}>
               {service?.name ?? "—"}
             </p>
             {pkg && (
-              <p style={{ fontSize: "0.8rem", color: "#6b7280" }}>
+              <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)" }}>
                 {pkg.name} Package · {pkg.duration}
               </p>
             )}
           </SummaryCard>
 
-          {/* Add-ons */}
           <SummaryCard title="Extras" onEdit={() => onEditStep(3)}>
             {addons.length === 0 ? (
-              <p style={{ fontSize: "0.78rem", color: "#9ca3af", fontStyle: "italic" }}>
+              <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>
                 None selected
               </p>
             ) : (
@@ -212,11 +205,11 @@ export const SummaryStep: React.FC<Props> = ({
                       display: "flex",
                       justifyContent: "space-between",
                       padding: "4px 0",
-                      borderBottom: "1px solid #f3f4f6",
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
-                    <span style={{ fontSize: "0.78rem", color: "#374151" }}>{a.name}</span>
-                    <span style={{ fontSize: "0.78rem", fontFamily: "monospace", color: "#374151" }}>
+                    <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)" }}>{a.name}</span>
+                    <span style={{ fontSize: "0.78rem", fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>
                       +€{a.price}
                     </span>
                   </div>
@@ -225,44 +218,41 @@ export const SummaryStep: React.FC<Props> = ({
             )}
           </SummaryCard>
 
-          {/* Date & Time */}
           <SummaryCard title="Date & Time" onEdit={() => onEditStep(4)}>
             <div style={{ display: "flex", gap: "2rem" }}>
               <div>
-                <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#9ca3af", marginBottom: 2 }}>
+                <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: 2 }}>
                   Date
                 </p>
-                <p style={{ fontSize: "1rem", fontWeight: 800, fontFamily: "monospace", color: "#111827" }}>
+                <p style={{ fontSize: "1rem", fontWeight: 800, fontFamily: "monospace", color: "rgba(255,255,255,0.9)" }}>
                   {bookingData.selectedDate ?? "—"}
                 </p>
               </div>
               <div>
-                <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#9ca3af", marginBottom: 2 }}>
+                <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: 2 }}>
                   Time
                 </p>
-                <p style={{ fontSize: "1rem", fontWeight: 800, fontFamily: "monospace", color: "#111827" }}>
+                <p style={{ fontSize: "1rem", fontWeight: 800, fontFamily: "monospace", color: "rgba(255,255,255,0.9)" }}>
                   {bookingData.selectedTimeSlot ?? "—"}
                 </p>
               </div>
             </div>
           </SummaryCard>
 
-          {/* Contact */}
           <SummaryCard title="Contact" onEdit={() => onEditStep(5)}>
-            <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#111827", marginBottom: 3 }}>
+            <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "rgba(255,255,255,0.9)", marginBottom: 3 }}>
               {bookingData.customer.fullName || "—"}
             </p>
-            <p style={{ fontSize: "0.78rem", color: "#6b7280" }}>{bookingData.customer.email}</p>
-            <p style={{ fontSize: "0.78rem", color: "#6b7280" }}>{bookingData.customer.phone}</p>
+            <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)" }}>{bookingData.customer.email}</p>
+            <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)" }}>{bookingData.customer.phone}</p>
           </SummaryCard>
         </div>
 
-        {/* Right — price + CTA */}
         <div
           style={{
             borderRadius: "1rem",
-            border: "1.5px solid #111827",
-            background: "#111827",
+            border: "1.5px solid rgba(255,255,255,0.1)",
+            background: "#0d0d0d",
             padding: "1.5rem",
             display: "flex",
             flexDirection: "column",
@@ -282,7 +272,6 @@ export const SummaryStep: React.FC<Props> = ({
             Price Estimate
           </p>
 
-          {/* Line items */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: "1rem" }}>
             <PriceLine
               label={pkg ? `${pkg.name} Package` : "Base service"}
@@ -293,7 +282,6 @@ export const SummaryStep: React.FC<Props> = ({
             ))}
           </div>
 
-          {/* Total */}
           <div
             style={{
               display: "flex",
@@ -318,7 +306,6 @@ export const SummaryStep: React.FC<Props> = ({
             </span>
           </div>
 
-          {/* CTA */}
           <button
             type="button"
             disabled={submitting}
@@ -327,8 +314,8 @@ export const SummaryStep: React.FC<Props> = ({
               width: "100%",
               padding: "1rem 1.5rem",
               borderRadius: "0.75rem",
-              background: submitting ? "rgba(255,255,255,0.2)" : "#fff",
-              color: "#111827",
+              background: submitting ? "rgba(255,255,255,0.15)" : "#fff",
+              color: "#000",
               fontWeight: 800,
               fontSize: "0.7rem",
               letterSpacing: "0.18em",
@@ -343,7 +330,7 @@ export const SummaryStep: React.FC<Props> = ({
             }}
           >
             {submitting ? (
-              <span style={{ color: "rgba(0,0,0,0.4)" }}>Processing…</span>
+              <span style={{ color: "rgba(255,255,255,0.4)" }}>Processing…</span>
             ) : (
               <>
                 Book Appointment
@@ -371,8 +358,6 @@ export const SummaryStep: React.FC<Props> = ({
   );
 };
 
-// ── Sub-components ──────────────────────────────────────────────────────────
-
 const SummaryCard: React.FC<{
   title: string;
   onEdit?: () => void;
@@ -382,8 +367,8 @@ const SummaryCard: React.FC<{
     style={{
       padding: "1.25rem",
       borderRadius: "0.875rem",
-      border: "1.5px solid #e5e7eb",
-      background: "#fff",
+      border: "1.5px solid rgba(255,255,255,0.08)",
+      background: "#0d0d0d",
     }}
   >
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.875rem" }}>
@@ -393,7 +378,7 @@ const SummaryCard: React.FC<{
           fontWeight: 700,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: "#9ca3af",
+          color: "rgba(255,255,255,0.35)",
         }}
       >
         {title}
@@ -410,15 +395,15 @@ const SummaryCard: React.FC<{
             fontWeight: 600,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#9ca3af",
+            color: "rgba(255,255,255,0.35)",
             background: "none",
             border: "none",
             cursor: "pointer",
             padding: 0,
             transition: "color 0.15s",
           }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#374151")}
-          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "#9ca3af")}
+          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)")}
+          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.35)")}
         >
           <Pencil style={{ width: 10, height: 10 }} />
           Edit

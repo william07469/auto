@@ -68,44 +68,40 @@ export const DateTimeStep: React.FC<Props> = ({
 
   return (
     <div ref={ref} className="space-y-8 max-w-3xl mx-auto">
-      {/* Header */}
       <div>
-        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "#9ca3af", marginBottom: 8 }}>
+        <p style={{ fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 600, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
           Step 4 of 5
         </p>
-        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#111827", lineHeight: 1.15, marginBottom: 8 }}>
+        <h3 style={{ fontSize: "clamp(1.6rem,3.5vw,2.25rem)", fontWeight: 700, letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.15, marginBottom: 8 }}>
           Pick a date & time
         </h3>
-        <p style={{ fontSize: "0.9rem", color: "#6b7280", lineHeight: 1.65, maxWidth: 440 }}>
+        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65, maxWidth: 440 }}>
           Select an available date, then choose your preferred drop-off time.
         </p>
       </div>
 
-      {/* ── DATE PICKER ── */}
       <div
         style={{
           borderRadius: "1rem",
-          border: "1.5px solid #e5e7eb",
-          background: "#fff",
+          border: "1.5px solid rgba(255,255,255,0.1)",
+          background: "#0d0d0d",
           padding: "1.5rem",
         }}
       >
-        <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#374151", marginBottom: "1.25rem" }}>
+        <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", marginBottom: "1.25rem" }}>
           Date
         </p>
 
         <div className="space-y-6">
           {grouped.map(([month, days]) => (
             <div key={month}>
-              {/* Month label */}
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#9ca3af", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", whiteSpace: "nowrap" }}>
                   {month}
                 </span>
-                <div style={{ flex: 1, height: 1, background: "#f3f4f6" }} />
+                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
               </div>
 
-              {/* Day buttons */}
               <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4 }}>
                 {days.map((item) => {
                   const active = selectedDate === item.iso;
@@ -119,8 +115,8 @@ export const DateTimeStep: React.FC<Props> = ({
                         width: 58,
                         height: 72,
                         borderRadius: "0.75rem",
-                        border: active ? "2px solid #111827" : "1.5px solid #e5e7eb",
-                        background: active ? "#111827" : "#fff",
+                        border: active ? "2px solid #fff" : "1.5px solid rgba(255,255,255,0.12)",
+                        background: active ? "#fff" : "transparent",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -128,7 +124,7 @@ export const DateTimeStep: React.FC<Props> = ({
                         gap: 1,
                         cursor: "pointer",
                         transition: "all 0.2s ease",
-                        boxShadow: active ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
+                        boxShadow: active ? "0 2px 12px rgba(255,255,255,0.08)" : "none",
                       }}
                     >
                       <span
@@ -137,7 +133,7 @@ export const DateTimeStep: React.FC<Props> = ({
                           fontWeight: 700,
                           letterSpacing: "0.1em",
                           textTransform: "uppercase",
-                          color: active ? "rgba(255,255,255,0.55)" : "#9ca3af",
+                          color: active ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.4)",
                         }}
                       >
                         {item.dayName}
@@ -148,7 +144,7 @@ export const DateTimeStep: React.FC<Props> = ({
                           fontWeight: 800,
                           fontFamily: "monospace",
                           letterSpacing: "-0.02em",
-                          color: active ? "#fff" : "#111827",
+                          color: active ? "#000" : "rgba(255,255,255,0.85)",
                           lineHeight: 1,
                         }}
                       >
@@ -161,7 +157,7 @@ export const DateTimeStep: React.FC<Props> = ({
                             fontWeight: 700,
                             letterSpacing: "0.12em",
                             textTransform: "uppercase",
-                            color: active ? "rgba(255,255,255,0.4)" : "#d1d5db",
+                            color: active ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.25)",
                           }}
                         >
                           WE
@@ -183,15 +179,15 @@ export const DateTimeStep: React.FC<Props> = ({
               gap: 6,
               marginTop: "1rem",
               paddingTop: "1rem",
-              borderTop: "1px solid #f3f4f6",
+              borderTop: "1px solid rgba(255,255,255,0.06)",
               fontSize: "0.75rem",
-              color: "#374151",
+              color: "rgba(255,255,255,0.55)",
             }}
           >
-            <Check style={{ width: 13, height: 13, color: "#111827", strokeWidth: 2.5 }} />
+            <Check style={{ width: 13, height: 13, color: "rgba(255,255,255,0.7)", strokeWidth: 2.5 }} />
             <span>
               Selected:{" "}
-              <strong>
+              <strong style={{ color: "rgba(255,255,255,0.8)" }}>
                 {selDate.dayName}, {selDate.dayNum} {selDate.monthName}
               </strong>
             </span>
@@ -199,12 +195,11 @@ export const DateTimeStep: React.FC<Props> = ({
         )}
       </div>
 
-      {/* ── TIME PICKER ── */}
       <div
         style={{
           borderRadius: "1rem",
-          border: selectedDate ? "1.5px solid #e5e7eb" : "1.5px solid #f3f4f6",
-          background: selectedDate ? "#fff" : "#fafafa",
+          border: selectedDate ? "1.5px solid rgba(255,255,255,0.1)" : "1.5px solid rgba(255,255,255,0.05)",
+          background: selectedDate ? "#0d0d0d" : "transparent",
           padding: "1.5rem",
           transition: "all 0.2s ease",
         }}
@@ -215,7 +210,7 @@ export const DateTimeStep: React.FC<Props> = ({
             fontWeight: 700,
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: selectedDate ? "#374151" : "#d1d5db",
+            color: selectedDate ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.2)",
             marginBottom: "1.25rem",
           }}
         >
@@ -223,28 +218,26 @@ export const DateTimeStep: React.FC<Props> = ({
         </p>
 
         {!selectedDate ? (
-          <p style={{ fontSize: "0.82rem", color: "#d1d5db", fontStyle: "italic" }}>
+          <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.2)", fontStyle: "italic" }}>
             Choose a date above to see available time slots.
           </p>
         ) : (
           <div className="space-y-5">
             {groupedSlots.map(({ period, slots }) => (
               <div key={period}>
-                {/* Period label */}
                 <p
                   style={{
                     fontSize: "0.6rem",
                     fontWeight: 700,
                     letterSpacing: "0.18em",
                     textTransform: "uppercase",
-                    color: "#9ca3af",
+                    color: "rgba(255,255,255,0.35)",
                     marginBottom: 8,
                   }}
                 >
                   {period}
                 </p>
 
-                {/* Slots grid */}
                 <div
                   style={{
                     display: "grid",
@@ -263,9 +256,9 @@ export const DateTimeStep: React.FC<Props> = ({
                         style={{
                           padding: "0.75rem 0.875rem",
                           borderRadius: "0.65rem",
-                          border: active ? "2px solid #111827" : "1.5px solid #e5e7eb",
-                          background: active ? "#111827" : "#fff",
-                          opacity: ts.available ? 1 : 0.35,
+                          border: active ? "2px solid #fff" : "1.5px solid rgba(255,255,255,0.12)",
+                          background: active ? "#fff" : "transparent",
+                          opacity: ts.available ? 1 : 0.25,
                           cursor: ts.available ? "pointer" : "not-allowed",
                           display: "flex",
                           flexDirection: "column",
@@ -284,13 +277,13 @@ export const DateTimeStep: React.FC<Props> = ({
                               width: 14,
                               height: 14,
                               borderRadius: "50%",
-                              background: "#fff",
+                              background: "#000",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
                             }}
                           >
-                            <Check style={{ width: 8, height: 8, color: "#111827", strokeWidth: 3 }} />
+                            <Check style={{ width: 8, height: 8, color: "#fff", strokeWidth: 3 }} />
                           </div>
                         )}
                         <span
@@ -299,7 +292,7 @@ export const DateTimeStep: React.FC<Props> = ({
                             fontWeight: 800,
                             fontFamily: "monospace",
                             letterSpacing: "-0.02em",
-                            color: active ? "#fff" : "#111827",
+                            color: active ? "#000" : "rgba(255,255,255,0.85)",
                           }}
                         >
                           {ts.slot}
@@ -310,7 +303,7 @@ export const DateTimeStep: React.FC<Props> = ({
                             fontWeight: 600,
                             letterSpacing: "0.12em",
                             textTransform: "uppercase",
-                            color: active ? "rgba(255,255,255,0.5)" : ts.available ? "#9ca3af" : "#d1d5db",
+                            color: active ? "rgba(0,0,0,0.45)" : ts.available ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.15)",
                           }}
                         >
                           {ts.available ? "Free" : "Taken"}
@@ -328,6 +321,5 @@ export const DateTimeStep: React.FC<Props> = ({
   );
 };
 
-// Keep legacy named exports so any leftover imports don't break
 export const DateStep = DateTimeStep;
 export const TimeStep = DateTimeStep;

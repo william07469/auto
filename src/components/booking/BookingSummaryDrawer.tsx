@@ -37,21 +37,20 @@ export const BookingSummaryDrawer: React.FC<Props> = ({
         left: 0,
         right: 0,
         zIndex: 40,
-        background: "#fff",
-        borderTop: "1.5px solid #e5e7eb",
-        boxShadow: "0 -4px 24px rgba(0,0,0,0.08)",
+        background: "#0d0d0d",
+        borderTop: "1.5px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 -4px 24px rgba(0,0,0,0.4)",
       }}
     >
       <div
         className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3"
         style={{ padding: "0.875rem 1.5rem" }}
       >
-        {/* Price & context */}
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flex: 1, minWidth: 0 }}>
           <div>
             {total > 0 ? (
               <>
-                <p style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#9ca3af", marginBottom: 1 }}>
+                <p style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: 1 }}>
                   Estimate
                 </p>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
@@ -61,24 +60,23 @@ export const BookingSummaryDrawer: React.FC<Props> = ({
                       fontWeight: 800,
                       fontFamily: "monospace",
                       letterSpacing: "-0.03em",
-                      color: "#111827",
+                      color: "#fff",
                     }}
                   >
                     €{total}
                   </span>
                   {addons.length > 0 && (
-                    <span style={{ fontSize: "0.65rem", color: "#9ca3af" }}>
+                    <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.35)" }}>
                       incl. {addons.length} extra{addons.length > 1 ? "s" : ""}
                     </span>
                   )}
                 </div>
               </>
             ) : (
-              <p style={{ fontSize: "0.82rem", color: "#d1d5db" }}>Select a service to see pricing</p>
+              <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.3)" }}>Select a service to see pricing</p>
             )}
           </div>
 
-          {/* Context pills */}
           <div className="hidden md:flex items-center gap-2 flex-wrap">
             {service && (
               <span
@@ -89,9 +87,9 @@ export const BookingSummaryDrawer: React.FC<Props> = ({
                   textTransform: "uppercase",
                   padding: "4px 10px",
                   borderRadius: 999,
-                  background: "#f3f4f6",
-                  color: "#374151",
-                  border: "1px solid #e5e7eb",
+                  background: "rgba(255,255,255,0.06)",
+                  color: "rgba(255,255,255,0.55)",
+                  border: "1px solid rgba(255,255,255,0.1)",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -105,9 +103,9 @@ export const BookingSummaryDrawer: React.FC<Props> = ({
                   fontFamily: "monospace",
                   padding: "4px 10px",
                   borderRadius: 999,
-                  background: "#f3f4f6",
-                  color: "#374151",
-                  border: "1px solid #e5e7eb",
+                  background: "rgba(255,255,255,0.06)",
+                  color: "rgba(255,255,255,0.55)",
+                  border: "1px solid rgba(255,255,255,0.1)",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -117,7 +115,6 @@ export const BookingSummaryDrawer: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* CTA */}
         <button
           type="button"
           disabled={!canContinue}
@@ -129,19 +126,19 @@ export const BookingSummaryDrawer: React.FC<Props> = ({
             gap: 8,
             padding: "0.8rem 1.75rem",
             borderRadius: 999,
-            background: canContinue ? "#111827" : "#f3f4f6",
-            color: canContinue ? "#fff" : "#9ca3af",
+            background: canContinue ? "#fff" : "rgba(255,255,255,0.06)",
+            color: canContinue ? "#000" : "rgba(255,255,255,0.2)",
             fontWeight: 700,
             fontSize: "0.65rem",
             letterSpacing: "0.18em",
             textTransform: "uppercase",
-            border: "none",
+            border: canContinue ? "none" : "1px solid rgba(255,255,255,0.07)",
             cursor: canContinue ? "pointer" : "not-allowed",
             transition: "all 0.2s ease",
             whiteSpace: "nowrap",
             width: "100%",
             maxWidth: 240,
-            boxShadow: canContinue ? "0 2px 12px rgba(0,0,0,0.12)" : "none",
+            boxShadow: canContinue ? "0 2px 12px rgba(255,255,255,0.09)" : "none",
           }}
         >
           <span>{canContinue ? `Continue to ${stepName}` : "Complete this step"}</span>
