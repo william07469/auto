@@ -81,7 +81,7 @@ export function Nav() {
             <img
               src="/main_logo.jpeg"
               alt="WV Detailing"
-              className="h-10 w-auto md:h-12 object-contain transition-opacity duration-300 group-hover:opacity-80"
+              className="h-12 w-auto md:h-16 object-contain transition-opacity duration-300 group-hover:opacity-80"
             />
           </Link>
 
@@ -175,7 +175,7 @@ export function Nav() {
               className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[90vw] flex-col bg-card border-l border-border lg:hidden"
             >
               <div className="flex h-16 items-center justify-between px-6 md:h-20">
-                <img src="/main_logo.jpeg" alt="WV Detailing" className="h-9 w-auto object-contain" />
+                <img src="/main_logo.jpeg" alt="WV Detailing" className="h-12 w-auto object-contain" />
                 <button
                   onClick={() => setOpen(false)}
                   aria-label="Schließen"

@@ -86,7 +86,7 @@ function MyBookingsPage() {
       <header className="border-b border-border">
         <div className="container-lux flex h-16 md:h-20 items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src="/logo.jpeg" alt="WV Detailing" className="h-9 w-auto object-contain" />
+            <img src="/logo.jpeg" alt="WV Detailing"              className="h-12 w-auto object-contain" />
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground hidden md:inline">{email}</span>

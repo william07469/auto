@@ -309,7 +309,7 @@ function BookingPage() {
             <img
               src="/logo.jpeg"
               alt="WV Detailing"
-              style={{ height: 28, width: "auto", objectFit: "contain", opacity: 0.75 }}
+              style={{ height: 36, width: "auto", objectFit: "contain", opacity: 0.9 }}
             />
           </Link>
 

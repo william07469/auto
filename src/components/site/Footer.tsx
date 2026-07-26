@@ -60,7 +60,7 @@ export function Footer() {
               <img
                 src="/main_logo.jpeg"
                 alt="WV Detailing"
-                className="h-14 w-auto object-contain hover:opacity-80 transition-opacity"
+                className="h-20 w-auto object-contain hover:opacity-80 transition-opacity"
               />
             </Link>
             <p className="mt-5 max-w-[20rem] text-sm leading-relaxed text-muted-foreground md:max-w-[22rem]">
