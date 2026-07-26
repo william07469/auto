@@ -58,9 +58,10 @@ export function Footer() {
           <div>
             <Link to="/" className="inline-block">
               <img
-                src="/logo.svg"
-                alt="WV Detailing"
-                className="h-16 md:h-20 w-auto hover:opacity-80 transition-opacity"
+                src="/main_logo.jpeg"
+                alt="UV Detailing"
+                className="h-28 md:h-32 w-auto hover:opacity-80 transition-opacity object-contain"
+                style={{ mixBlendMode: "screen", filter: "brightness(1.3) contrast(1.1)" }}
               />
             </Link>
             <p className="mt-5 max-w-[20rem] text-sm leading-relaxed text-muted-foreground md:max-w-[22rem]">

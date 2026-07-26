@@ -75,16 +75,15 @@ export function Nav() {
           scrolled ? "glass-nav shadow-[0_1px_40px_rgba(0,0,0,0.5)]" : ""
         }`}
       >
-        <div className="container-lux flex h-16 items-center justify-between md:h-20">
+        <div className="container-lux flex h-24 items-center justify-between md:h-28">
           {/* Logo */}
           <Link to="/" className="group flex items-center shrink-0">
-            <div className="flex items-center justify-center rounded-lg bg-white/10 backdrop-blur-md px-5 py-3 md:px-6 md:py-4">
-              <img
-                src="/main_logo.jpeg"
-                alt="WV Detailing"
-                className="h-10 w-auto brightness-0 invert md:h-14"
-              />
-            </div>
+            <img
+              src="/main_logo.jpeg"
+              alt="UV Detailing"
+              className="h-24 w-auto md:h-28 object-contain transition-opacity duration-300 group-hover:opacity-80"
+              style={{ mixBlendMode: "screen", filter: "brightness(1.3) contrast(1.1)" }}
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -177,7 +176,7 @@ export function Nav() {
               className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[90vw] flex-col bg-card border-l border-border lg:hidden"
             >
               <div className="flex h-16 items-center justify-between px-6 md:h-20">
-                <img src="/second_logo.jpeg" alt="WV Detailing" className="h-12 w-auto object-contain" />
+                <img src="/second_logo.jpeg" alt="UV Detailing" className="h-12 w-auto object-contain" style={{ mixBlendMode: "screen", filter: "brightness(1.3) contrast(1.1)" }} />
                 <button
                   onClick={() => setOpen(false)}
                   aria-label="Schließen"

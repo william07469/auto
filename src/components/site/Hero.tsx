@@ -13,6 +13,7 @@ export function Hero() {
   const bgRef        = useRef<HTMLDivElement>(null);
   const videoRef     = useRef<HTMLVideoElement>(null);
   const eyebrowRef   = useRef<HTMLDivElement>(null);
+  const logoRef      = useRef<HTMLDivElement>(null);
   const headlineRef  = useRef<HTMLDivElement>(null);
   const subtitleRef  = useRef<HTMLParagraphElement>(null);
   const ctaRef       = useRef<HTMLDivElement>(null);
@@ -65,6 +66,13 @@ export function Hero() {
         { opacity: 0 },
         { opacity: 1, duration: 1.4 },
         0.4
+      );
+
+      tl.fromTo(
+        logoRef.current,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 1 },
+        0.6
       );
 
       tl.fromTo(
@@ -132,7 +140,7 @@ export function Hero() {
         },
       });
 
-      gsap.to([eyebrowRef.current, headlineRef.current, subtitleRef.current, ctaRef.current, badgesRef.current], {
+      gsap.to([eyebrowRef.current, logoRef.current, headlineRef.current, subtitleRef.current, ctaRef.current, badgesRef.current], {
         opacity: 0,
         y: -40,
         ease: "none",
@@ -209,6 +217,17 @@ export function Hero() {
 
       {/* Content */}
       <div className="container-lux relative z-10 pt-28 sm:pt-32 md:pt-0">
+
+        {/* Logo */}
+        <div className="mb-8" style={{ opacity: 0 }} ref={logoRef}>
+          <img
+            src="/main_logo.jpeg"
+            alt="UV Detailing"
+            className="h-24 w-auto md:h-32 object-contain"
+            style={{ mixBlendMode: "screen", filter: "brightness(1.3) contrast(1.1)" }}
+          />
+        </div>
+
         <div
           ref={eyebrowRef}
           className="mb-8 flex items-center gap-4"
