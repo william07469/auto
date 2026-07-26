@@ -8,6 +8,7 @@ import interiorAfter from "@/assets/before_after/Create_interior_image_202607261
 import seatBefore from "@/assets/before_after/seat_before.jpeg";
 import seatAfter from "@/assets/before_after/seat_after.jpeg";
 import floorBefore from "@/assets/before_after/floor_before.jpeg";
+import floorAfter from "@/assets/before_after/floor_after.jpeg";
 import whatsappImg from "@/assets/before_after/floor_before.jpeg";
 import { supabase } from "@/integrations/client";
 
@@ -22,7 +23,7 @@ const FALLBACK_CASES: Case[] = [
     desc: "Deep extraction cleaning of seats, carpets and dashboard. Stains, odours and embedded dirt completely removed from every surface.",
     pairs: [
       { title: "Driver Seat",  before: seatBefore,          after: seatAfter },
-      { title: "Floor & Mats", before: floorBefore,         after: interiorAfter },
+      { title: "Floor & Mats", before: floorBefore,         after: floorAfter },
       { title: "Cabin",        before: interiorDirtyBefore, after: interiorAfter },
     ],
   },
