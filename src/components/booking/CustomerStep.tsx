@@ -60,7 +60,7 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
             letterSpacing: "0.3em",
             textTransform: "uppercase",
             fontWeight: 600,
-            color: "#9ca3af",
+            color: "rgba(255,255,255,0.35)",
             marginBottom: 8,
           }}
         >
@@ -71,14 +71,14 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
             fontSize: "clamp(1.4rem,3vw,1.875rem)",
             fontWeight: 700,
             letterSpacing: "-0.03em",
-            color: "#111827",
+            color: "#fff",
             lineHeight: 1.15,
             marginBottom: 6,
           }}
         >
           Your details
         </h3>
-        <p style={{ fontSize: "0.875rem", color: "#6b7280", lineHeight: 1.65, maxWidth: 400 }}>
+        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65, maxWidth: 400 }}>
           Used to confirm your appointment. Never shared with third parties.
         </p>
       </div>
@@ -88,8 +88,8 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
         style={{
           padding: "1.5rem",
           borderRadius: "1rem",
-          border: "1.5px solid #e5e7eb",
-          background: "#fff",
+          border: "1.5px solid rgba(255,255,255,0.1)",
+          background: "#141414",
         }}
       >
         <div
@@ -117,14 +117,14 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
                     fontWeight: 700,
-                    color: "#374151",
+                    color: "rgba(255,255,255,0.5)",
                     marginBottom: 6,
                   }}
                 >
-                  <Icon style={{ width: 11, height: 11, color: "#9ca3af" }} />
+                  <Icon style={{ width: 11, height: 11, color: "rgba(255,255,255,0.3)" }} />
                   {field.label}
                   {field.required && (
-                    <span style={{ color: "#d1d5db", fontWeight: 400 }}>*</span>
+                    <span style={{ color: "rgba(255,255,255,0.2)", fontWeight: 400 }}>*</span>
                   )}
                 </label>
                 <input
@@ -137,18 +137,18 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
                   placeholder={field.placeholder}
                   style={{
                     width: "100%",
-                    background: "#f9fafb",
-                    border: "1.5px solid #e5e7eb",
+                    background: "#0d0d0d",
+                    border: "1.5px solid rgba(255,255,255,0.1)",
                     borderRadius: "0.65rem",
                     padding: "0.8rem 1rem",
                     fontSize: "0.9rem",
-                    color: "#111827",
+                    color: "#fff",
                     outline: "none",
                     transition: "border-color 0.18s",
                     boxSizing: "border-box",
                   }}
-                  onFocus={(e) => (e.target.style.borderColor = "#111827")}
-                  onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
+                  onFocus={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.5)")}
+                  onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
                 />
               </div>
             );
@@ -165,15 +165,15 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
                 letterSpacing: "0.2em",
                 textTransform: "uppercase",
                 fontWeight: 700,
-                color: "#374151",
+                color: "rgba(255,255,255,0.5)",
                 marginBottom: 6,
               }}
             >
-              <FileText style={{ width: 11, height: 11, color: "#9ca3af" }} />
+              <FileText style={{ width: 11, height: 11, color: "rgba(255,255,255,0.3)" }} />
               Notes
               <span
                 style={{
-                  color: "#9ca3af",
+                  color: "rgba(255,255,255,0.3)",
                   fontWeight: 400,
                   textTransform: "none",
                   letterSpacing: 0,
@@ -190,20 +190,20 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
               placeholder="Special requests, PPF present, access instructions…"
               style={{
                 width: "100%",
-                background: "#f9fafb",
-                border: "1.5px solid #e5e7eb",
+                background: "#0d0d0d",
+                border: "1.5px solid rgba(255,255,255,0.1)",
                 borderRadius: "0.65rem",
                 padding: "0.8rem 1rem",
                 fontSize: "0.9rem",
-                color: "#111827",
+                color: "#fff",
                 outline: "none",
                 resize: "none",
                 transition: "border-color 0.18s",
                 boxSizing: "border-box",
                 fontFamily: "inherit",
               }}
-              onFocus={(e) => (e.target.style.borderColor = "#111827")}
-              onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
+              onFocus={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.5)")}
+              onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
             />
           </div>
         </div>
@@ -216,7 +216,7 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
             gap: 10,
             marginTop: "1.25rem",
             paddingTop: "1.25rem",
-            borderTop: "1px solid #f3f4f6",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
           }}
         >
           <div
@@ -224,17 +224,17 @@ export const CustomerStep: React.FC<Props> = ({ customer, onChangeCustomer }) =>
               width: 30,
               height: 30,
               borderRadius: "0.5rem",
-              border: "1px solid #e5e7eb",
-              background: "#f9fafb",
+              border: "1px solid rgba(255,255,255,0.1)",
+              background: "rgba(255,255,255,0.04)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
             }}
           >
-            <Lock style={{ width: 12, height: 12, color: "#9ca3af" }} />
+            <Lock style={{ width: 12, height: 12, color: "rgba(255,255,255,0.3)" }} />
           </div>
-          <p style={{ fontSize: "0.72rem", color: "#9ca3af", lineHeight: 1.6, paddingTop: 2 }}>
+          <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.3)", lineHeight: 1.6, paddingTop: 2 }}>
             Your data is encrypted and processed confidentially. Not shared with third parties.
             Deletion available on request.
           </p>

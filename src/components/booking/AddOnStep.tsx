@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ADDONS_DATA } from "./bookingData";
-import { Gauge, Lightbulb, Wind, Circle, Sparkles, ShieldCheck, Check } from "lucide-react";
+import { Gauge, Lightbulb, Wind, Circle, Sparkles, ShieldCheck, Check, Droplets, Wrench } from "lucide-react";
 import gsap from "gsap";
 
 interface Props {
@@ -15,6 +15,8 @@ const ICONS: Record<string, React.ReactNode> = {
   Circle: <Circle className="w-5 h-5" />,
   Sparkles: <Sparkles className="w-5 h-5" />,
   ShieldCheck: <ShieldCheck className="w-5 h-5" />,
+  Droplets: <Droplets className="w-5 h-5" />,
+  Wrench: <Wrench className="w-5 h-5" />,
 };
 
 export const AddOnStep: React.FC<Props> = ({ selectedAddOnIds, onToggleAddOn }) => {

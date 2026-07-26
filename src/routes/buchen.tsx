@@ -68,26 +68,27 @@ function BookingPage() {
   const [done, setDone] = useState(false);
   const stepRef = useRef<HTMLDivElement>(null);
 
-  // Sync admin prices
+  // Sync admin prices from pricing_packages into PACKAGES_DATA
   useEffect(() => {
     supabase
       .from("pricing_packages")
-      .select("*")
+      .select("category,tier,price")
       .eq("is_active", true)
       .then(({ data }) => {
         if (!data?.length) return;
-        data.forEach((pkg: any) => {
-          const cat = (pkg.category ?? "").toLowerCase();
+        for (const row of data as any[]) {
+          const cat = (row.category ?? "").toLowerCase();
           const svc = SERVICES_DATA.find(
             (s) => s.id === cat || s.name.toLowerCase().includes(cat)
           );
-          if (!svc) return;
-          Object.values(PACKAGES_DATA)
-            .flat()
-            .forEach((p) => {
-              if (p.id === "premium" && pkg.price > 0) p.price = pkg.price;
-            });
-        });
+          if (!svc) continue;
+          const tierMap: Record<string, PackageId> = { basic: "basic", deluxe: "premium" };
+          const pkgId = tierMap[row.tier as string];
+          if (!pkgId || row.price <= 0) continue;
+          const pkgs = PACKAGES_DATA[svc.id];
+          const pkg = pkgs.find((p) => p.id === pkgId);
+          if (pkg) pkg.price = row.price;
+        }
       });
   }, []);
 
