@@ -97,8 +97,7 @@ export function Services() {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as const }}
           className="mx-auto max-w-3xl text-center"
         >
-          <img src="/logo2.jpeg" alt="WV Detailing" className="mx-auto h-24 md:h-32 w-auto mb-8" />
-          <h2 className="text-display text-[clamp(2.5rem,5vw,5rem)]">
+          <h2 className="text-display mt-6 text-[clamp(2.5rem,5vw,5rem)]">
             Handwerk auf
             <br />
             <span className="italic text-muted-foreground">höchstem Niveau.</span>
