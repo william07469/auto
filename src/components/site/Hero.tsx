@@ -250,12 +250,12 @@ export function Hero() {
           className="mt-8 flex flex-wrap items-center gap-3 md:mt-10 md:gap-4"
           style={{ opacity: 0 }}
         >
-          <Link
-            to="/buchen"
+          <a
+            href="#kontakt"
             className="btn-primary hover:opacity-90 hover:scale-[0.98] active:scale-95 shadow-[0_8px_40px_rgba(255,255,255,0.08)]"
           >
-            Termin buchen
-          </Link>
+            Termin anfragen
+          </a>
           <a
             href="#leistungen"
             className="btn-secondary hover:border-foreground hover:bg-foreground/5"

@@ -15,7 +15,7 @@ import { AdminBeforeAfter } from "@/components/admin/AdminBeforeAfter";
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
   beforeLoad: ({ context }) => {
-    if (context.role !== "admin") throw redirect({ to: "/meine-buchungen" });
+    if (context.role !== "admin") throw redirect({ to: "/" });
   },
   head: () => ({ meta: [{ title: "Admin — WV Detailing" }, { name: "robots", content: "noindex,nofollow" }] }),
 });

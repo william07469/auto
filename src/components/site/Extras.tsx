@@ -36,12 +36,12 @@ export function Extras() {
               Passen Sie Ihren Service mit unseren Spezialbehandlungen an.
             </p>
           </div>
-          <Link
-            to="/buchen"
+          <a
+            href="#kontakt"
             className="btn-secondary shrink-0 hover:border-foreground hover:bg-foreground/5"
           >
-            Alle buchen
-          </Link>
+            Anfragen
+          </a>
         </motion.div>
 
         <div className="mt-16 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

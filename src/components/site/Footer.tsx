@@ -40,13 +40,13 @@ export function Footer() {
                 <span className="italic text-muted-foreground">das Beste.</span>
               </h2>
             </div>
-            <Link
-              to="/buchen"
+            <a
+              href="#kontakt"
               className="btn-primary shrink-0 shadow-[0_8px_40px_rgba(255,255,255,0.08)] hover:opacity-90 hover:scale-[0.98] active:scale-95"
             >
-              Termin buchen
+              Termin anfragen
               <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} />
-            </Link>
+            </a>
           </motion.div>
         </div>
       </div>
@@ -130,34 +130,28 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Kunden */}
+          {/* Kundenbereich */}
           <div>
-            <p className="text-eyebrow mb-6">Kundenbereich</p>
+            <p className="text-eyebrow mb-6">Kontakt</p>
             <ul className="space-y-3">
+              <li>
+                <a
+                  href="#kontakt"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Termin anfragen
+                </a>
+              </li>
               <li>
                 <Link
                   to="/kunden-login"
-                  search={{ redirect: "/meine-buchungen" }}
+                  search={{ redirect: "/" }}
                   className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   Anmelden
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/meine-buchungen"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Meine Buchungen
-                </Link>
-              </li>
             </ul>
-            <Link
-              to="/buchen"
-              className="mt-8 inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-[0.6875rem] uppercase tracking-[0.2em] transition-all hover:border-foreground hover:bg-foreground hover:text-background"
-            >
-              Termin buchen
-            </Link>
           </div>
         </div>
 

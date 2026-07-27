@@ -268,16 +268,16 @@ export function Pricing() {
                 ))}
               </ul>
 
-              <Link
-                to="/buchen"
+              <a
+                href="#kontakt"
                 className={`mt-10 inline-flex items-center justify-center rounded-full px-6 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-[0.2em] transition-all duration-300 ${
                   p.popular
                     ? "bg-foreground text-background hover:opacity-90 hover:scale-[0.98]"
                     : "border border-border text-foreground hover:border-foreground hover:bg-foreground hover:text-background"
                 }`}
               >
-                Jetzt buchen
-              </Link>
+                Anfragen
+              </a>
             </motion.div>
           ))}
         </div>

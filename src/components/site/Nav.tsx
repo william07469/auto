@@ -103,35 +103,27 @@ export function Nav() {
           {/* CTA + hamburger */}
           <div className="flex items-center gap-3">
             {user ? (
-              <>
-                <Link
-                  to="/meine-buchungen"
-                  className="hidden lg:inline-flex items-center gap-1.5 text-[0.6875rem] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Meine Buchungen
-                </Link>
-                <button
-                  onClick={signOut}
-                  className="hidden lg:inline-flex items-center gap-1.5 text-[0.6875rem] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <LogOut className="h-3 w-3" /> Abmelden
-                </button>
-              </>
+              <button
+                onClick={signOut}
+                className="hidden lg:inline-flex items-center gap-1.5 text-[0.6875rem] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <LogOut className="h-3 w-3" /> Abmelden
+              </button>
             ) : (
               <Link
                 to="/kunden-login"
-                search={{ redirect: "/meine-buchungen" }}
+                search={{ redirect: "/" }}
                 className="hidden lg:inline-flex items-center gap-1.5 text-[0.6875rem] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
               >
                 Anmelden
               </Link>
             )}
-            <Link
-              to="/buchen"
+            <a
+              href="#kontakt"
               className="hidden sm:inline-flex btn-primary text-[0.6875rem] py-2.5 px-4 sm:px-5 hover:opacity-90 hover:scale-[0.98] active:scale-95"
             >
-              Termin buchen
-            </Link>
+              Termin anfragen
+            </a>
             <button
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Menü schließen" : "Menü öffnen"}
@@ -206,41 +198,29 @@ export function Nav() {
 
               <div className="mt-auto space-y-3 px-6 pb-10">
                 {user ? (
-                  <>
-                    <Link
-                      to="/meine-buchungen"
-                      onClick={() => setOpen(false)}
-                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-[0.6875rem] uppercase tracking-[0.2em] transition-all hover:border-foreground"
-                    >
-                      Meine Buchungen
-                    </Link>
-                    <button
-                      onClick={signOut}
-                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-[0.6875rem] uppercase tracking-[0.2em] transition-all hover:border-foreground text-muted-foreground"
-                    >
-                      <LogOut className="h-3 w-3" /> Abmelden
-                    </button>
-                  </>
+                  <button
+                    onClick={signOut}
+                    className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-[0.6875rem] uppercase tracking-[0.2em] transition-all hover:border-foreground text-muted-foreground"
+                  >
+                    <LogOut className="h-3 w-3" /> Abmelden
+                  </button>
                 ) : (
-                  <>
-                    <Link
-                      to="/kunden-login"
-                      onClick={() => setOpen(false)}
-                      search={{ redirect: "/meine-buchungen" }}
-                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-[0.6875rem] uppercase tracking-[0.2em] transition-all hover:border-foreground"
-                    >
-                      Anmelden
-                    </Link>
-                    <Link
-                      to="/kunden-login"
-                      onClick={() => setOpen(false)}
-                      search={{ redirect: "/buchen" }}
-                      className="btn-primary w-full justify-center text-[0.6875rem]"
-                    >
-                      Termin buchen
-                    </Link>
-                  </>
+                  <Link
+                    to="/kunden-login"
+                    onClick={() => setOpen(false)}
+                    search={{ redirect: "/" }}
+                    className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-[0.6875rem] uppercase tracking-[0.2em] transition-all hover:border-foreground"
+                  >
+                    Anmelden
+                  </Link>
                 )}
+                <a
+                  href="#kontakt"
+                  onClick={() => setOpen(false)}
+                  className="btn-primary w-full justify-center text-[0.6875rem]"
+                >
+                  Termin anfragen
+                </a>
               </div>
             </motion.div>
           </>

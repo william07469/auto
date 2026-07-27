@@ -153,13 +153,13 @@ export function Services() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-16 flex justify-center"
         >
-          <Link
-            to="/buchen"
+          <a
+            href="#kontakt"
             className="btn-secondary hover:border-foreground hover:bg-foreground/5"
           >
             Beratung anfragen
             <span className="inline-block h-px w-5 bg-current" />
-          </Link>
+          </a>
         </motion.div>
       </div>
     </section>

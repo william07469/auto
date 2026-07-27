@@ -12,11 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as BuchenRouteImport } from './routes/buchen'
 import { Route as KundenLoginRouteImport } from './routes/kunden-login'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedMeineBuchungenRouteImport } from './routes/_authenticated/meine-buchungen'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -31,11 +29,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BuchenRoute = BuchenRouteImport.update({
-  id: '/buchen',
-  path: '/buchen',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KundenLoginRoute = KundenLoginRouteImport.update({
@@ -53,12 +46,6 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedMeineBuchungenRoute =
-  AuthenticatedMeineBuchungenRouteImport.update({
-    id: '/meine-buchungen',
-    path: '/meine-buchungen',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -68,21 +55,17 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/buchen': typeof BuchenRoute
   '/kunden-login': typeof KundenLoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/meine-buchungen': typeof AuthenticatedMeineBuchungenRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/buchen': typeof BuchenRoute
   '/kunden-login': typeof KundenLoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/meine-buchungen': typeof AuthenticatedMeineBuchungenRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 export interface FileRoutesById {
@@ -90,11 +73,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
-  '/buchen': typeof BuchenRoute
   '/kunden-login': typeof KundenLoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
-  '/_authenticated/meine-buchungen': typeof AuthenticatedMeineBuchungenRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 export interface FileRouteTypes {
@@ -102,32 +83,26 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/buchen'
     | '/kunden-login'
     | '/sitemap.xml'
     | '/admin'
-    | '/meine-buchungen'
     | '/auth/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/buchen'
     | '/kunden-login'
     | '/sitemap.xml'
     | '/admin'
-    | '/meine-buchungen'
     | '/auth/callback'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/buchen'
     | '/kunden-login'
     | '/sitemap.xml'
     | '/_authenticated/admin'
-    | '/_authenticated/meine-buchungen'
     | '/auth/callback'
   fileRoutesById: FileRoutesById
 }
@@ -135,7 +110,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
-  BuchenRoute: typeof BuchenRoute
   KundenLoginRoute: typeof KundenLoginRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
@@ -163,13 +137,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/buchen': {
-      id: '/buchen'
-      path: '/buchen'
-      fullPath: '/buchen'
-      preLoaderRoute: typeof BuchenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/kunden-login': {
       id: '/kunden-login'
       path: '/kunden-login'
@@ -191,13 +158,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/meine-buchungen': {
-      id: '/_authenticated/meine-buchungen'
-      path: '/meine-buchungen'
-      fullPath: '/meine-buchungen'
-      preLoaderRoute: typeof AuthenticatedMeineBuchungenRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/callback'
@@ -210,12 +170,10 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
-  AuthenticatedMeineBuchungenRoute: typeof AuthenticatedMeineBuchungenRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
-  AuthenticatedMeineBuchungenRoute: AuthenticatedMeineBuchungenRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -235,7 +193,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
-  BuchenRoute: BuchenRoute,
   KundenLoginRoute: KundenLoginRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
